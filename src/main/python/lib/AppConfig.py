@@ -26,7 +26,7 @@ _app_config = {
     'logging.loglevel': logging.INFO,
     'logging.format': '[%(asctime)s] [%(levelname)-5s] [%(module)-20s:%(lineno)-4s] %(message)s',
     'logging.datefmt': '%d-%m-%Y %H:%M:%S',
-    'logging.logfile': str(Path.home()) + '/logs/Falldown.application-' + time.strftime('%d-%m-%Y-%H-%M-%S') + '.log'
+    'logging.logfile': str(Path.home()) + '/falldown/logs/application-' + time.strftime('%d-%m-%Y-%H-%M-%S') + '.log'
 }
 
 def app_conf_set(key, value):
