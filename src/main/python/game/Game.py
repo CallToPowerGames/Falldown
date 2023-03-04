@@ -94,9 +94,13 @@ class Game():
                 self.game_data.exit()
 
         try:
-            pygame.quit()
-        except:
-            pass
+            logging.info('Quitting modules')
+            pygame.font.quit()
+            pygame.mixer.quit()
 
-        logging.info('Quit')
+            logging.info('Quitting')
+            pygame.quit()
+        except Exception as e:
+            logging.error(e)
+
         return sys.exit(0)
