@@ -15,7 +15,6 @@ import pygame
 
 from lib.AppConfig import app_conf_get
 from i18n.Translations import translate
-from lib.Utils import load_highscore_db
 from game.drawables.DrawableUtils import draw_text_in_rect
 
 from game.scenes.Scene import Scene
@@ -237,8 +236,7 @@ class HighscoreScene(Scene):
 
         if not self.loaded_highscore:
             logging.info('Loading highscore db')
-            self.highscore_db = load_highscore_db(self.game_data.cryptography, self.game_data.game_config.basedir)
-            self.highscore_db = sorted(self.highscore_db, key=lambda e: e['score'], reverse=True)
+            self.highscore_db = self.game_data.highscore.load(reload=True)
             self._draw_highscore()
             self.loaded_highscore = True
 

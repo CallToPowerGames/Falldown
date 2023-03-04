@@ -15,7 +15,6 @@ import pygame
 from i18n.Translations import translate
 
 from game.drawables.DrawableUtils import draw_text_in_rect
-from lib.Utils import load_highscore_db, save_highscore_db
 
 from game.scenes.Scene import Scene
 from game.GameState import State
@@ -37,7 +36,6 @@ class GameOverScene(Scene):
         self.text_color_inactive = self.game_data.game_config.get('text.color.inactive')
         self.line_width = self.game_data.game_config.get('line.width')
         self.text_color_help = self.game_data.game_config.get('text.color.help')
-        self.highscore_max_entries = self.game_data.game_config.get('highscore.entries.max')
 
         self.screen_mid = self.screen_size[0] / 2, self.screen_size[1] / 2
         self.items = []
@@ -140,20 +138,14 @@ class GameOverScene(Scene):
             return
 
         if not self.saved_highscore:
-            logging.info('Loading highscore db')
-            self.highscore_db = load_highscore_db(self.game_data.cryptography, self.game_data.game_config.basedir)
             if self.game_data.score > 0:
+                self.highscore_db = self.game_data.highscore.load(reload=True)
                 logging.info('Adding new entry to highscore db')
                 self.highscore_db.append({
                     'name': self.game_data.players[self.game_data.player_index]['name'],
                     'score': self.game_data.score
                 })
-                if len(self.highscore_db) > self.highscore_max_entries:
-                    logging.info('Cutting highscore db to {} entries'.format(self.highscore_max_entries))
-                    self.highscore_db = sorted(self.highscore_db, key=lambda e: e['score'], reverse=True)
-                    self.highscore_db = self.highscore_db[:self.highscore_max_entries]
-                logging.info('Saving highscore db')
-                save_highscore_db(self.game_data.cryptography, self.highscore_db, self.game_data.game_config.basedir)
+                self.game_data.highscore.save(self.highscore_db)
             else:
                 logging.info('Score not high enough, not saving...')
             self.saved_highscore = True

@@ -22,6 +22,7 @@ from lib.SpriteCache import SpriteCache
 from game.GameData import GameData
 from game.Game import Game
 from lib.Cryptography import Cryptography
+from lib.Highscore import Highscore
 
 class AppContext():
     """Application Context"""
@@ -49,7 +50,8 @@ class AppContext():
         self._cache_sounds()
         self._cache_sprites()
 
-        self.game_data = GameData(self.game_config, self.cryptography, self.font_cache, self.sound_cache, self.sprite_cache)
+        self.highscore = Highscore(self.cryptography, self.basedir, max_entries=self.game_config.get('highscore.entries.max'))
+        self.game_data = GameData(self.game_config, self.highscore, self.font_cache, self.sound_cache, self.sprite_cache)
         self.game = Game(self.game_data)
 
     def _init_modules(self):

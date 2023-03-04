@@ -114,7 +114,7 @@ def save_highscore_db(cryptography, highscore_db, basedir):
     file_path = home_file_path
 
     if os.path.isfile(file_path):
-        logging.info('Deleting old highscore db in user folder')
+        logging.debug('Deleting old highscore db in user folder')
 
         try:
             os.remove(file_path)
