@@ -37,7 +37,6 @@ class Level():
         self.segment_height = self.game_data.game_config.get('level.segments.height')
         self.gap_vert_min = self.game_data.game_config.get('level.segments.gap.vert.min')
         self.gap_vert_add_max = self.game_data.game_config.get('level.segments.gap.vert.add.max')
-        self.corrected_velocity_epsilon = self.game_data.game_config.get('level.velocity.correction.epsilon')
         self.line_moving_probability = self.game_data.game_config.get('level.line.moving.probability')
         self.segments_width_min = self.game_data.game_config.get('level.segments.width.min')
         self.segments_width_max = self.game_data.game_config.get('level.segments.width.max')

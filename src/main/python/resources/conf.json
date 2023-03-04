@@ -38,14 +38,12 @@
     "barrier.speed.increase": 1,
     "player.stuck.correction": 2,
     "player.barrier.move.correction": 30,
-    "camera.line.width": 3,
     "camera.borders": {
         "left": 150,
         "right": 150,
         "top": 50,
         "bottom": 240
     },
-    "level.velocity.correction.epsilon": 0.08,
     "level.generator.modifier": 1.4,
     "level.line.moving.probability": 15,
     "level.segments.width.min": 50,

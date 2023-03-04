@@ -43,6 +43,7 @@ class Player(pygame.sprite.Sprite):
         self.speed_decrease = self.player_info['speed_decrease']
         self.falling_factor_increase = self.player_info['falling_factor_increase']
         self.rect_inner = self.player_info['rect_inner']
+        self.debug_show = self.game_data.game_config.get('debug.show')
 
         self.spritesheet_idle = Spritesheet(self.game_data.sprite_cache, self.player_info['idle']['key'], size=self.player_info['size'], nr_images=self.player_info['idle']['nr_images'], orientation_left=self.player_info['orientation_left'])
         self.spritesheet_run = Spritesheet(self.game_data.sprite_cache, self.player_info['run']['key'], size=self.player_info['size'], nr_images=self.player_info['run']['nr_images'], orientation_left=self.player_info['orientation_left'])
@@ -263,4 +264,19 @@ class Player(pygame.sprite.Sprite):
 
     def draw(self):
         """Draws the player"""
-        self.screen.blit(self.image, self.get_rect().topleft)
+        self.screen.blit(self.image, (self.rect.topleft[0], self.rect.topleft[1] + self.rect_inner[1]))
+
+        if self.debug_show:
+            pygame.draw.rect(
+                self.screen,
+                (200, 50, 50),
+                self.get_rect(),
+                width=1
+            )
+
+            pygame.draw.rect(
+                self.screen,
+                (0, 0, 0),
+                self.rect,
+                width=1
+            )

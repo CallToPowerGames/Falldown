@@ -55,8 +55,6 @@ class Camera():
         self.text_color_go = self.game_data.game_config.get('text.color.go')
         self.fps_text_color = self.game_data.game_config.get('fps.text.color')
         self.player_stuck_correction = self.game_data.game_config.get('player.stuck.correction')
-        self.camera_line_width = self.game_data.game_config.get('camera.line.width')
-        self.camera_line_color = self.game_data.game_config.get('camera.line.color')
         self.player_barrier_move_correction = self.game_data.game_config.get('player.barrier.move.correction')
         self.debug_show = self.game_data.game_config.get('debug.show')
         self.start_barrier = self.game_data.game_config.get('debug.barrier.start')
@@ -378,12 +376,12 @@ class Camera():
             # Camera borders
             pygame.draw.rect(
                 self.screen,
-                self.camera_line_color,
+                (0, 0, 0),
                 pygame.Rect(
                     self.camera_borders['left'],
                     self.camera_borders['top'],
                     self.screen_size[0] - self.camera_borders['left'] - self.camera_borders['right'],
                     self.screen_size[1] - self.camera_borders['top'] - self.camera_borders['bottom']
                 ),
-                width=self.camera_line_width
+                width=3
             )
