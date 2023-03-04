@@ -42,11 +42,9 @@ class Camera():
         self.level = level
 
         self.screen = self.game_data.game_config.get('screen')
-
         self.font_xs = self.game_data.font_cache.get('main.xs')
         self.font_s = self.game_data.font_cache.get('main.s')
         self.font_l = self.game_data.font_cache.get('main.l')
-
         self.segment_height = self.game_data.game_config.get('level.segments.height')
         self.screen_size = self.game_data.game_config.get('screen.size')
         self.camera_borders = self.game_data.game_config.get('camera.borders')
@@ -59,7 +57,6 @@ class Camera():
         self.player_stuck_correction = self.game_data.game_config.get('player.stuck.correction')
         self.camera_line_width = self.game_data.game_config.get('camera.line.width')
         self.camera_line_color = self.game_data.game_config.get('camera.line.color')
-        self.camera_text_color = self.game_data.game_config.get('camera.text.color')
         self.player_barrier_move_correction = self.game_data.game_config.get('player.barrier.move.correction')
         self.debug_show = self.game_data.game_config.get('debug.show')
         self.start_barrier = self.game_data.game_config.get('debug.barrier.start')

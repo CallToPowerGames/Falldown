@@ -28,7 +28,6 @@ class GameScene(Scene):
     def __init__(self, state, fps, game_data):
         super().__init__(state, fps, game_data)
 
-        self.screen = self.game_data.game_config.get('screen')
         self.screen_size = self.game_data.game_config.get('screen.size')
         self.camera_borders = self.game_data.game_config.get('camera.borders')
         self.music_volume_bg_game = self.game_data.game_config.get('music.volume.background.game')
@@ -46,6 +45,8 @@ class GameScene(Scene):
         self.playing_music = False
         self.curr_bg_music = ''
 
+        self.init_start = True
+
         self._init()
 
     def _init(self):
@@ -53,15 +54,19 @@ class GameScene(Scene):
         logging.debug('Initializing')
 
         self.border = Border(self.game_data)
-        pos = (self.screen_size[0] / 2, self.camera_borders['top'])
-        self.barrier = Barrier(self.game_data, pos)
+        pos_barrier = (self.screen_size[0] / 2, self.camera_borders['top'])
+        self.barrier = Barrier(self.game_data, pos_barrier)
+
         self.player = Player(self.game_data)
-        pos = (self.screen_size[0] / 2, self.player.size[1] + self.camera_borders['top'])
-        self.player.init(pos)
+        pos_player = (self.screen_size[0] / 2, self.player.size[1] + self.camera_borders['top'])
+        self.player.init(pos_player, init_start=self.init_start)
+
         self.level = Level(self.game_data)
         self.background = Background(self.game_data)
         self.camera = Camera(self.game_data, self.border, self.barrier, self.player, self.background, self.level)
+
         self.sound_played = False
+        self.init_start = False
 
     def reset(self):
         """Resets the scene"""

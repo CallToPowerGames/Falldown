@@ -34,7 +34,6 @@
     "background.speed.bg.clouds.mid.max": 90,
     "background.speed.bg.clouds.small.min": 30,
     "background.speed.bg.clouds.small.max": 100,
-    "line.width": 5,
     "barrier.speed": 130,
     "barrier.speed.increase": 1,
     "player.stuck.correction": 2,

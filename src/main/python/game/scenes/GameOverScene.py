@@ -34,7 +34,6 @@ class GameOverScene(Scene):
         self.text_color_score = self.game_data.game_config.get('text.color.score')
         self.text_color = self.game_data.game_config.get('text.color')
         self.text_color_inactive = self.game_data.game_config.get('text.color.inactive')
-        self.line_width = self.game_data.game_config.get('line.width')
         self.text_color_help = self.game_data.game_config.get('text.color.help')
 
         self.screen_mid = self.screen_size[0] / 2, self.screen_size[1] / 2

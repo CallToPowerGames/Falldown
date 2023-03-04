@@ -46,7 +46,7 @@ if __name__ == '__main__':
 
     basedir = os.path.dirname(__file__)
 
-    logging.info('Starting')
+    logging.info('Falldown version {} build {}, a game by {}'.format(app_conf_get('version'), app_conf_get('build'), app_conf_get('author')))
     appctxt = AppContext(basedir)
     exit_code = appctxt.run()
     sys.exit(exit_code)

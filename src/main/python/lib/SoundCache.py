@@ -28,10 +28,10 @@ class SoundCache():
     }
 
     def __init__(self, basedir):
-        '''Initializes
+        """Initializes
 
         :param basedir: The base path
-        '''
+        """
         logging.debug('Initializing SoundCache')
         
         self.basedir = basedir
@@ -39,31 +39,31 @@ class SoundCache():
     # Sounds
 
     def load_sound(self, key, name, path='sounds'):
-        '''Loads the sound into the cache
+        """Loads the sound into the cache
 
         :param sound: Sound to load
-        '''
+        """
         val = self.get_sound(key)
         if not val:
             self.set_sound(key, load_sound(self.basedir, name, path))
             val = self.get_sound(key)
 
     def play(self, key, loops=0, volume=1.0):
-        '''Plays the sound
+        """Plays the sound
 
         :param key: Sound to play
         :param loops: Number of loops
-        '''
+        """
         val = self.get_sound(key)
         if val:
             val.set_volume(volume)
             val.play(loops=loops)
 
     def stop(self, key):
-        '''Stops the sound
+        """Stops the sound
 
         :param sound: Sound to play
-        '''
+        """
         val = self.get_sound(key)
         if val:
             val.stop()

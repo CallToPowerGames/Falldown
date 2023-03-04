@@ -57,7 +57,7 @@ class Player(pygame.sprite.Sprite):
         self.last_direction = None
         self.position_midbottom = None
 
-    def init(self, position_midbottom=(0, 0)):
+    def init(self, position_midbottom=(0, 0), init_start=False):
         """Initializes the player"""
         self.position_midbottom = position_midbottom
         self.position_original = (self.position_midbottom[0], self.position_midbottom[1])
@@ -70,7 +70,8 @@ class Player(pygame.sprite.Sprite):
 
         self.last_direction = Direction.LEFT
 
-        logging.info('Starting with player "{}"'.format(self.player_info['name']))
+        if not init_start:
+            logging.info('Starting with player "{}"'.format(self.player_info['name']))
 
     def get_rect(self):
         """Returns the calculated rect

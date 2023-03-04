@@ -37,7 +37,6 @@ class Background(pygame.sprite.Sprite):
         self.screen_size = self.game_data.game_config.get('screen.size')
         self.offset_max_left = self.game_data.game_config.get('offset.max.left')
         self.offset_max_right = self.game_data.game_config.get('offset.max.right')
-        self.camera_borders = self.game_data.game_config.get('camera.borders')
         self.bg_main_color = self.game_data.game_config.get('background.main.color')
         self.nr_of_clouds_big = self.game_data.game_config.get('background.number.bg.clouds.big')
         self.startpoint_bg_clouds_big = self.game_data.game_config.get('background.startpoint.bg.clouds.big')

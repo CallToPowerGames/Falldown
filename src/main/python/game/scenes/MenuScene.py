@@ -45,7 +45,6 @@ class MenuScene(Scene):
         self.text_color_logo = self.game_data.game_config.get('text.color.logo')
         self.text_color = self.game_data.game_config.get('text.color')
         self.text_color_inactive = self.game_data.game_config.get('text.color.inactive')
-        self.line_width = self.game_data.game_config.get('line.width')
         self.text_color_help = self.game_data.game_config.get('text.color.help')
         self.music_volume_bg_menu = self.game_data.game_config.get('music.volume.background.menu')
         self.music_volume_bg_menu_effects = self.game_data.game_config.get('music.volume.background.menu.effects')

@@ -29,10 +29,7 @@ class LoadingScene(Scene):
         self.screen = self.game_data.game_config.get('screen')
         self.screen_size = self.game_data.game_config.get('screen.size')
         self.font_xl = self.game_data.font_cache.get('main.xl')
-        self.font_l = self.game_data.font_cache.get('main.l')
         self.text_color_logo = self.game_data.game_config.get('text.color.logo')
-        self.text_color = self.game_data.game_config.get('text.color')
-        self.text_color_inactive = self.game_data.game_config.get('text.color.inactive')
 
         self.screen_mid = self.screen_size[0] / 2, self.screen_size[1] / 2
         self.curr_initial_wait = 0
