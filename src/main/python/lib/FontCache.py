@@ -8,6 +8,8 @@
 
 import logging
 
+from lib.Utils import get_font
+
 """FontCache"""
 
 class FontCache():
@@ -20,9 +22,30 @@ class FontCache():
         'main.xl': None
     }
 
-    def __init__(self):
-        """Initializes the sprite cache"""
+    def __init__(self, basedir):
+        """Initializes the sprite cache
+
+        :param basedir: The base path
+        """
         logging.debug('Initializing FontCache')
+        
+        self.basedir = basedir
+
+    def get_or_load(self, key, name, size, system_font_name, path=None):
+        """Gets or, if not present, loads the font
+
+        :param key: The key
+        :param name: The name
+        :param size: The size
+        :param system_font_name: The system font name
+        :param path: The path
+        """
+        val = self.get(key)
+        if not val:
+            self.set(key, get_font(name, size, system_font_name, self.basedir, path))
+            val = self.get(key)
+
+        return val
 
     def set(self, key, value, override=False):
         """Sets the value for the given key

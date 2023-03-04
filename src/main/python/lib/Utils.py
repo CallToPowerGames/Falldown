@@ -7,6 +7,26 @@ import pygame
 
 from lib.AppConfig import app_conf_get
 
+def get_font(name, size, system_font_name, basedir, base_path):
+    """Returns the font if found. Returns the system font if not found.
+
+    :param key: The key
+    :param name: The name
+    :param size: The size
+    :param system_font_name: The system font name
+    :param basedir: The base path
+    :param base_path: The base path - for default if not found in user folder
+    """
+    main_font_dir = os.path.join(basedir, 'resources', 'fonts')
+    try:
+        font_path = os.path.join(base_path, name)
+        logging.debug('Loading font "{}" from directory "{}"'.format(font_path, main_font_dir))
+        font = os.path.join(main_font_dir, font_path)
+        return pygame.font.Font(font, size)
+    except Exception as e:
+        logging.error('Could not find font, falling back to system font')
+        return pygame.font.SysFont(system_font_name, size)
+
 def load_game_conf(basedir, base_path=None):
     """
     Loads the game configuration
