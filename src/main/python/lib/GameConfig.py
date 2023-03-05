@@ -150,7 +150,7 @@ class GameConfig():
         'barrier.cannon.size': (39, 25),
         'barrier.cannon.left.correction': (0, -1),
         'barrier.cannon.right.correction': (-5, -1),
-        'barrier.laser.correction': (3, 3),
+        'barrier.laser.correction': (3, 2),
         'barrier.laserbeam.size': (20, 9),
         'barrier.holder.left.size': (36, 30),
         'barrier.holder.right.size': (36, 30),
