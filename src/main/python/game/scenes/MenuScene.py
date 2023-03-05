@@ -48,6 +48,7 @@ class MenuScene(Scene):
         self.text_color_help = self.game_data.game_config.get('text.color.help')
         self.music_volume_bg_menu = self.game_data.game_config.get('music.volume.background.menu')
         self.music_volume_bg_menu_effects = self.game_data.game_config.get('music.volume.background.menu.effects')
+        self.menu_music = self.game_data.game_config.get('menu.music')
 
         self.screen_mid = self.screen_size[0] / 2, self.screen_size[1] / 2
         self.playing_music = False
@@ -283,7 +284,7 @@ class MenuScene(Scene):
     def start_music(self):
         if not self.playing_music:
             self.playing_music = True
-            self.curr_bg_music = random.choice(['bg-0.wav', 'bg-1.wav'])
+            self.curr_bg_music = random.choice(self.menu_music)
             self.game_data.sound_cache.load_music(self.curr_bg_music)
             self.game_data.sound_cache.play_music(loops=-1, volume=self.music_volume_bg_menu)
 
@@ -303,8 +304,6 @@ class MenuScene(Scene):
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     self.exit()
-                elif event.key == pygame.K_f:
-                    self.game_data.toggle_fullscreen()
                 elif event.key == pygame.K_UP:
                     self._keypress_arrow_up()
                 elif event.key == pygame.K_DOWN:

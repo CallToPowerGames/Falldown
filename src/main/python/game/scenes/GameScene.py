@@ -33,6 +33,7 @@ class GameScene(Scene):
         self.music_volume_bg_game = self.game_data.game_config.get('music.volume.background.game')
         self.music_volume_bg_game_effects = self.game_data.game_config.get('music.volume.background.game.effects')
         self.music_volume_bg_menu_effects = self.game_data.game_config.get('music.volume.background.menu.effects')
+        self.game_music = self.game_data.game_config.get('game.music')
 
         self.background = None
         self.border = None
@@ -45,13 +46,11 @@ class GameScene(Scene):
         self.playing_music = False
         self.curr_bg_music = ''
 
-        self.init_start = True
+        self.game_init_done = False
 
-        self._init()
-
-    def _init(self):
-        """Initializes the camera"""
-        logging.debug('Initializing')
+    def init_game(self):
+        """Initializes the game objects"""
+        self.sound_played = False
 
         self.border = Border(self.game_data)
         pos_barrier = (self.screen_size[0] / 2, self.camera_borders['top'])
@@ -59,18 +58,18 @@ class GameScene(Scene):
 
         self.player = Player(self.game_data)
         pos_player = (self.screen_size[0] / 2, self.player.size[1] + self.camera_borders['top'])
-        self.player.init(pos_player, init_start=self.init_start)
+        self.player.init(pos_player)
 
         self.level = Level(self.game_data)
         self.background = Background(self.game_data)
         self.camera = Camera(self.game_data, self.border, self.barrier, self.player, self.background, self.level)
 
-        self.sound_played = False
-        self.init_start = False
+        self.game_init_done = True
 
     def reset(self):
         """Resets the scene"""
-        self._init()
+        self.game_init_done = False
+        self.init_game()
 
     def toggle_show_fps(self):
         """Toggles the fps display"""
@@ -91,7 +90,7 @@ class GameScene(Scene):
             if event.type == pygame.QUIT:
                 self.exit()
             elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_1:
+                if event.key == pygame.K_f:
                     self.toggle_show_fps()
                 if event.key == pygame.K_ESCAPE:
                     self.camera.stop()
@@ -100,9 +99,6 @@ class GameScene(Scene):
                     self.paused = True
                     self.camera.pause()
                     self.set_state(State.PAUSE)
-                elif event.key == pygame.K_f:
-                    self.set_state(State.PAUSE)
-                    self.toggle_fullscreen()
 
         if self.is_state(State.GAME):
             if self.paused:
@@ -116,14 +112,21 @@ class GameScene(Scene):
                 self.set_state(State.GAMEOVER)
 
         if not self.is_state(State.GAME):
+            if not self.is_state(State.PAUSE):
+                self.game_init_done = False
             self.game_data.sound_cache.play('menu.back', volume=self.music_volume_bg_menu_effects)
             if not self.is_state(State.PAUSE) and not self.is_state(State.GAMEOVER):
                 self.stop_music()
             return
         else:
+            if not self.game_init_done:
+                logging.error('Game is not initialized.')
+                self.set_state(State.PLAYERSELECTION)
+                self.stop_music()
+                return
             if not self.playing_music:
                 self.playing_music = True
-                self.curr_bg_music = random.choice(['game-0.wav', 'game-1.wav', 'game-2.wav', 'game-3.wav'])
+                self.curr_bg_music = random.choice(self.game_music)
                 self.game_data.sound_cache.load_music(self.curr_bg_music)
                 self.game_data.sound_cache.play_music(loops=-1, volume=self.music_volume_bg_game)
 

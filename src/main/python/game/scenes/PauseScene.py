@@ -131,8 +131,6 @@ class PauseScene(Scene):
                     self.set_state(State.PLAYERSELECTION)
                 elif event.key == pygame.K_SPACE:
                     self.set_state(State.GAME)
-                elif event.key == pygame.K_f:
-                    self.toggle_fullscreen()
 
         if not self.is_state(State.PAUSE):
             self.game_data.sound_cache.play('menu.back', volume=self.music_volume_bg_menu_effects)

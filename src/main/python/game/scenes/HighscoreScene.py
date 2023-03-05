@@ -214,8 +214,6 @@ class HighscoreScene(Scene):
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     self.set_state(State.MENU)
-                elif event.key == pygame.K_f:
-                    self.game_data.toggle_fullscreen()
                 elif event.key == pygame.K_UP:
                     self._keypress_arrow_up()
                 elif event.key == pygame.K_DOWN:
@@ -224,8 +222,6 @@ class HighscoreScene(Scene):
                     if self.active_item == HighscoreSceneActiveItem.BACK:
                         self._reset_button_to_init(sound_played=True)
                         self.set_state(State.MENU)
-                    else:
-                        self.game_data.toggle_fullscreen()
 
         if not self.is_state(State.HIGHSCORE):
             self.loaded_highscore = False
@@ -235,7 +231,7 @@ class HighscoreScene(Scene):
 
         if not self.loaded_highscore:
             logging.info('Loading highscore db')
-            self.highscore_db = self.game_data.highscore.load(reload=True)
+            self.highscore_db = self.game_data.highscore.load(reload_db=True)
             self._draw_highscore()
             self.loaded_highscore = True
 

@@ -30,16 +30,24 @@ class Highscore():
 
         self.highscore_db = None
 
-    def load(self, reload=False):
+    def _save(self):
+        """Save the highscore db"""
+        self.save(self.highscore_db)
+
+    def _reload_db(self):
+        """Reloads the highscore db"""
+        logging.info('Reloading highscore')
+        self.highscore_db = load_highscore_db(self.cryptography, self.basedir)
+        self.highscore_db = sorted(self.highscore_db, key=lambda e: e['score'], reverse=True)
+
+    def load(self, reload_db=False):
         """(Re-)Loads the highscore db
 
-        :param reload: Whether to reload
+        :param reload_db: Whether to reload
         :return: The db
         """
-        if reload or not self.highscore_db:
-            logging.info('Loading highscore')
-            self.highscore_db = load_highscore_db(self.cryptography, self.basedir)
-            self.highscore_db = sorted(self.highscore_db, key=lambda e: e['score'], reverse=True)
+        if reload_db or not self.highscore_db:
+            self._reload_db()
 
         return self.highscore_db
 
@@ -54,3 +62,21 @@ class Highscore():
             logging.info('Cutting highscore db to {} entries'.format(self.max_entries))
             self.highscore_db = self.highscore_db[:self.max_entries]
         save_highscore_db(self.cryptography, self.highscore_db, self.basedir)
+
+    def add_entry(self, name, score, reload_db=True, save_db=True):
+        """Adds an entry to the highscore db
+
+        :param name: The name of the player
+        :param score: The score
+        :param reload: Whether to reload the db before adding/saving
+        :param save_db: Whether to save the db after adding the entry
+        """
+        logging.info('Adding highscore entry [name={}, score={}] to db'.format(name, score))
+        if reload_db:
+            self._reload_db()
+        self.highscore_db.append({
+            'name': name,
+            'score': score
+        })
+        if save_db:
+            self._save()

@@ -61,7 +61,7 @@ class GameConfig():
         'background.speed.bg.clouds.small.max': 100,
         'barrier.speed': 130,
         'barrier.speed.increase': 1,
-        'player.stuck.correction': 2,
+        'player.stuck.correction': 1,
         'player.barrier.move.correction': 30,
         'camera.borders': { # Read: "Pixels from [...]"
             'left': 150,
@@ -128,8 +128,10 @@ class GameConfig():
         'player.speed.fallingfactor.increase.8': 0.8,
         'highscore.entries.max': 100,
         # Not in the public config
-        'debug.config.ignore': False,
+        'debug.config.ignore': True,
         'screen.size': (800, 600),
+        'menu.music': ['bg-0.wav', 'bg-1.wav'],
+        'game.music': ['game-0.wav', 'game-1.wav', 'game-2.wav', 'game-3.wav'],
         'font.sizes': ['xs', 's', 'l', 'xl'],
         'font.system': 'freesanbold.ttf',
         'font.main.path': 'yoster-island',

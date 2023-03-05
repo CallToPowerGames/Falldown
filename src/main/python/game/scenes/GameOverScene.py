@@ -128,8 +128,6 @@ class GameOverScene(Scene):
                     self.set_state(State.MENU)
                 if event.key == pygame.K_RETURN:
                     self.set_state(State.MENU)
-                elif event.key == pygame.K_f:
-                    self.toggle_fullscreen()
 
         if not self.is_state(State.GAMEOVER):
             self.game_data.scene_game.stop_music()
@@ -138,13 +136,7 @@ class GameOverScene(Scene):
 
         if not self.saved_highscore:
             if self.game_data.score > 0:
-                self.highscore_db = self.game_data.highscore.load(reload=True)
-                logging.info('Adding new entry to highscore db')
-                self.highscore_db.append({
-                    'name': self.game_data.players[self.game_data.player_index]['name'],
-                    'score': self.game_data.score
-                })
-                self.game_data.highscore.save(self.highscore_db)
+                self.game_data.highscore.add_entry(self.game_data.player_info['name'], self.game_data.score)
             else:
                 logging.info('Score not high enough, not saving...')
             self.saved_highscore = True

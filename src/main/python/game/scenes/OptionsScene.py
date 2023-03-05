@@ -200,18 +200,16 @@ class OptionsScene(Scene):
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     self.set_state(State.MENU)
-                elif event.key == pygame.K_f:
-                    self.game_data.toggle_fullscreen()
                 elif event.key == pygame.K_UP:
                     self._keypress_arrow_up()
                 elif event.key == pygame.K_DOWN:
                     self._keypress_arrow_down()
                 elif event.key == pygame.K_RETURN:
-                    if self.active_item == OptionsSceneActiveItem.BACK:
+                    if self.active_item == OptionsSceneActiveItem.FULLSCREEN:
+                        self.game_data.toggle_fullscreen()
+                    elif self.active_item == OptionsSceneActiveItem.BACK:
                         self._reset_button_to_init(sound_played=True)
                         self.set_state(State.MENU)
-                    else:
-                        self.game_data.toggle_fullscreen()
 
         if not self.is_state(State.OPTIONS):
             self.game_data.sound_cache.play('menu.back', volume=self.music_volume_bg_menu_effects)

@@ -31,11 +31,6 @@ class Scene():
         logging.debug('Exit')
         self.game_data.exit()
 
-    def toggle_fullscreen(self):
-        """Toggles between fullscreen modes"""
-        logging.debug('Toggle fullscreen')
-        self.game_data.toggle_fullscreen()
-
     def set_state(self, state):
         """Sets the state
 

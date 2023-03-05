@@ -315,8 +315,6 @@ class PlayerSelectionScene(Scene):
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     self.set_state(State.MENU)
-                elif event.key == pygame.K_f:
-                    self.game_data.toggle_fullscreen()
                 elif event.key == pygame.K_UP:
                     self._keypress_arrow_up()
                 elif event.key == pygame.K_DOWN:

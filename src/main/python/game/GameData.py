@@ -60,6 +60,7 @@ class GameData():
 
         self.players = []
         self.player_index = 0
+        self.player_info = None
         self.score = 0
         self.fps = 0
 
@@ -119,6 +120,7 @@ class GameData():
     def check_reset_game(self):
         """Checks whether to reset game"""
         if self.game_state.is_state_changed():
+            self.player_info = self.players[self.player_index]
             self.reset_game()
             self.game_state.reset_state_changed()
 

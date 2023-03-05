@@ -332,7 +332,7 @@ class Camera():
         self.barrier.draw(self.offset)
 
         if self.show_go:
-            txt = translate('scene.game.go').format(self.player.player_info['name'])
+            txt = translate('scene.game.go').format(self.game_data.player_info['name'])
             width_go = len(txt) * 50
             height_go = 50
             draw_text_in_rect(

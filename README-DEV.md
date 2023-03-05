@@ -1,9 +1,8 @@
 # Falldown
 
 * Key mappings
-  * Press "f" to play fullscreen
   * When in-game:
-    * Press "1" to display fps
+    * Press "f" to display fps
     * Press "Space" to pause game
 * After the first game start a config is written to "<UserDirectory>/falldown/conf.json"
 
