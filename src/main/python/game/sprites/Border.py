@@ -36,10 +36,14 @@ class Border(pygame.sprite.Sprite):
         self.camera_borders = self.game_data.game_config.get('camera.borders')
         self.border_color = self.game_data.game_config.get('border.color')
         self.border_size = self.game_data.game_config.get('level.border.img.size')
+        self.border_out_size = self.game_data.game_config.get('level.border.out.img.size')
 
         self.spritesheet_border = Spritesheet(self.game_data.sprite_cache, 'level.border', self.border_size, 1, generate_sides=False)
+        self.spritesheet_border_out = Spritesheet(self.game_data.sprite_cache, 'level.border.out', self.border_out_size, 1, generate_sides=True)
 
         self.image_border = None
+        self.image_border_left = None
+        self.image_border_right = None
 
         self._init()
 
@@ -48,6 +52,8 @@ class Border(pygame.sprite.Sprite):
         logging.debug("Initializing the border")
 
         self.image_border = self.spritesheet_border.images_left[0]
+        self.image_border_left = self.spritesheet_border_out.images_left[0]
+        self.image_border_right = self.spritesheet_border_out.images_right[0]
 
     def draw(self, offset):
         """Draws the border
@@ -67,6 +73,7 @@ class Border(pygame.sprite.Sprite):
                 ),
                 width=0
             )
+
             startpoint_y = 0
             while (startpoint_y + self.image_border.get_height()) <= offset.y:
                 startpoint_y += self.image_border.get_height()
@@ -85,6 +92,21 @@ class Border(pygame.sprite.Sprite):
                     curr_x -= self.image_border.get_width()
                 curr_y += self.image_border.get_height()
 
+            startpoint_y = 0
+            while (startpoint_y + self.image_border_left.get_height()) <= offset.y:
+                startpoint_y += self.image_border_left.get_height()
+            curr_y = startpoint_y - offset.y
+            for i in range(int(self.screen_size[1] / self.image_border_left.get_height()) + 2):
+                self.screen.blit(self.image_border_left,
+                    pygame.Rect(
+                        self.offset_max_left + self.camera_borders['left'] - self.image_border_left.get_width() - offset.x,
+                        curr_y,
+                        self.image_border_left.get_width(),
+                        self.image_border_left.get_height()
+                    )
+                )
+                curr_y += self.image_border_left.get_height()
+
         if abs(self.screen_size[0] + self.offset_max_right - self.camera_borders['right'] - offset.x) < (self.screen_size[0] + self.camera_borders['left'] - self.camera_borders['right']):
             # Right border
             pygame.draw.rect(
@@ -98,6 +120,7 @@ class Border(pygame.sprite.Sprite):
                 ),
                 width=0
             )
+
             startpoint_y = 0
             while (startpoint_y + self.image_border.get_height()) <= offset.y:
                 startpoint_y += self.image_border.get_height()
@@ -115,3 +138,18 @@ class Border(pygame.sprite.Sprite):
                     )
                     curr_x += self.image_border.get_width()
                 curr_y += self.image_border.get_height()
+
+            startpoint_y = 0
+            while (startpoint_y + self.image_border_right.get_height()) <= offset.y:
+                startpoint_y += self.image_border_right.get_height()
+            curr_y = startpoint_y - offset.y
+            for i in range(int(self.screen_size[1] / self.image_border_right.get_height()) + 2):
+                self.screen.blit(self.image_border_right,
+                    pygame.Rect(
+                        self.screen_size[0] + self.offset_max_right - self.camera_borders['right'] - offset.x,
+                        curr_y,
+                        self.image_border_right.get_width(),
+                        self.image_border_right.get_height()
+                    )
+                )
+                curr_y += self.image_border_right.get_height()

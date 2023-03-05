@@ -12,7 +12,7 @@ import logging
 
 _translations = {
     'game.name': 'Falldown',
-    'game.version': 'Version {}',
+    'game.version': 'Version {} Build {}',
     'game.by': 'A game by {}',
     'scene.pause.score': 'Score: {}',
     'scene.game.fps': 'FPS: {}',

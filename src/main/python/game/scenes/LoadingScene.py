@@ -143,6 +143,7 @@ class LoadingScene(Scene):
         self.game_data.sprite_cache.get_or_load('level.segment', 'segment.png', 'sprites')
         self.game_data.sprite_cache.get_or_load('level.segment.propeller', 'propeller.png', 'sprites')
         self.game_data.sprite_cache.get_or_load('level.border', 'border.png', 'sprites')
+        self.game_data.sprite_cache.get_or_load('level.border.out', 'border-out.png', 'sprites')
         self.game_data.sprite_cache.get_or_load('button.active', 'button-active.png', 'items')
         self.game_data.sprite_cache.get_or_load('button.inactive', 'button-inactive.png', 'items')
         self.game_data.sprite_cache.get_or_load('highscore', 'highscore.png', 'items')

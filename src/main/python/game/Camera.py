@@ -82,11 +82,12 @@ class Camera():
             self.screen_size[1] - self.camera_borders['top']- self.camera_borders['bottom']
         )
 
+        self.music_volume = 0
+
         self.velocity_player = [0, 0]
         self.velocity_barrier = 0
 
         self.game_data.score = 0
-
         width_score = 300
         height_score = 50
         rect = (self.screen_size[0] - width_score - 10, 10, width_score, height_score)
@@ -267,14 +268,17 @@ class Camera():
 
         # Check game over
         if self.barrier.is_visible(self.offset):
-            self.game_data.sound_cache.set_music_volume(self.music_volume_bg_game_barriervisible)
+            if self.music_volume != self.music_volume_bg_game_barriervisible:
+                self.music_volume = self.music_volume_bg_game_barriervisible
+                self.game_data.sound_cache.set_music_volume(self.music_volume)
             if self.barrier.collides_with(self.player, self.offset):
                 logging.info('Player collided with barrier')
                 self.game_data.sound_cache.play('game.over', volume=self.music_volume_bg_game_effects)
                 self.stop()
                 self.game_data.sound_cache.set_music_volume(self.music_volume_bg_game)
                 return True
-        else:
+        elif self.music_volume != self.music_volume_bg_game:
+            self.music_volume = self.music_volume_bg_game
             self.game_data.sound_cache.set_music_volume(self.music_volume_bg_game)
 
         # Slide move

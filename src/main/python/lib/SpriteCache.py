@@ -46,6 +46,7 @@ class SpriteCache():
         'level.segment': None,
         'level.segment.propeller': None,
         'level.border': None,
+        'level.border.out': None,
         'banner': None,
         'button.none': None,
         'button.active': None,

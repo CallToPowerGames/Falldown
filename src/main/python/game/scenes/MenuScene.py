@@ -42,6 +42,7 @@ class MenuScene(Scene):
         self.font_xl = self.game_data.font_cache.get('main.xl')
         self.font_l = self.game_data.font_cache.get('main.l')
         self.font_s = self.game_data.font_cache.get('main.s')
+        self.font_xs = self.game_data.font_cache.get('main.xs')
         self.text_color_logo = self.game_data.game_config.get('text.color.logo')
         self.text_color = self.game_data.game_config.get('text.color')
         self.text_color_inactive = self.game_data.game_config.get('text.color.inactive')
@@ -107,17 +108,17 @@ class MenuScene(Scene):
         # Version
         width = 500
         height = 60
-        rect = (self.screen_mid[0] - width / 2, height + 40, width, height)
+        rect = (self.screen_mid[0] - width / 2, height + 60, width, height)
         item_version = MenuItem(
                                     self.game_data,
-                                    self.font_s,
+                                    self.font_xs,
                                     rect,
-                                    (self.screen_mid[0], self.screen_size[1] - height * 2 + 20),
+                                    (self.screen_mid[0], self.screen_size[1] - height * 2 + 30),
                                     width=width,
                                     height=height,
                                     color=self.text_color_inactive,
                                     rect_width=-1,
-                                    text=translate('game.version').format(app_conf_get('version'))
+                                    text=translate('game.version').format(app_conf_get('version'), app_conf_get('build'))
                                 )
         self.items.append(item_version)
 
