@@ -307,7 +307,7 @@ class Camera():
             c_left = collides_left and self.player.can_go_left() and keys[pygame.K_LEFT]
             c_right = collides_right and self.player.can_go_right() and keys[pygame.K_RIGHT]
             player_plus_velocity_y = self.player.rect.y + self.player.rect.height + self.velocity_player[1]
-            c_bottom = (player_plus_velocity_y - self.player_stuck_correction) < segment_top_y
+            c_bottom = (player_plus_velocity_y - self.player_stuck_correction) < (segment_top_y + self.segment_height / 2)
             if c_bottom and (c_left or c_right):
                 self._player_move_top(self.player_stuck_correction)
                 corrected_top = True
