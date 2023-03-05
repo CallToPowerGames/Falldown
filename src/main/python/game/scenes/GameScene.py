@@ -85,17 +85,14 @@ class GameScene(Scene):
         self.playing_music = False
 
     def loop(self, tick):
-        # Handle "global" events
+        # Handle events
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.exit()
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_f:
                     self.toggle_show_fps()
-                if event.key == pygame.K_ESCAPE:
-                    self.camera.stop()
-                    self.set_state(State.PLAYERSELECTION)
-                elif event.key == pygame.K_SPACE:
+                if event.key == pygame.K_ESCAPE or event.key == pygame.K_SPACE:
                     self.paused = True
                     self.camera.pause()
                     self.set_state(State.PAUSE)
@@ -108,7 +105,8 @@ class GameScene(Scene):
                 self.sound_played = True
                 self.game_data.sound_cache.play('game.start', volume=self.music_volume_bg_game_effects)
             dt = tick / 1000
-            if self.camera.loop(dt, pygame.key.get_pressed()):
+            self.camera.loop(dt, pygame.key.get_pressed())
+            if self.camera.game_over:
                 self.set_state(State.GAMEOVER)
 
         if not self.is_state(State.GAME):

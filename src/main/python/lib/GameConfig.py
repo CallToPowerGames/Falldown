@@ -61,7 +61,7 @@ class GameConfig():
         'background.speed.bg.clouds.small.max': 100,
         'barrier.speed': 130,
         'barrier.speed.increase': 1,
-        'player.stuck.correction': 1,
+        'player.stuck.correction': 2,
         'player.barrier.move.correction': 30,
         'camera.borders': { # Read: "Pixels from [...]"
             'left': 150,

@@ -82,7 +82,7 @@ class ExitScene(Scene):
         dt = tick / 1000
         self.background.loop(dt)
 
-        # Handle "global" events
+        # Handle events
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.game_data._exit_full()

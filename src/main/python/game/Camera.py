@@ -104,6 +104,8 @@ class Camera():
                                 banner=True
                             )
 
+        self.game_over = False
+
     def stop(self):
         """Stops"""
         self.barrier.stop()
@@ -191,7 +193,6 @@ class Camera():
             self.player.falling = True
             self.player_first_time_colliding_bottom = True
 
-
     def loop_visuals(self, dt):
         self.background.loop(dt)
         self.level.loop_visuals(dt)
@@ -207,6 +208,9 @@ class Camera():
         self.background.loop(dt)
         self.level.loop(dt)
         self.item_score.loop()
+
+        if self.game_over:
+            return
 
         if self.show_go:
             self.nr_it_show_go -= 1
@@ -276,10 +280,13 @@ class Camera():
                 self.game_data.sound_cache.play('game.over', volume=self.music_volume_bg_game_effects)
                 self.stop()
                 self.game_data.sound_cache.set_music_volume(self.music_volume_bg_game)
-                return True
+                self.game_over = True
         elif self.music_volume != self.music_volume_bg_game:
             self.music_volume = self.music_volume_bg_game
             self.game_data.sound_cache.set_music_volume(self.music_volume_bg_game)
+
+        if self.game_over:
+            return
 
         # Slide move
         if self.player.is_sliding():
@@ -297,9 +304,10 @@ class Camera():
         # Left/Right stuck move
         corrected_top = False
         if collides_bottom:
-            c_left = collides_left and keys[pygame.K_LEFT]
-            c_right = collides_right and keys[pygame.K_RIGHT]
-            c_bottom = (self.player.rect.y + self.player.rect.height) < (segment_top_y + self.player_stuck_correction)
+            c_left = collides_left and self.player.can_go_left() and keys[pygame.K_LEFT]
+            c_right = collides_right and self.player.can_go_right() and keys[pygame.K_RIGHT]
+            player_plus_velocity_y = self.player.rect.y + self.player.rect.height + self.velocity_player[1]
+            c_bottom = (player_plus_velocity_y - self.player_stuck_correction) < segment_top_y
             if c_bottom and (c_left or c_right):
                 self._player_move_top(self.player_stuck_correction)
                 corrected_top = True
@@ -321,7 +329,7 @@ class Camera():
         self.barrier.update_sprite()
         self.player.update_sprite()
 
-        return False
+        self.game_over = False
 
     def draw(self, show_score=True, show_fps=True):
         """Draws all elements of the camera
@@ -349,15 +357,6 @@ class Camera():
             )
 
         # Score
-        if False and show_score:
-            draw_text_in_rect(
-                self.screen,
-                translate('scene.game.score').format(self.game_data.score),
-                self.text_color_score,
-                self.font_l,
-                (self.screen_size[0] - width_score, 0, width_score, height_score),
-                (self.screen_size[0] - width_score / 2, height_score / 2)
-            )
         if show_score:
             self.item_score.set_text(translate('scene.game.score').format(self.game_data.score))
             self.item_score.draw()

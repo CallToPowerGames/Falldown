@@ -298,7 +298,7 @@ class MenuScene(Scene):
 
         self.background.loop(dt)
 
-        # Handle "global" events
+        # Handle events
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.exit()

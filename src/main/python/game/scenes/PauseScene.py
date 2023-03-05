@@ -120,7 +120,7 @@ class PauseScene(Scene):
         self.items.append(item_help)
 
     def loop(self, tick):
-        # Handle "global" events
+        # Handle events
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.exit()
