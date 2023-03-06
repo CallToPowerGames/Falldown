@@ -21,7 +21,7 @@ from game.scenes.Scene import Scene
 from game.GameState import State
 from game.sprites.Background import Background
 from game.drawables.MenuItem import MenuItem
-from game.drawables.ImageMenuItem import ImageMenuItem
+from game.drawables.PlayerMenuItem import PlayerMenuItem
 from game.sprites.Spritesheet import Spritesheet
 
 class PlayerSelectionScene(Scene):
@@ -45,6 +45,7 @@ class PlayerSelectionScene(Scene):
         self.curr_player_index = 0
         self.last_valid_player_index = self.curr_player_index
 
+        self.show_info = False
         self.screen_mid = self.screen_size[0] / 2, self.screen_size[1] / 2
         self.background = None
         self.items = []
@@ -141,8 +142,9 @@ class PlayerSelectionScene(Scene):
         start_height = -1 * height / 2
         for i, player in enumerate(self.game_data.players):
             rect = (self.screen_mid[0] + start_width, self.screen_mid[1] - 50 + start_height, width, height)
-            item = ImageMenuItem(
+            item = PlayerMenuItem(
                                 self.game_data,
+                                player,
                                 self.font_xs,
                                 rect,
                                 (rect[0] + width / 2, rect[1] + height / 2 + 25),
@@ -150,9 +152,7 @@ class PlayerSelectionScene(Scene):
                                 height=height,
                                 color=self.text_color,
                                 rect_width=-1,
-                                text=player['name'],
                                 active=False,
-                                image=player['image'],
                                 play_sound_on_activation=True,
                                 button_bg_width=width,
                                 button_bg_height=height
@@ -223,6 +223,11 @@ class PlayerSelectionScene(Scene):
                                 )
         self.items.append(self.item_help)
 
+    def _update_player_info(self):
+        for imageitem in self.imageitems:
+            imageitem.show_info(self.show_info)
+        self._update_selection(suppress_sound=True)
+
     def _update_selection(self, suppress_sound=False):
         self.item_back.active = self.curr_player_index == -2
         self.item_random.active = self.curr_player_index == -1
@@ -239,7 +244,10 @@ class PlayerSelectionScene(Scene):
             self.item_help.set_text(translate('menu.random.help'))
             self.item_help.rotate = False
         else:
-            self.item_help.set_text(translate('menu.playerselection.help'))
+            if not self.show_info:
+                self.item_help.set_text(translate('menu.playerselection.help'))
+            else:
+                self.item_help.set_text(translate('menu.playerselection.showinfo.help'))
             self.item_help.rotate = True
 
     def _keypress_arrow_up(self):
@@ -315,6 +323,9 @@ class PlayerSelectionScene(Scene):
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     self.set_state(State.MENU)
+                elif event.key == pygame.K_TAB:
+                    self.show_info = not self.show_info
+                    self._update_player_info()
                 elif event.key == pygame.K_UP:
                     self._keypress_arrow_up()
                 elif event.key == pygame.K_DOWN:
@@ -338,6 +349,8 @@ class PlayerSelectionScene(Scene):
         if not self.is_state(State.PLAYERSELECTION):
             if self.is_state(State.MENU):
                 self.curr_player_index = 0
+                self.show_info = False
+                self._update_player_info()
                 self._update_selection(suppress_sound=True)
             self.game_data.sound_cache.play('menu.back', volume=self.music_volume_bg_menu_effects)
             return

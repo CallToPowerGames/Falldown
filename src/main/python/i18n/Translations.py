@@ -23,10 +23,15 @@ _translations = {
     'scene.exit.txt': 'Bye!',
     'scene.game.score': 'Score: {}',
     'scene.game.go': 'Go, {}!',
+    'menu.item.player.speed.start': 'Speed start: {}, {}',
+    'menu.item.player.speed.max': 'Speed max: {}, {}',
+    'menu.item.player.speed.increase': 'Speed inc: {}, {}',
+    'menu.item.player.speed.decrease': 'Speed dec: {}',
+    'menu.item.player.falling.increase': 'Fall inc: {}',
     'menu.highscore.txt': 'Highscore',
-    'menu.highscore.help': 'Press <Enter> to see the highscore list',
+    'menu.highscore.help': 'Press <Enter> to open the highscore list',
     'menu.options.txt': 'Options',
-    'menu.options.help': 'Press <Enter> for more options',
+    'menu.options.help': 'Press <Enter> for options',
     'menu.fullscreen.txt': 'Toggle fullscreen',
     'menu.fullscreen.help': 'Press <Enter> to toggle between fullscreen and window mode.',
     'menu.start_game.txt': 'Start Game',
@@ -34,13 +39,14 @@ _translations = {
     'menu.quit_game.txt': 'Quit Game',
     'menu.quit_game.help': 'Press <Enter> to quit game',
     'menu.playerselection.txt': 'Player Selection',
-    'menu.playerselection.help': 'Use <Arrows> to select a player, press <Enter> to start a game.',
+    'menu.playerselection.help': 'Use <Arrows> to select a player, press <Enter> to start a game. Press <Tab> to show additional info.',
+    'menu.playerselection.showinfo.help': 'Use <Arrows> to select a player, press <Enter> to start a game. Press <Tab> to hide additional info.',
     'menu.random.txt': 'Random',
     'menu.random.help': 'Press <Enter> to start a game with a random player.',
     'menu.back.txt': 'Back',
     'menu.back.help': 'Press <Enter> to get back to the menu',
     'menu.back.highscore.txt': 'Back',
-    'menu.back.highscore.help': 'Press <Enter> to get back to the menu, <Arrow-Up> and <Arrow-Down> to scroll the highscore.'
+    'menu.back.highscore.help': 'Use <Arrow-Up> and <Arrow-Down> to scroll the highscore. Press <Enter> to get back to the menu.'
 }
 
 
