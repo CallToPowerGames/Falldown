@@ -1,6 +1,8 @@
 {
     "debug.show": false,
     "debug.barrier.start": true,
+    "logging.level": "INFO",
+    "logging.logtofile": false,
     "fps.show": false,
     "winstyle": 0,
     "font.main.xs.size": 12,

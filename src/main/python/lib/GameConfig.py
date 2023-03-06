@@ -25,6 +25,8 @@ class GameConfig():
         # In the public config
         'debug.show': False,
         'debug.barrier.start': True,
+        'logging.level': 'INFO',
+        'logging.logtofile': False,
         'fps.show': False,
         'winstyle': 0,
         'font.main.xs.size': 12,

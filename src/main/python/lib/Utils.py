@@ -7,6 +7,54 @@ import pygame
 
 from lib.AppConfig import app_conf_get
 
+def log_app_info():
+    """Prints app info"""
+    logging.info('Falldown version {} build {}, a game by {}'.format(app_conf_get('version'), app_conf_get('build'), app_conf_get('author')))
+
+def initialize_logger():
+    """Initializes the logger"""
+    if app_conf_get('logging.log_to_file'):
+        logging.info('Logging to file')
+        basedir = os.path.dirname(app_conf_get('logging.logfile'))
+        if not os.path.exists(basedir):
+            os.makedirs(basedir)
+
+    logging.basicConfig(level=app_conf_get('logging.loglevel'),
+                        format=app_conf_get('logging.format'),
+                        datefmt=app_conf_get('logging.datefmt'))
+
+    if app_conf_get('logging.log_to_file'):
+        handler_file = logging.FileHandler(app_conf_get('logging.logfile'), mode='w', encoding=None, delay=False)
+        handler_file.setLevel(app_conf_get('logging.loglevel'))
+        handler_file.setFormatter(logging.Formatter(fmt=app_conf_get('logging.format'), datefmt=app_conf_get('logging.datefmt')))
+        logging.getLogger().addHandler(handler_file)
+
+def update_logging(loglevel, logtofile=False):
+    """Updates the logging
+
+    :param loglevel: DEBUG, INFO, ERROR
+    :param logtofile: Flag whether to log to file
+    """
+    logging.info('Setting log level to "{}"'.format(loglevel))
+    _lvl = logging.INFO
+    if loglevel == 'DEBUG':
+        _lvl = logging.DEBUG
+    elif loglevel == 'ERROR':
+        _lvl = logging.ERROR
+    logging.getLogger().setLevel(_lvl)
+
+    if not app_conf_get('logging.log_to_file') and logtofile:
+        logging.info('Logging to file')
+        basedir = os.path.dirname(app_conf_get('logging.logfile'))
+        if not os.path.exists(basedir):
+            os.makedirs(basedir)
+        handler_file = logging.FileHandler(app_conf_get('logging.logfile'), mode='w', encoding=None, delay=False)
+        handler_file.setLevel(_lvl)
+        handler_file.setFormatter(logging.Formatter(fmt=app_conf_get('logging.format'), datefmt=app_conf_get('logging.datefmt')))
+        logging.getLogger().addHandler(handler_file)
+    else:
+        logging.info('Not logging to file')
+
 def get_font(name, size, system_font_name, basedir, base_path):
     """Returns the font if found. Returns the system font if not found.
 

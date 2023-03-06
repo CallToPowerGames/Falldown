@@ -15,6 +15,7 @@ import logging
 import pygame
 
 from lib.AppConfig import app_conf_set
+from lib.Utils import update_logging, log_app_info
 from lib.GameConfig import GameConfig
 from lib.FontCache import FontCache
 from lib.SoundCache import SoundCache
@@ -44,6 +45,9 @@ class AppContext():
         self.sound_cache = SoundCache(self.basedir)
         self.sprite_cache = SpriteCache(self.basedir)
         self.cryptography = Cryptography(self.basedir)
+
+        update_logging(self.game_config.get('logging.level'), logtofile=self.game_config.get('logging.logtofile'))
+        log_app_info()
 
         self._init_modules()
         self._cache_initial_fonts()
