@@ -132,8 +132,8 @@ class GameConfig():
         # Not in the public config
         'debug.config.ignore': False,
         'screen.size': (800, 600),
-        'menu.music': ['bg-0.wav', 'bg-1.wav'],
-        'game.music': ['game-0.wav', 'game-1.wav', 'game-2.wav', 'game-3.wav'],
+        'menu.music': ['bg/bg-0.wav', 'bg/bg-1.wav'],
+        'game.music': ['game/game-0.wav', 'game/game-1.wav', 'game/game-2.wav', 'game/game-3.wav'],
         'font.sizes': ['xs', 's', 'l', 'xl'],
         'font.system': 'freesanbold.ttf',
         'font.main.path': 'yoster-island',

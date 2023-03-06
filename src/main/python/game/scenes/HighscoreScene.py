@@ -13,7 +13,6 @@ from enum import Enum, unique
 
 import pygame
 
-from lib.AppConfig import app_conf_get
 from i18n.Translations import translate
 from game.drawables.DrawableUtils import draw_text_in_rect
 

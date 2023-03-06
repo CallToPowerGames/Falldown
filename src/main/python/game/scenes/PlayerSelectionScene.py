@@ -14,7 +14,6 @@ import random
 
 import pygame
 
-from lib.AppConfig import app_conf_get
 from i18n.Translations import translate
 
 from game.scenes.Scene import Scene

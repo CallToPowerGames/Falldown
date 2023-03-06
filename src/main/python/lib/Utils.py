@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pygame
 
-from lib.AppConfig import app_conf_get
+from config.AppConfig import app_conf_get
 
 def log_app_info():
     """Prints app info"""

@@ -14,12 +14,12 @@ import logging
 
 import pygame
 
-from lib.AppConfig import app_conf_set
+from config.AppConfig import app_conf_set
 from lib.Utils import update_logging, log_app_info
-from lib.GameConfig import GameConfig
-from lib.FontCache import FontCache
-from lib.SoundCache import SoundCache
-from lib.SpriteCache import SpriteCache
+from config.GameConfig import GameConfig
+from cache.FontCache import FontCache
+from cache.SoundCache import SoundCache
+from cache.SpriteCache import SpriteCache
 from game.GameData import GameData
 from game.Game import Game
 from lib.Cryptography import Cryptography
@@ -98,11 +98,11 @@ class AppContext():
         """Caches the initial sprites"""
         logging.info('Caching initial sprites')
         self.sprite_cache.get_or_load('app.logo', 'logo-app.png')
-        self.sprite_cache.get_or_load('bg.clouds', 'clouds.png', 'sprites')
+        self.sprite_cache.get_or_load('bg.clouds', 'clouds.png', 'sprites/bg')
+        self.sprite_cache.get_or_load('loader', 'loader.png', 'items/loading')
+        self.sprite_cache.get_or_load('loader.filler', 'loader-filler.png', 'items/loading')
         self.sprite_cache.get_or_load('banner', 'banner.png', 'items')
-        self.sprite_cache.get_or_load('button.none', 'button-none.png', 'items')
-        self.sprite_cache.get_or_load('loader', 'loader.png', 'items')
-        self.sprite_cache.get_or_load('loader.filler', 'loader-filler.png', 'items')
+        self.sprite_cache.get_or_load('button.none', 'button-none.png', 'items/buttons')
 
     def run(self):
         """Initializes and shows the GUI"""
