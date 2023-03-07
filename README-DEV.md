@@ -1,10 +1,17 @@
 # Falldown
 
-* Key mappings
-  * When in-game:
-    * Press "f" to display fps
-    * Press "Space" to pause game
+## Information
+
 * After the first game start a config is written to "<UserDirectory>/falldown/conf.json"
+* After the first game start a highscore database is written to "<UserDirectory>/falldown/highscore.db"
+
+## Key mappings
+
+* In player selection:
+    * Press "Tab" to show/hide additional player information
+* When in-game:
+    * Press "Escape" or "Space" to pause game
+    * Press "f" to display fps
 
 ## Copyright
 

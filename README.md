@@ -4,7 +4,18 @@
 * Two evil swines on the left and on the right side have a laser gun and will hunt the player down
 * Some of the lines are moving from left to right
 * Every sketchy guys have slightly different behaviour
+* Two Powers
+    * Clear a single segment
+    * Clear all segments
 * Local highscore
+
+## Key mappings
+
+* In player selection:
+    * Press "Tab" to show/hide additional player information
+* When in-game:
+    * Press "Escape" or "Space" to pause game
+    * Press "f" to display fps
 
 ## Copyright
 
