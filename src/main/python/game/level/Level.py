@@ -16,6 +16,7 @@ import pygame
 from game.level.Line import Line
 from game.level.Segment import Segment
 from game.sprites.Spritesheet import Spritesheet
+from game.level.CollisionInfo import CollisionInfo
 
 class Level():
     """The level"""
@@ -173,8 +174,7 @@ class Level():
         :param velocity: Calculated velocity
         :param keys: The keys
         :param offset: The offset
-        :return: Tuple of <collides with a segment> and corrections/information:
-                 <CollidesBottom>, <CollidesLeft>, <CollidesRight>, <SegmentTopY>, <SegmentRightX>, <SegmentLeftX>, <StandsOnMovingSegment>, <SegmentSpeed>, <CollidesWithClearLine>, <CollidesWithClearAll>, <IndexLineColliding>, <IndexSegmentColliding>
+        :return: CollisionInfo
         """
         plus_right = velocity[0] if player.is_moving() else 0
         minus_left = velocity[0] if player.is_moving() else 0
@@ -184,24 +184,13 @@ class Level():
         plus_bottom_corrected = plus_bottom + self.collision_detection_correction_bottom
 
         # Return values
-        collides_bottom = False
-        collides_left = False
-        collides_right = False
-        segment_top_y = 0
-        segment_right_x = 0
-        segment_left_x = 0
-        stands_on_moving_segment = False
-        segment_speed = 0
-        collides_clear_linesegment = False
-        collides_clear_all = False
-        index_line_colliding = -1
-        index_segment_colliding = -1
+        collisioninfo = CollisionInfo()
 
         player_rect = player.get_rect()
         for i_l, line in enumerate(self._lines):
-            index_line_colliding = i_l
+            collisioninfo.index_line_colliding = i_l
             for i_s, segment in enumerate(line.segments):
-                index_segment_colliding = i_s
+                collisioninfo.index_segment_colliding = i_s
                 segment_startpoint_with_offset = segment.get_startpoint_with_offset(offset)
                 segment_next_startpoint_with_offset = segment.get_next_startpoint_with_offset(dt, offset)
 
@@ -209,10 +198,10 @@ class Level():
                 x_left_in_screen = (segment.startpoint[0] + segment.width) > offset[0]
                 x_right_in_screen = segment_startpoint_with_offset[0] < self.screen_size[0]
                 if x_left_in_screen and x_right_in_screen:
-                    collides_clear_linesegment = segment.clear_linesegment and pygame.Rect.colliderect(player_rect, segment.get_clear_linesegment_rect(offset))
-                    collides_clear_all = segment.clear_all and pygame.Rect.colliderect(player_rect, segment.get_clear_all_rect(offset))
-                    if collides_clear_linesegment or collides_clear_all:
-                        return collides_bottom, collides_left, collides_right, segment_top_y, segment_right_x, segment_left_x, stands_on_moving_segment, segment_speed, collides_clear_linesegment, collides_clear_all, index_line_colliding, index_segment_colliding
+                    collisioninfo.collides_clear_linesegment = segment.clear_linesegment and pygame.Rect.colliderect(player_rect, segment.get_clear_linesegment_rect(offset))
+                    collisioninfo.collides_clear_all = segment.clear_all and pygame.Rect.colliderect(player_rect, segment.get_clear_all_rect(offset))
+                    if collisioninfo.collides_clear_linesegment or collisioninfo.collides_clear_all:
+                        return collisioninfo
 
                     segment_x = segment_next_startpoint_with_offset[0]
                     segment_y = segment_next_startpoint_with_offset[1]
@@ -234,21 +223,19 @@ class Level():
 
                     if inside_y_range and inside_x_range:
                         if on_x_left:
-                            collides_left = True
-                            segment_right_x = segment_x_right
+                            collisioninfo.collides_left = True
                         if on_x_right:
-                            collides_right = True
-                            segment_left_x = segment_x
+                            collisioninfo.collides_right = True
                         if on_y:
-                            collides_bottom = True
-                            segment_top_y = segment_startpoint_with_offset[1]
+                            collisioninfo.collides_bottom = True
+                            collisioninfo.segment_top_y = segment_startpoint_with_offset[1]
                             if line.moving:
-                                stands_on_moving_segment = True
-                                segment_speed = segment.get_speed()
+                                collisioninfo.stands_on_moving_segment = True
+                                collisioninfo.segment_speed = segment.get_speed()
 
-                        return collides_bottom, collides_left, collides_right, segment_top_y, segment_right_x, segment_left_x, stands_on_moving_segment, segment_speed, collides_clear_linesegment, collides_clear_all, index_line_colliding, index_segment_colliding
+                        return collisioninfo
 
-        return collides_bottom, collides_left, collides_right, segment_top_y, segment_right_x, segment_left_x, stands_on_moving_segment, segment_speed, collides_clear_linesegment, collides_clear_all, index_line_colliding, index_segment_colliding
+        return collisioninfo
 
     def loop_visuals(self, dt):
         """Loops only the visual parts of the level

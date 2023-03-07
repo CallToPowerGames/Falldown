@@ -260,45 +260,45 @@ class Camera():
         self.velocity_player = self.player.get_velocity(dt)
 
         # Collision detection and more
-        collides_bottom, collides_left, collides_right, segment_top_y, segment_right_x, segment_left_x, stands_on_moving_segment, segment_speed, collides_clear_linesegment, collides_clear_all, index_line_colliding, index_segment_colliding = self.level.collides_with(self.player, dt, self.velocity_player, keys, self.offset)
+        collisioninfo = self.level.collides_with(self.player, dt, self.velocity_player, keys, self.offset)
 
-        if collides_clear_linesegment:
-            self.level.clear_line_segment(index_line_colliding, index_segment_colliding)
+        if collisioninfo.collides_clear_linesegment:
+            self.level.clear_line_segment(collisioninfo.index_line_colliding, collisioninfo.index_segment_colliding)
             self.game_data.score += self.score_plus_clear_linesegment
             self.game_data.cache.sound_cache.play('clear.line', volume=self.music_volume_bg_game_effects)
-        if collides_clear_all:
+        if collisioninfo.collides_clear_all:
             self.level.clear_all()
             self.nr_lines_created_since_last_clean = 0
             self.game_data.score += self.score_plus_clear_all
             self.game_data.cache.sound_cache.play('clear.all', volume=self.music_volume_bg_game_effects)
-        if collides_clear_linesegment or collides_clear_all:
+        if collisioninfo.collides_clear_linesegment or collisioninfo.collides_clear_all:
             if self.barrier.started:
                 self.barrier.increase_speed()
             return
 
-        if stands_on_moving_segment:
-            if (segment_speed < 0 and keys[pygame.K_RIGHT]) or (segment_speed > 0 and keys[pygame.K_LEFT]):
+        if collisioninfo.stands_on_moving_segment:
+            if (collisioninfo.segment_speed < 0 and keys[pygame.K_RIGHT]) or (collisioninfo.segment_speed > 0 and keys[pygame.K_LEFT]):
                 if self.segment_moving_decrease_factor > 0:
                     self.velocity_player[0] = self.velocity_player[0] / self.segment_moving_decrease_factor
 
-        if collides_left:
+        if collisioninfo.collides_left:
             if self.player_first_time_colliding_left:
                 self.player_first_time_colliding_left = False
         else:
             self.player_first_time_colliding_left = True
 
-        if collides_right:
+        if collisioninfo.collides_right:
             if self.player_first_time_colliding_right:
                 self.player_first_time_colliding_right = False
         else:
             self.player_first_time_colliding_right = True
 
         # Move with moving segments
-        if stands_on_moving_segment:
-            if segment_speed < 0 and self.player.can_go_left():
-                self._player_move_left((abs(segment_speed) - self.player_barrier_move_correction) * dt)
-            elif segment_speed > 0 and self.player.can_go_right():
-                self._player_move_right((segment_speed + self.player_barrier_move_correction) * dt)
+        if collisioninfo.stands_on_moving_segment:
+            if collisioninfo.segment_speed < 0 and self.player.can_go_left():
+                self._player_move_left((abs(collisioninfo.segment_speed) - self.player_barrier_move_correction) * dt)
+            elif collisioninfo.segment_speed > 0 and self.player.can_go_right():
+                self._player_move_right((collisioninfo.segment_speed + self.player_barrier_move_correction) * dt)
 
         # Check game over
         if self.barrier.is_visible(self.offset):
@@ -320,29 +320,29 @@ class Camera():
 
         # Slide move
         if self.player.is_sliding():
-            if self.player.is_going_left() and not collides_left:
+            if self.player.is_going_left() and not collisioninfo.collides_left:
                 self._player_move_left(self.velocity_player[0])
-            elif self.player.is_going_right() and not collides_right:
+            elif self.player.is_going_right() and not collisioninfo.collides_right:
                 self._player_move_right(self.velocity_player[0])
         # Normal move
         else:
-            if keys[pygame.K_LEFT] and not collides_left:
+            if keys[pygame.K_LEFT] and not collisioninfo.collides_left:
                 self._player_move_left(self.velocity_player[0])
-            elif keys[pygame.K_RIGHT] and not collides_right:
+            elif keys[pygame.K_RIGHT] and not collisioninfo.collides_right:
                 self._player_move_right(self.velocity_player[0])
 
         # Left/Right stuck move
         corrected_top = False
-        if collides_bottom:
-            c_left = collides_left and self.player.can_go_left() and keys[pygame.K_LEFT]
-            c_right = collides_right and self.player.can_go_right() and keys[pygame.K_RIGHT]
+        if collisioninfo.collides_bottom:
+            c_left = collisioninfo.collides_left and self.player.can_go_left() and keys[pygame.K_LEFT]
+            c_right = collisioninfo.collides_right and self.player.can_go_right() and keys[pygame.K_RIGHT]
             player_plus_velocity_y = self.player.rect.y + self.player.rect.height + self.velocity_player[1]
-            if (self.player.rect.y + self.velocity_player[1]) > (segment_top_y - self.player.get_rect().height):
-                if collides_left or collides_right:
+            if (self.player.rect.y + self.velocity_player[1]) > (collisioninfo.segment_top_y - self.player.get_rect().height):
+                if collisioninfo.collides_left or collisioninfo.collides_right:
                     self.player.half_speed_x()
                     self._player_move_bottom_ignore_collision(self.velocity_player[1])
                     corrected_top = True
-            elif (player_plus_velocity_y < (segment_top_y + self.player_stuck_threshold)) and (c_left or c_right):
+            elif (player_plus_velocity_y < (collisioninfo.segment_top_y + self.player_stuck_threshold)) and (c_left or c_right):
                 self._player_move_top(self.player_stuck_correction)
                 corrected_top = True
                 if c_left:
@@ -352,7 +352,7 @@ class Camera():
 
         # Fall down
         if not corrected_top and self.velocity_player[1] >= 0:
-            self._player_move_bottom(self.velocity_player[1], segment_top_y)
+            self._player_move_bottom(self.velocity_player[1], collisioninfo.segment_top_y)
 
         if self.barrier.started:
             self.barrier.rect.y += self.barrier.get_velocity(dt)
