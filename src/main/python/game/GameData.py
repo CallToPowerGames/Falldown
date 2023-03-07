@@ -100,10 +100,10 @@ class GameData():
 
         if not self.fullscreen:
             logging.debug("Changing to fullscreen mode")
-            self._set_screen(pygame.display.set_mode(self.game_config.get('screen.size'), self.game_config.get('winstyle') | pygame.FULLSCREEN))
+            self._set_screen(pygame.display.set_mode(self.game_config.get('screen.size'), self.game_config.get('winstyle') | pygame.FULLSCREEN | pygame.DOUBLEBUF))
         else:
             logging.debug("Changing to windowed mode")
-            self._set_screen(pygame.display.set_mode(self.game_config.get('screen.size'), self.game_config.get('winstyle')))
+            self._set_screen(pygame.display.set_mode(self.game_config.get('screen.size'), self.game_config.get('winstyle') | pygame.DOUBLEBUF))
 
         self.game_config.get('screen').blit(screen_backup, (0, 0))
         pygame.display.update()

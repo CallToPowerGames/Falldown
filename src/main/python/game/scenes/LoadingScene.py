@@ -30,16 +30,18 @@ class LoadingScene(Scene):
         self.screen_size = self.game_data.game_config.get('screen.size')
         self.font_xl = self.game_data.font_cache.get('main.xl')
         self.text_color_logo = self.game_data.game_config.get('text.color.logo')
+        self.load_filler_bg_color = self.game_data.game_config.get('background.load.filler.color')
 
         self.screen_mid = self.screen_size[0] / 2, self.screen_size[1] / 2
         self.curr_initial_wait = 0
-        self.initial_wait = 5
+        self.initial_wait = 10
         self.background = None
         self.items = []
 
         self.init = False
         self.init_perc = 0
 
+        self.load_filler_bg_height = 20
         self.wh_loader = (300, 200)
         self.image_loader = pygame.transform.scale(self.game_data.sprite_cache.get('loader').convert_alpha(), self.wh_loader)
         self.loader_rect = (
@@ -53,7 +55,7 @@ class LoadingScene(Scene):
         self.images_loader_filler = []
         _raw_img = self.game_data.sprite_cache.get('loader.filler').convert_alpha()
         for i in range(0, 101):
-            wh = (280 / 100 * i, 200)
+            wh = (self.wh_loader_filler[0] / 100 * i, self.wh_loader_filler[1])
             img = pygame.transform.scale(_raw_img, wh)
             self.images_loader_filler.append(img)
 
@@ -201,6 +203,16 @@ class LoadingScene(Scene):
     def draw(self):
         self.background.draw()
 
+        pygame.draw.rect(
+            self.screen,
+            self.load_filler_bg_color,
+            (
+                self.screen_mid[0] - self.wh_loader_filler[0] / 2,
+                self.screen_mid[1] - (self.load_filler_bg_height / 2),
+                self.wh_loader_filler[0],
+                self.load_filler_bg_height
+            )
+        )
         self.screen.blit(self.image_loader_filler, self.loader_filler_rect)
         self.screen.blit(self.image_loader, self.loader_rect)
 

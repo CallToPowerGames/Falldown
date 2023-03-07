@@ -57,6 +57,6 @@ pip install -r requirements.txt
 
 python src/main/python/Main.py
 
-pyinstaller ImageScaler.spec
+pyinstaller Falldown.spec
 
 (Initially created .spec file with: pyinstaller --windowed src/main/python/Main.py --noconfirm --name "Falldown" --icon "src/main/icons/icons.icns")

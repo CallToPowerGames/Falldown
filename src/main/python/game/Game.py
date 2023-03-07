@@ -31,6 +31,7 @@ class Game():
         self.clock = None
 
         self._init()
+        self._set_allowed_events()
 
     def _init(self):
         """Initializes"""
@@ -46,6 +47,10 @@ class Game():
 
         pygame.mouse.set_visible(0)
 
+    def _set_allowed_events(self):
+        """Allowes only certain events"""
+        pygame.event.set_allowed([pygame.QUIT, pygame.KEYDOWN])
+
     def _init_library(self):
         """Initializes library"""
         logging.debug('Initializing library')
@@ -53,7 +58,7 @@ class Game():
         size = self.game_data.game_config.get('screen.size')
         winstyle = 0
         self.game_data.game_config.set('winstyle', winstyle)
-        self.game_data.game_config.set('screen', pygame.display.set_mode(size, winstyle))
+        self.game_data.game_config.set('screen', pygame.display.set_mode(size, winstyle | pygame.DOUBLEBUF))
 
         self.game_data.init_loading_scene()
 

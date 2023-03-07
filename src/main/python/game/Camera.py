@@ -165,7 +165,7 @@ class Camera():
         player_rect = self.player.rect
         player_plus_velocity_y = player_rect.y + player_rect.height + velocity
         if player_plus_velocity_y <= self.camera_rect.bottom:
-            self.player.rect.y = int(self.player.rect.y + velocity)
+            self.player.rect.y = self.player.rect.y + velocity
         else:
             self.player.rect.y = self.camera_rect.bottom - self.player.rect.height
             self.offset.y += velocity
@@ -188,7 +188,7 @@ class Camera():
                 self.player.rect.y = segment_top_y - self.player.rect.height
                 collides = True
             else:
-                self.player.rect.y = int(self.player.rect.y + velocity)
+                self.player.rect.y = self.player.rect.y + velocity
         else:
             if segment_top_y > 0 and player_plus_velocity_y >= segment_top_y_corr:
                 old_y = self.player.rect.y

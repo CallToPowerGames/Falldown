@@ -74,6 +74,7 @@ class AppContext():
             raise SystemExit("Font module required")
         logging.info('Initializing mixer module')
         if pygame.mixer:
+            pygame.mixer.pre_init(44100, 16, 2, 4096)
             pygame.mixer.init()
         else:
             raise SystemExit("Sound module required")

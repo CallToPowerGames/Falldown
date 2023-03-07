@@ -33,7 +33,7 @@ class GameConfig():
         'font.main.s.size': 25,
         'font.main.l.size': 50,
         'font.main.xl.size': 75,
-        'fps.loading': 15,
+        'fps.loading': 30,
         'fps.menu': 30,
         'fps.highscore': 30,
         'fps.options': 30,
@@ -41,7 +41,7 @@ class GameConfig():
         'fps.gameover': 30,
         'fps.playerselection': 30,
         'fps.game': 60,
-        'fps.exit': 15,
+        'fps.exit': 30,
         'exit.timer1': 2.0,
         'exit.timer2': 0.2,
         'offset.max.up': 0,
@@ -215,7 +215,8 @@ class GameConfig():
         'level.segment.img.propeller.startpoint': (0, 0),
         'level.segment.img.propeller.size': (32, 5),
         'background.main.color': Colors.BLUE_DEEPSKY,
-        'text.color': Colors.BLUE_EGYPTIAN,
+        'background.load.filler.color': Colors.GREY_LIGHT,
+        'text.color': Colors.BLUE_COBALT,
         'text.color.highscore': Colors.BLACK,
         'text.color.inactive': Colors.GREY,
         'text.color.help': Colors.GREY,
@@ -223,7 +224,7 @@ class GameConfig():
         'text.color.score': Colors.RED_BURGUNDY,
         'text.color.go': Colors.RED_BURGUNDY,
         'border.color': Colors.BLACK,
-        'fps.text.color': Colors.BLUE_EGYPTIAN,
+        'fps.text.color': Colors.BLUE_COBALT,
         'screen': None
     }
 

@@ -37,7 +37,6 @@ class MenuScene(Scene):
     def __init__(self, state, fps, game):
         super().__init__(state, fps, game)
 
-        self.screen = self.game_data.game_config.get('screen')
         self.screen_size = self.game_data.game_config.get('screen.size')
         self.font_xl = self.game_data.font_cache.get('main.xl')
         self.font_l = self.game_data.font_cache.get('main.l')
