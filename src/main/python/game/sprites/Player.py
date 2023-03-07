@@ -147,6 +147,14 @@ class Player(pygame.sprite.Sprite):
         self.speed = [self.speed_start[0], self.speed[1]]
         self._direction_til_stop = None
 
+    def half_speed_x(self):
+        """Resets the speed on x coordinate"""
+        new_speed = int(self.speed[0] / 2)
+        if new_speed < self.speed_start[0]:
+            new_speed = self.speed_start[0]
+            self._direction_til_stop = None
+        self.speed = [new_speed, self.speed[1]]
+
     def reset_speed_y(self):
         """Resets the speed on y coordinate"""
         self.speed = [self.speed[0], self.speed_start[1]]

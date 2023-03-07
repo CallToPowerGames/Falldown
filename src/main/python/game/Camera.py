@@ -162,7 +162,6 @@ class Camera():
 
         :param velocity: The y velocity
         """
-        logging.info('_player_move_bottom_ignore_collision')
         player_rect = self.player.rect
         player_plus_velocity_y = player_rect.y + player_rect.height + velocity
         if player_plus_velocity_y <= self.camera_rect.bottom:
@@ -325,8 +324,8 @@ class Camera():
             c_right = collides_right and self.player.can_go_right() and keys[pygame.K_RIGHT]
             player_plus_velocity_y = self.player.rect.y + self.player.rect.height + self.velocity_player[1]
             if (self.player.rect.y + self.velocity_player[1]) > (segment_top_y - self.player.get_rect().height):
-                self.player.reset_speed_x()
                 if collides_left or collides_right:
+                    self.player.half_speed_x()
                     self._player_move_bottom_ignore_collision(self.velocity_player[1])
                     corrected_top = True
             elif (player_plus_velocity_y < (segment_top_y + self.player_stuck_threshold)) and (c_left or c_right):
