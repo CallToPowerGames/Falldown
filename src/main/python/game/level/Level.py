@@ -16,7 +16,7 @@ import pygame
 from game.level.Line import Line
 from game.level.Segment import Segment
 from game.sprites.Spritesheet import Spritesheet
-from game.level.CollisionInfo import CollisionInfo
+from game.CollisionInfo import CollisionInfo
 
 class Level():
     """The level"""

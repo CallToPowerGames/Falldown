@@ -18,8 +18,6 @@ class CollisionInfo():
     <CollidesLeft>
     <CollidesRight>
     <SegmentTopY>
-    <SegmentRightX>
-    <SegmentLeftX>
     <StandsOnMovingSegment>
     <SegmentSpeed>
     <CollidesWithClearLine>

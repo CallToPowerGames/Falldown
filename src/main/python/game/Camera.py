@@ -211,6 +211,51 @@ class Camera():
             self.player.falling = True
             self.player_first_time_colliding_bottom = True
 
+    def _update_current_key(self, keys):
+        """Updates the current key on the player
+
+        :param keys: The keys
+        """
+        self.player.current_key = None
+        if not (keys[pygame.K_LEFT] and keys[pygame.K_RIGHT]):
+            if keys[pygame.K_LEFT]:
+                self.player.current_key = pygame.K_LEFT
+            elif keys[pygame.K_RIGHT]:
+                self.player.current_key = pygame.K_RIGHT
+
+
+    def _clean_and_generate_new_level_elements(self):
+        """Cleans up and - if it's time - generates new level elements"""
+        if self.level.last_y < (self.offset.y + self.screen_size[1] + self.segment_height):
+            logging.debug('Generating next line...')
+            self.level.generate_new_line()
+            self.nr_lines_created_since_last_clean += 1
+            if self.level.nr_or_lines_generated > self.barrier_start_after_lines:
+                if self.start_barrier:
+                    self.barrier.started = True
+                    self.barrier.increase_speed()
+                self.game_data.score += self.score_plus
+        if self.nr_lines_created_since_last_clean >= self.clean_every_n_created_lines:
+            self.level.clean(self.offset.y)
+            logging.debug('#Lines: {}'.format(len(self.level._lines)))
+            self.nr_lines_created_since_last_clean = 0
+
+    def _check_game_over(self):
+        """Checks whether the game is over and sets a flag"""
+        if self.barrier.is_visible(self.offset):
+            if self.music_volume != self.music_volume_bg_game_barriervisible:
+                self.music_volume = self.music_volume_bg_game_barriervisible
+                self.game_data.cache.sound_cache.set_music_volume(self.music_volume)
+            if self.barrier.collides_with(self.player, self.offset):
+                logging.info('Player collided with barrier')
+                self.game_data.cache.sound_cache.play('game.over', volume=self.music_volume_bg_game_effects)
+                self.stop()
+                self.game_data.cache.sound_cache.set_music_volume(self.music_volume_bg_game)
+                self.game_over = True
+        elif self.music_volume != self.music_volume_bg_game:
+            self.music_volume = self.music_volume_bg_game
+            self.game_data.cache.sound_cache.set_music_volume(self.music_volume_bg_game)
+
     def loop_visuals(self, dt):
         self.background.loop(dt)
         self.level.loop_visuals(dt)
@@ -235,33 +280,16 @@ class Camera():
             if self.nr_it_show_go <= 0:
                 self.show_go = False
 
-        # Generate/clean new level elements
-        if self.level.last_y < (self.offset.y + self.screen_size[1] + self.segment_height):
-            logging.debug('Generating next line...')
-            self.level.generate_new_line()
-            self.nr_lines_created_since_last_clean += 1
-            if self.level.nr_or_lines_generated > self.barrier_start_after_lines:
-                if self.start_barrier:
-                    self.barrier.started = True
-                    self.barrier.increase_speed()
-                self.game_data.score += self.score_plus
-        if self.nr_lines_created_since_last_clean >= self.clean_every_n_created_lines:
-            self.level.clean(self.offset.y)
-            logging.debug('#Lines: {}'.format(len(self.level._lines)))
-            self.nr_lines_created_since_last_clean = 0
+        self._clean_and_generate_new_level_elements()
 
-        self.player.current_key = None
-        if not (keys[pygame.K_LEFT] and keys[pygame.K_RIGHT]):
-            if keys[pygame.K_LEFT]:
-                self.player.current_key = pygame.K_LEFT
-            elif keys[pygame.K_RIGHT]:
-                self.player.current_key = pygame.K_RIGHT
+        self._update_current_key(keys)
 
         self.velocity_player = self.player.get_velocity(dt)
 
         # Collision detection and more
         collisioninfo = self.level.collides_with(self.player, dt, self.velocity_player, keys, self.offset)
 
+        # Handle "Powers"
         if collisioninfo.collides_clear_linesegment:
             self.level.clear_line_segment(collisioninfo.index_line_colliding, collisioninfo.index_segment_colliding)
             self.game_data.score += self.score_plus_clear_linesegment
@@ -276,47 +304,31 @@ class Camera():
                 self.barrier.increase_speed()
             return
 
-        if collisioninfo.stands_on_moving_segment:
-            if (collisioninfo.segment_speed < 0 and keys[pygame.K_RIGHT]) or (collisioninfo.segment_speed > 0 and keys[pygame.K_LEFT]):
-                if self.segment_moving_decrease_factor > 0:
-                    self.velocity_player[0] = self.velocity_player[0] / self.segment_moving_decrease_factor
-
+        # Handle left side colisions
         if collisioninfo.collides_left:
             if self.player_first_time_colliding_left:
                 self.player_first_time_colliding_left = False
         else:
             self.player_first_time_colliding_left = True
 
+        # Handle right side colisions
         if collisioninfo.collides_right:
             if self.player_first_time_colliding_right:
                 self.player_first_time_colliding_right = False
         else:
             self.player_first_time_colliding_right = True
 
-        # Move with moving segments
+        # Handle standing on a moving segment
         if collisioninfo.stands_on_moving_segment:
+            # Slow speed
+            if (collisioninfo.segment_speed < 0 and keys[pygame.K_RIGHT]) or (collisioninfo.segment_speed > 0 and keys[pygame.K_LEFT]):
+                if self.segment_moving_decrease_factor > 0:
+                    self.velocity_player[0] = self.velocity_player[0] / self.segment_moving_decrease_factor
+            # Move with moving segments
             if collisioninfo.segment_speed < 0 and self.player.can_go_left():
                 self._player_move_left((abs(collisioninfo.segment_speed) - self.player_barrier_move_correction) * dt)
             elif collisioninfo.segment_speed > 0 and self.player.can_go_right():
                 self._player_move_right((collisioninfo.segment_speed + self.player_barrier_move_correction) * dt)
-
-        # Check game over
-        if self.barrier.is_visible(self.offset):
-            if self.music_volume != self.music_volume_bg_game_barriervisible:
-                self.music_volume = self.music_volume_bg_game_barriervisible
-                self.game_data.cache.sound_cache.set_music_volume(self.music_volume)
-            if self.barrier.collides_with(self.player, self.offset):
-                logging.info('Player collided with barrier')
-                self.game_data.cache.sound_cache.play('game.over', volume=self.music_volume_bg_game_effects)
-                self.stop()
-                self.game_data.cache.sound_cache.set_music_volume(self.music_volume_bg_game)
-                self.game_over = True
-        elif self.music_volume != self.music_volume_bg_game:
-            self.music_volume = self.music_volume_bg_game
-            self.game_data.cache.sound_cache.set_music_volume(self.music_volume_bg_game)
-
-        if self.game_over:
-            return
 
         # Slide move
         if self.player.is_sliding():
@@ -331,7 +343,7 @@ class Camera():
             elif keys[pygame.K_RIGHT] and not collisioninfo.collides_right:
                 self._player_move_right(self.velocity_player[0])
 
-        # Left/Right stuck move
+        # Left/Right stuck move (stuck correction)
         corrected_top = False
         if collisioninfo.collides_bottom:
             c_left = collisioninfo.collides_left and self.player.can_go_left() and keys[pygame.K_LEFT]
@@ -354,13 +366,15 @@ class Camera():
         if not corrected_top and self.velocity_player[1] >= 0:
             self._player_move_bottom(self.velocity_player[1], collisioninfo.segment_top_y)
 
+        # Move the barrier
         if self.barrier.started:
             self.barrier.rect.y += self.barrier.get_velocity(dt)
 
+        # Update all sprites
         self.barrier.update_sprite()
         self.player.update_sprite()
 
-        self.game_over = False
+        self._check_game_over()
 
     def draw(self, show_score=True, show_fps=True):
         """Draws all elements of the camera
