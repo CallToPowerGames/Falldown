@@ -24,7 +24,9 @@ class SoundCache():
         'laser': None,
         'bump': None,
         'menu.back': None,
-        'scroll': None
+        'scroll': None,
+        'clear.line': None,
+        'clear.all': None
     }
 
     def __init__(self, basedir):

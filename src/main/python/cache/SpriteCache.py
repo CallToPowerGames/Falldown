@@ -45,6 +45,8 @@ class SpriteCache():
         'bg.clouds': None,
         'level.segment': None,
         'level.segment.propeller': None,
+        'level.segment.clear.all': None,
+        'level.segment.clear.line': None,
         'level.border': None,
         'level.border.out': None,
         'banner': None,

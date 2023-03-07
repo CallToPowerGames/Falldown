@@ -63,6 +63,10 @@ class Camera():
         self.collision_detection_correction_bottom = self.game_data.game_config.get('level.collision.detection.correction.bottom')
         self.segment_moving_decrease_factor = self.game_data.game_config.get('level.segment.moving.decrease.factor')
         self.player_stuck_threshold = self.game_data.game_config.get('player.stuck.threshold')
+        self.barrier_start_after_lines = self.game_data.game_config.get('barrier.start.after.lines')
+        self.score_plus = self.game_data.game_config.get('score.plus')
+        self.score_plus_clear_linesegment = self.game_data.game_config.get('score.plus.clear.linesegment')
+        self.score_plus_clear_all = self.game_data.game_config.get('score.plus.clear.all')
 
         self.nr_lines_created_since_last_clean = 0
         self.clean_every_n_created_lines = 10
@@ -236,14 +240,14 @@ class Camera():
             logging.debug('Generating next line...')
             self.level.generate_new_line()
             self.nr_lines_created_since_last_clean += 1
-            if self.level.size() > 10:
+            if self.level.nr_or_lines_generated > self.barrier_start_after_lines:
                 if self.start_barrier:
                     self.barrier.started = True
                     self.barrier.increase_speed()
-                self.game_data.score += 1
+                self.game_data.score += self.score_plus
         if self.nr_lines_created_since_last_clean >= self.clean_every_n_created_lines:
             self.level.clean(self.offset.y)
-            logging.debug('#Lines: {}'.format(self.level.size()))
+            logging.debug('#Lines: {}'.format(len(self.level._lines)))
             self.nr_lines_created_since_last_clean = 0
 
         self.player.current_key = None
@@ -256,7 +260,21 @@ class Camera():
         self.velocity_player = self.player.get_velocity(dt)
 
         # Collision detection and more
-        collides_bottom, collides_left, collides_right, segment_top_y, segment_right_x, segment_left_x, stands_on_moving_segment, segment_speed = self.level.collides_with(self.player, dt, self.velocity_player, keys, self.offset)
+        collides_bottom, collides_left, collides_right, segment_top_y, segment_right_x, segment_left_x, stands_on_moving_segment, segment_speed, collides_clear_linesegment, collides_clear_all, index_line_colliding, index_segment_colliding = self.level.collides_with(self.player, dt, self.velocity_player, keys, self.offset)
+
+        if collides_clear_linesegment:
+            self.level.clear_line_segment(index_line_colliding, index_segment_colliding)
+            self.game_data.score += self.score_plus_clear_linesegment
+            self.game_data.cache.sound_cache.play('clear.line', volume=self.music_volume_bg_game_effects)
+        if collides_clear_all:
+            self.level.clear_all()
+            self.nr_lines_created_since_last_clean = 0
+            self.game_data.score += self.score_plus_clear_all
+            self.game_data.cache.sound_cache.play('clear.all', volume=self.music_volume_bg_game_effects)
+        if collides_clear_linesegment or collides_clear_all:
+            if self.barrier.started:
+                self.barrier.increase_speed()
+            return
 
         if stands_on_moving_segment:
             if (segment_speed < 0 and keys[pygame.K_RIGHT]) or (segment_speed > 0 and keys[pygame.K_LEFT]):
@@ -266,14 +284,12 @@ class Camera():
         if collides_left:
             if self.player_first_time_colliding_left:
                 self.player_first_time_colliding_left = False
-                self.game_data.cache.sound_cache.play('bump', volume=self.music_volume_bg_game_effects)
         else:
             self.player_first_time_colliding_left = True
 
         if collides_right:
             if self.player_first_time_colliding_right:
                 self.player_first_time_colliding_right = False
-                self.game_data.cache.sound_cache.play('bump', volume=self.music_volume_bg_game_effects)
         else:
             self.player_first_time_colliding_right = True
 

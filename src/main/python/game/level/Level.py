@@ -38,6 +38,8 @@ class Level():
         self.gap_vert_min = self.game_data.game_config.get('level.segments.gap.vert.min')
         self.gap_vert_add_max = self.game_data.game_config.get('level.segments.gap.vert.add.max')
         self.line_moving_probability = self.game_data.game_config.get('level.line.moving.probability')
+        self.clear_linesegment_probability = self.game_data.game_config.get('level.line.clear.linesegment.probability')
+        self.clear_all_probability = self.game_data.game_config.get('level.line.clear.all.probability')
         self.segments_width_min = self.game_data.game_config.get('level.segments.width.min')
         self.segments_width_max = self.game_data.game_config.get('level.segments.width.max')
         self.segment_img_left_size = self.game_data.game_config.get('level.segment.img.left.size')
@@ -48,6 +50,10 @@ class Level():
         self.segment_img_right_startpoint = self.game_data.game_config.get('level.segment.img.right.startpoint')
         self.segment_img_propeller_size = self.game_data.game_config.get('level.segment.img.propeller.size')
         self.segment_img_propeller_startpoint = self.game_data.game_config.get('level.segment.img.propeller.startpoint')
+        self.segment_img_clear_linesegment_size = self.game_data.game_config.get('level.segment.img.clear.linesegment.size')
+        self.segment_img_clear_linesegment_startpoint = self.game_data.game_config.get('level.segment.img.clear.linesegment.startpoint')
+        self.segment_img_clear_all_size = self.game_data.game_config.get('level.segment.img.clear.all.size')
+        self.segment_img_clear_all_startpoint = self.game_data.game_config.get('level.segment.img.clear.all.startpoint')
         self.collision_detection_correction_left = self.game_data.game_config.get('level.collision.detection.correction.left')
         self.collision_detection_correction_right = self.game_data.game_config.get('level.collision.detection.correction.right')
         self.collision_detection_correction_bottom = self.game_data.game_config.get('level.collision.detection.correction.bottom')
@@ -56,6 +62,8 @@ class Level():
         self.spritesheet_segment_mid = Spritesheet(self.game_data.cache.sprite_cache, 'level.segment', size=self.segment_img_mid_size, nr_images=1, startpoint=self.segment_img_mid_startpoint, generate_sides=False)
         self.spritesheet_segment_right = Spritesheet(self.game_data.cache.sprite_cache, 'level.segment', size=self.segment_img_right_size, nr_images=1, startpoint=self.segment_img_right_startpoint, generate_sides=False)
         self.spritesheet_segment_propeller = Spritesheet(self.game_data.cache.sprite_cache, 'level.segment.propeller', size=self.segment_img_propeller_size, nr_images=4, startpoint=self.segment_img_propeller_startpoint, generate_sides=False)
+        self.spritesheet_segment_clear_linesegment = Spritesheet(self.game_data.cache.sprite_cache, 'level.segment.clear.line', size=self.segment_img_clear_linesegment_size, nr_images=21, startpoint=self.segment_img_clear_linesegment_startpoint, generate_sides=False)
+        self.spritesheet_segment_clear_all = Spritesheet(self.game_data.cache.sprite_cache, 'level.segment.clear.all', size=self.segment_img_clear_all_size, nr_images=15, startpoint=self.segment_img_clear_all_startpoint, generate_sides=False)
 
         self.image_segment_right = None
         self.image_segment_mid = None
@@ -63,6 +71,7 @@ class Level():
 
         self._lines = []
         self.last_y = -1
+        self.nr_or_lines_generated = 0
 
         self._init()
 
@@ -77,13 +86,6 @@ class Level():
         """Resets the level"""
         self._lines = []
         self.last_y = -1
-
-    def size(self):
-        """Returns the current level size (number of lines)
-
-        :return: the current level size (number of lines)
-        """
-        return len(self._lines)
 
     def add(self, line):
         """Adds a line to the level
@@ -107,11 +109,28 @@ class Level():
         """
         self._lines = [line for line in self._lines if line.get_startpoint_y() >= offset_y]
 
+    def clear_line_segment(self, index_line, index_segment):
+        """Clears a specific segment in a given line
+
+        :param index_line: The line index
+        :param index_segment: The segment index
+        """
+        if index_line >= 0 and index_segment >= 0 and index_line < len(self._lines):
+            line = self._lines[index_line]
+            if index_segment < len(line.segments):
+                line.segments.pop(index_segment)
+
+    def clear_all(self):
+        """Clears all lines"""
+        self._lines = []
+
     def generate_new_line(self):
         """Generates a new line
         
         :return: The new line
         """
+        self.nr_or_lines_generated += 1
+
         moving = random.randint(0, 100) < self.line_moving_probability
         line = Line(self.game_data.game_config, moving=moving)
 
@@ -125,6 +144,9 @@ class Level():
         cnt = 0
         reached_end = False
         while not reached_end:
+            clear_linesegment = random.randint(0, 100) < self.clear_linesegment_probability
+            clear_all = (random.randint(0, 100) < self.clear_all_probability) if not clear_linesegment else False
+
             cnt += 1
             startpoint = (
                 startpoint_last[0] + width_last + self.gap_min + random.randint(0, self.gap_add_max),
@@ -133,7 +155,7 @@ class Level():
             width = random.randint(self.segments_width_min, self.segments_width_max)
             height = self.segment_height
             images_segment = [self.image_segment_left, self.image_segment_mid, self.image_segment_right]
-            segment = Segment(self.game_data.game_config, images_segment, self.spritesheet_segment_propeller, startpoint, width, height, moving=moving)
+            segment = Segment(self.game_data.game_config, images_segment, self.spritesheet_segment_propeller, self.spritesheet_segment_clear_linesegment, self.spritesheet_segment_clear_all, startpoint, width, height, moving=moving, clear_linesegment=clear_linesegment, clear_all=clear_all)
             line.add(segment)
             startpoint_last = startpoint
             width_last = width
@@ -143,7 +165,8 @@ class Level():
         return line
 
     def collides_with(self, player, dt, velocity, keys, offset):
-        """Checks whether a level segment collides with the player
+        """Checks whether a level segment collides with the player.
+        Returns early and w/o collision check if <CollidesWithClearLine> or <CollidesWithClearAll>
 
         :param player: The player
         :param dt: Tick rate, milliseconds between each call to 'tick'
@@ -151,7 +174,7 @@ class Level():
         :param keys: The keys
         :param offset: The offset
         :return: Tuple of <collides with a segment> and corrections/information:
-                 <CollidesBottom>, <CollidesLeft>, <CollidesRight>, <SegmentTopY>, <SegmentRightX>, <SegmentLeftX>, <StandsOnMovingSegment>, <SegmentSpeed>
+                 <CollidesBottom>, <CollidesLeft>, <CollidesRight>, <SegmentTopY>, <SegmentRightX>, <SegmentLeftX>, <StandsOnMovingSegment>, <SegmentSpeed>, <CollidesWithClearLine>, <CollidesWithClearAll>, <IndexLineColliding>, <IndexSegmentColliding>
         """
         plus_right = velocity[0] if player.is_moving() else 0
         minus_left = velocity[0] if player.is_moving() else 0
@@ -169,10 +192,16 @@ class Level():
         segment_left_x = 0
         stands_on_moving_segment = False
         segment_speed = 0
+        collides_clear_linesegment = False
+        collides_clear_all = False
+        index_line_colliding = -1
+        index_segment_colliding = -1
 
         player_rect = player.get_rect()
-        for line in self._lines:
-            for segment in line.segments:
+        for i_l, line in enumerate(self._lines):
+            index_line_colliding = i_l
+            for i_s, segment in enumerate(line.segments):
+                index_segment_colliding = i_s
                 segment_startpoint_with_offset = segment.get_startpoint_with_offset(offset)
                 segment_next_startpoint_with_offset = segment.get_next_startpoint_with_offset(dt, offset)
 
@@ -180,6 +209,11 @@ class Level():
                 x_left_in_screen = (segment.startpoint[0] + segment.width) > offset[0]
                 x_right_in_screen = segment_startpoint_with_offset[0] < self.screen_size[0]
                 if x_left_in_screen and x_right_in_screen:
+                    collides_clear_linesegment = segment.clear_linesegment and pygame.Rect.colliderect(player_rect, segment.get_clear_linesegment_rect(offset))
+                    collides_clear_all = segment.clear_all and pygame.Rect.colliderect(player_rect, segment.get_clear_all_rect(offset))
+                    if collides_clear_linesegment or collides_clear_all:
+                        return collides_bottom, collides_left, collides_right, segment_top_y, segment_right_x, segment_left_x, stands_on_moving_segment, segment_speed, collides_clear_linesegment, collides_clear_all, index_line_colliding, index_segment_colliding
+
                     segment_x = segment_next_startpoint_with_offset[0]
                     segment_y = segment_next_startpoint_with_offset[1]
 
@@ -212,9 +246,9 @@ class Level():
                                 stands_on_moving_segment = True
                                 segment_speed = segment.get_speed()
 
-                        return collides_bottom, collides_left, collides_right, segment_top_y, segment_right_x, segment_left_x, stands_on_moving_segment, segment_speed
+                        return collides_bottom, collides_left, collides_right, segment_top_y, segment_right_x, segment_left_x, stands_on_moving_segment, segment_speed, collides_clear_linesegment, collides_clear_all, index_line_colliding, index_segment_colliding
 
-        return collides_bottom, collides_left, collides_right, segment_top_y, segment_right_x, segment_left_x, stands_on_moving_segment, segment_speed
+        return collides_bottom, collides_left, collides_right, segment_top_y, segment_right_x, segment_left_x, stands_on_moving_segment, segment_speed, collides_clear_linesegment, collides_clear_all, index_line_colliding, index_segment_colliding
 
     def loop_visuals(self, dt):
         """Loops only the visual parts of the level
@@ -237,5 +271,5 @@ class Level():
 
         :param offset: The offset
         """
-        for li in range(0, self.size()):
+        for li in range(0, len(self._lines)):
             self.get(li).draw(offset)

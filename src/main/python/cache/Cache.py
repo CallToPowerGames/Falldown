@@ -48,7 +48,9 @@ class Cache():
             'game.start': 'game/game-start.wav',
             'game.over': 'game/game-over.wav',
             'laser': 'game/laser.wav',
-            'bump': 'game/bump.wav'
+            'bump': 'game/bump.wav',
+            'clear.line': 'game/clear-line-segment.wav',
+            'clear.all': 'game/clear-all.wav'
         }
 
         self.initial_sprites = {
@@ -90,6 +92,8 @@ class Cache():
             'barrier.cannon': 'sprites/barrier/barrier-cannon.png',
             'level.segment': 'sprites/segment/segment.png',
             'level.segment.propeller': 'sprites/segment/propeller.png',
+            'level.segment.clear.all': 'sprites/segment/clear-all.png',
+            'level.segment.clear.line': 'sprites/segment/clear-line-segment.png',
             'button.active': 'items/buttons/button-active.png',
             'button.inactive': 'items/buttons/button-inactive.png',
             'imagebutton.active': 'items/buttons/imagebutton-active.png',

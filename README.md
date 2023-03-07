@@ -18,14 +18,17 @@ Player Selection:
 New Game Started:  
 ![Screenshot](img/screenshot-1.png "Grumpy Stone starts a game")
 
+"Clear segment" and "clear all lines" powers:  
+![Screenshot](img/screenshot-2.png "CLear segment and clear all lines powers")
+
 Left Side, Green Swine:  
-![Screenshot](img/screenshot-2.png "Left side, green swine")
+![Screenshot](img/screenshot-3.png "Left side, green swine")
 
 Right Side, Red Swine:  
-![Screenshot](img/screenshot-3.png "Right side, red swine")
+![Screenshot](img/screenshot-4.png "Right side, red swine")
 
 The Highscore View:  
-![Screenshot](img/screenshot-4.png "The highscore view")
+![Screenshot](img/screenshot-5.png "The highscore view")
 
 ## Attributions
 
@@ -41,6 +44,7 @@ The Highscore View:
 * "Pixel Adventure 2" by Pixelfrog (https://pixelfrog-assets.itch.io/pixel-adventure-2)
 * "Massive Weapon Package" by GameSupplyGuy (https://gamesupply.itch.io/massive-weapon-package)
 * "Bows and Guns" by SnoopethDuckDuck (https://snoopethduckduck.itch.io/bows-and-guns)
+* "Trap Pack" by Foozlecc (https://foozlecc.itch.io/trap-pack)
 
 ### Font
 

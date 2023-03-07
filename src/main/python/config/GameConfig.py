@@ -25,6 +25,10 @@ class GameConfig():
         # In the public config
         'debug.show': False,
         'debug.barrier.start': True,
+        'barrier.start.after.lines': 10,
+        'score.plus': 1,
+        'score.plus.clear.linesegment': 2,
+        'score.plus.clear.all': 4,
         'logging.level': 'INFO',
         'logging.logtofile': False,
         'fps.show': False,
@@ -74,6 +78,8 @@ class GameConfig():
         },
         'level.generator.modifier': 1.4,
         'level.line.moving.probability': 15, # in percent
+        'level.line.clear.linesegment.probability': 10, # in percent
+        'level.line.clear.all.probability': 3, # in percent
         'level.segments.width.min': 50,
         'level.segments.width.max': 500,
         'level.segments.height': 22,
@@ -214,6 +220,10 @@ class GameConfig():
         'level.segment.img.right.size': (8, 10),
         'level.segment.img.propeller.startpoint': (0, 0),
         'level.segment.img.propeller.size': (32, 5),
+        'level.segment.img.clear.linesegment.startpoint': (0, 0),
+        'level.segment.img.clear.linesegment.size': (60, 40),
+        'level.segment.img.clear.all.startpoint': (0, 0),
+        'level.segment.img.clear.all.size': (14, 46),
         'background.main.color': Colors.BLUE_DEEPSKY,
         'background.load.filler.color': Colors.GREY_LIGHT,
         'text.color': Colors.BLUE_COBALT,
