@@ -64,6 +64,7 @@ class Camera():
         self.nr_iterations_show_go = self.game_data.game_config.get('level.iterations.showgo')
         self.collision_detection_correction_bottom = self.game_data.game_config.get('level.collision.detection.correction.bottom')
         self.segment_moving_decrease_factor = self.game_data.game_config.get('level.segment.moving.decrease.factor')
+        self.player_stuck_threshold = self.game_data.game_config.get('player.stuck.threshold')
 
         self.nr_lines_created_since_last_clean = 0
         self.clean_every_n_created_lines = 10
@@ -156,12 +157,28 @@ class Camera():
             if self.offset.y < self.offset_max_up:
                 self.offset.y = self.offset_max_up
 
-    def _player_move_bottom(self, velocity, segment_top_y, collides_bottom):
+    def _player_move_bottom_ignore_collision(self, velocity):
+        """Moves the player bottom
+
+        :param velocity: The y velocity
+        """
+        logging.info('_player_move_bottom_ignore_collision')
+        player_rect = self.player.rect
+        player_plus_velocity_y = player_rect.y + player_rect.height + velocity
+        if player_plus_velocity_y <= self.camera_rect.bottom:
+            self.player.rect.y = int(self.player.rect.y + velocity)
+        else:
+            self.player.rect.y = self.camera_rect.bottom - self.player.rect.height
+            self.offset.y += velocity
+        
+        self.player.falling = True
+        self.player_first_time_colliding_bottom = True
+
+    def _player_move_bottom(self, velocity, segment_top_y):
         """Moves the player bottom
 
         :param velocity: The y velocity
         :param segment_top_y: The y of the segment
-        :param collides_bottom: Flag whether collides bottom
         """
         collides = False
         player_rect = self.player.rect
@@ -307,8 +324,12 @@ class Camera():
             c_left = collides_left and self.player.can_go_left() and keys[pygame.K_LEFT]
             c_right = collides_right and self.player.can_go_right() and keys[pygame.K_RIGHT]
             player_plus_velocity_y = self.player.rect.y + self.player.rect.height + self.velocity_player[1]
-            c_bottom = (player_plus_velocity_y - self.player_stuck_correction) < (segment_top_y + self.segment_height / 2)
-            if c_bottom and (c_left or c_right):
+            if (self.player.rect.y + self.velocity_player[1]) > (segment_top_y - self.player.get_rect().height):
+                self.player.reset_speed_x()
+                if collides_left or collides_right:
+                    self._player_move_bottom_ignore_collision(self.velocity_player[1])
+                    corrected_top = True
+            elif (player_plus_velocity_y < (segment_top_y + self.player_stuck_threshold)) and (c_left or c_right):
                 self._player_move_top(self.player_stuck_correction)
                 corrected_top = True
                 if c_left:
@@ -317,11 +338,8 @@ class Camera():
                     self._player_move_right(self.velocity_player[0])
 
         # Fall down
-        if not corrected_top:
-            if self.velocity_player[1] < 0:
-                self._player_move_top(self.velocity_player[1])
-            else:
-                self._player_move_bottom(self.velocity_player[1], segment_top_y, collides_bottom)
+        if not corrected_top and self.velocity_player[1] >= 0:
+            self._player_move_bottom(self.velocity_player[1], segment_top_y)
 
         if self.barrier.started:
             self.barrier.rect.y += self.barrier.get_velocity(dt)

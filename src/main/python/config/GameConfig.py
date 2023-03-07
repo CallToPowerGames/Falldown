@@ -64,6 +64,7 @@ class GameConfig():
         'barrier.speed': 130,
         'barrier.speed.increase': 1,
         'player.stuck.correction': 2,
+        'player.stuck.threshold': 5,
         'player.barrier.move.correction': 30,
         'camera.borders': { # Read: "Pixels from [...]"
             'left': 150,
