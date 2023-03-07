@@ -30,8 +30,6 @@ class Camera():
         :param background: The background
         :param level: The level
         """
-        super().__init__()
-
         logging.info('Initializing camera')
 
         self.game_data = game_data
@@ -42,9 +40,9 @@ class Camera():
         self.level = level
 
         self.screen = self.game_data.game_config.get('screen')
-        self.font_xs = self.game_data.font_cache.get('main.xs')
-        self.font_s = self.game_data.font_cache.get('main.s')
-        self.font_l = self.game_data.font_cache.get('main.l')
+        self.font_xs = self.game_data.cache.font_cache.get('main.xs')
+        self.font_s = self.game_data.cache.font_cache.get('main.s')
+        self.font_l = self.game_data.cache.font_cache.get('main.l')
         self.segment_height = self.game_data.game_config.get('level.segments.height')
         self.screen_size = self.game_data.game_config.get('screen.size')
         self.camera_borders = self.game_data.game_config.get('camera.borders')
@@ -203,7 +201,7 @@ class Camera():
         if collides:
             if self.player_first_time_colliding_bottom:
                 self.player_first_time_colliding_bottom = False
-                self.game_data.sound_cache.play('bump', volume=self.music_volume_bg_game_effects)
+                self.game_data.cache.sound_cache.play('bump', volume=self.music_volume_bg_game_effects)
             self.player.reset_speed_y()
         else:
             self.player.falling = True
@@ -268,14 +266,14 @@ class Camera():
         if collides_left:
             if self.player_first_time_colliding_left:
                 self.player_first_time_colliding_left = False
-                self.game_data.sound_cache.play('bump', volume=self.music_volume_bg_game_effects)
+                self.game_data.cache.sound_cache.play('bump', volume=self.music_volume_bg_game_effects)
         else:
             self.player_first_time_colliding_left = True
 
         if collides_right:
             if self.player_first_time_colliding_right:
                 self.player_first_time_colliding_right = False
-                self.game_data.sound_cache.play('bump', volume=self.music_volume_bg_game_effects)
+                self.game_data.cache.sound_cache.play('bump', volume=self.music_volume_bg_game_effects)
         else:
             self.player_first_time_colliding_right = True
 
@@ -290,16 +288,16 @@ class Camera():
         if self.barrier.is_visible(self.offset):
             if self.music_volume != self.music_volume_bg_game_barriervisible:
                 self.music_volume = self.music_volume_bg_game_barriervisible
-                self.game_data.sound_cache.set_music_volume(self.music_volume)
+                self.game_data.cache.sound_cache.set_music_volume(self.music_volume)
             if self.barrier.collides_with(self.player, self.offset):
                 logging.info('Player collided with barrier')
-                self.game_data.sound_cache.play('game.over', volume=self.music_volume_bg_game_effects)
+                self.game_data.cache.sound_cache.play('game.over', volume=self.music_volume_bg_game_effects)
                 self.stop()
-                self.game_data.sound_cache.set_music_volume(self.music_volume_bg_game)
+                self.game_data.cache.sound_cache.set_music_volume(self.music_volume_bg_game)
                 self.game_over = True
         elif self.music_volume != self.music_volume_bg_game:
             self.music_volume = self.music_volume_bg_game
-            self.game_data.sound_cache.set_music_volume(self.music_volume_bg_game)
+            self.game_data.cache.sound_cache.set_music_volume(self.music_volume_bg_game)
 
         if self.game_over:
             return

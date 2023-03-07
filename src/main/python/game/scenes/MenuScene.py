@@ -38,10 +38,10 @@ class MenuScene(Scene):
         super().__init__(state, fps, game)
 
         self.screen_size = self.game_data.game_config.get('screen.size')
-        self.font_xl = self.game_data.font_cache.get('main.xl')
-        self.font_l = self.game_data.font_cache.get('main.l')
-        self.font_s = self.game_data.font_cache.get('main.s')
-        self.font_xs = self.game_data.font_cache.get('main.xs')
+        self.font_xl = self.game_data.cache.font_cache.get('main.xl')
+        self.font_l = self.game_data.cache.font_cache.get('main.l')
+        self.font_s = self.game_data.cache.font_cache.get('main.s')
+        self.font_xs = self.game_data.cache.font_cache.get('main.xs')
         self.text_color_logo = self.game_data.game_config.get('text.color.logo')
         self.text_color = self.game_data.game_config.get('text.color')
         self.text_color_inactive = self.game_data.game_config.get('text.color.inactive')
@@ -285,11 +285,11 @@ class MenuScene(Scene):
         if not self.playing_music:
             self.playing_music = True
             self.curr_bg_music = random.choice(self.menu_music)
-            self.game_data.sound_cache.load_music(self.curr_bg_music)
-            self.game_data.sound_cache.play_music(loops=-1, volume=self.music_volume_bg_menu)
+            self.game_data.cache.sound_cache.load_music(self.curr_bg_music)
+            self.game_data.cache.sound_cache.play_music(loops=-1, volume=self.music_volume_bg_menu)
 
     def stop_music(self):
-        self.game_data.sound_cache.stop_music()
+        self.game_data.cache.sound_cache.stop_music()
         self.playing_music = False
 
     def loop(self, tick):
@@ -321,7 +321,7 @@ class MenuScene(Scene):
                         self.set_state(State.PLAYERSELECTION)
 
         if not self.is_state(State.MENU):
-            self.game_data.sound_cache.play('menuitem.activate', volume=self.music_volume_bg_menu_effects)
+            self.game_data.cache.sound_cache.play('menuitem.activate', volume=self.music_volume_bg_menu_effects)
             if not (self.is_state(State.OPTIONS) or self.is_state(State.HIGHSCORE) or self.is_state(State.PLAYERSELECTION)):
                 self.stop_music()
             return

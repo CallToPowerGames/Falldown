@@ -81,7 +81,7 @@ class GameScene(Scene):
 
     def stop_music(self):
         """Stops the music of the scene"""
-        self.game_data.sound_cache.stop_music()
+        self.game_data.cache.sound_cache.stop_music()
         self.playing_music = False
 
     def loop(self, tick):
@@ -103,7 +103,7 @@ class GameScene(Scene):
                 self.camera.unpause()
             if not self.sound_played:
                 self.sound_played = True
-                self.game_data.sound_cache.play('game.start', volume=self.music_volume_bg_game_effects)
+                self.game_data.cache.sound_cache.play('game.start', volume=self.music_volume_bg_game_effects)
             dt = tick / 1000
             self.camera.loop(dt, pygame.key.get_pressed())
             if self.camera.game_over:
@@ -112,7 +112,7 @@ class GameScene(Scene):
         if not self.is_state(State.GAME):
             if not self.is_state(State.PAUSE):
                 self.game_init_done = False
-            self.game_data.sound_cache.play('menu.back', volume=self.music_volume_bg_menu_effects)
+            self.game_data.cache.sound_cache.play('menu.back', volume=self.music_volume_bg_menu_effects)
             if not self.is_state(State.PAUSE) and not self.is_state(State.GAMEOVER):
                 self.stop_music()
             return
@@ -125,8 +125,8 @@ class GameScene(Scene):
             if not self.playing_music:
                 self.playing_music = True
                 self.curr_bg_music = random.choice(self.game_music)
-                self.game_data.sound_cache.load_music(self.curr_bg_music)
-                self.game_data.sound_cache.play_music(loops=-1, volume=self.music_volume_bg_game)
+                self.game_data.cache.sound_cache.load_music(self.curr_bg_music)
+                self.game_data.cache.sound_cache.play_music(loops=-1, volume=self.music_volume_bg_game)
 
     def draw(self, show_score=True, show_fps=True):
         """Draws the game scene

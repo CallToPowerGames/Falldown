@@ -28,8 +28,8 @@ class ExitScene(Scene):
 
         self.screen = self.game_data.game_config.get('screen')
         self.screen_size = self.game_data.game_config.get('screen.size')
-        self.font_xl = self.game_data.font_cache.get('main.xl')
-        self.font_l = self.game_data.font_cache.get('main.l')
+        self.font_xl = self.game_data.cache.font_cache.get('main.xl')
+        self.font_l = self.game_data.cache.font_cache.get('main.l')
         self.text_color_logo = self.game_data.game_config.get('text.color.logo')
         self.text_color = self.game_data.game_config.get('text.color')
 

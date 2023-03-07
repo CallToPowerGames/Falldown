@@ -28,7 +28,7 @@ class Cryptography():
 
         self.basedir = basedir
 
-        self.key = load_key(basedir, 'fernet.key')
+        self.key = load_key(basedir)
 
     def encrypt(self, message):
         """

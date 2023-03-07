@@ -21,6 +21,7 @@ _app_config = {
     'conf.game.folder': 'falldown',
     'conf.game.name': 'conf.json',
     'conf.key.name': 'highscore.db',
+    'conf.highscore.key.file': 'fernet.key',
     'img_logo_app': None,
     'logging.log_to_file': False,
     'logging.loglevel': logging.INFO,

@@ -38,8 +38,8 @@ class Border(pygame.sprite.Sprite):
         self.border_size = self.game_data.game_config.get('level.border.img.size')
         self.border_out_size = self.game_data.game_config.get('level.border.out.img.size')
 
-        self.spritesheet_border = Spritesheet(self.game_data.sprite_cache, 'level.border', self.border_size, 1, generate_sides=False)
-        self.spritesheet_border_out = Spritesheet(self.game_data.sprite_cache, 'level.border.out', self.border_out_size, 1, generate_sides=True)
+        self.spritesheet_border = Spritesheet(self.game_data.cache.sprite_cache, 'level.border', self.border_size, 1, generate_sides=False)
+        self.spritesheet_border_out = Spritesheet(self.game_data.cache.sprite_cache, 'level.border.out', self.border_out_size, 1, generate_sides=True)
 
         self.image_border = None
         self.image_border_left = None

@@ -80,16 +80,15 @@ class SpriteCache():
 
         return val
 
-    def get_or_load(self, key, name, path=None):
+    def get_or_load(self, key, path):
         """Gets or, if not present, loads the image
 
         :param key: The key
-        :param name: The name
-        :param path: The path
+        :param path: The path + name
         """
         val = self.get(key)
         if not val:
-            self.set(key, load_image(self.basedir, name, path))
+            self.set(key, load_image(self.basedir, path))
             val = self.get(key)
 
         return val

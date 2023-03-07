@@ -42,8 +42,8 @@ class Player(pygame.sprite.Sprite):
         self.rect_inner = self.game_data.player_info['rect_inner']
         self.debug_show = self.game_data.game_config.get('debug.show')
 
-        self.spritesheet_idle = Spritesheet(self.game_data.sprite_cache, self.game_data.player_info['idle']['key'], size=self.game_data.player_info['size'], nr_images=self.game_data.player_info['idle']['nr_images'], orientation_left=self.game_data.player_info['orientation_left'])
-        self.spritesheet_run = Spritesheet(self.game_data.sprite_cache, self.game_data.player_info['run']['key'], size=self.game_data.player_info['size'], nr_images=self.game_data.player_info['run']['nr_images'], orientation_left=self.game_data.player_info['orientation_left'])
+        self.spritesheet_idle = Spritesheet(self.game_data.cache.sprite_cache, self.game_data.player_info['idle']['key'], size=self.game_data.player_info['size'], nr_images=self.game_data.player_info['idle']['nr_images'], orientation_left=self.game_data.player_info['orientation_left'])
+        self.spritesheet_run = Spritesheet(self.game_data.cache.sprite_cache, self.game_data.player_info['run']['key'], size=self.game_data.player_info['size'], nr_images=self.game_data.player_info['run']['nr_images'], orientation_left=self.game_data.player_info['orientation_left'])
         self.curr_img_index = 0
         self.image = None
 

@@ -75,12 +75,11 @@ def get_font(name, size, system_font_name, basedir, base_path):
         logging.error('Could not find font, falling back to system font')
         return pygame.font.SysFont(system_font_name, size)
 
-def load_game_conf(basedir, base_path=None):
+def load_game_conf(basedir):
     """
     Loads the game configuration
 
     :param basedir: The base path
-    :param base_path: The base path - for default if not found in user folder
     """
     homedir = str(Path.home())
     homefolder = app_conf_get('conf.game.folder')
@@ -97,11 +96,8 @@ def load_game_conf(basedir, base_path=None):
         load_from_home_dir = True
     ## Fallback to resources folder
     else:
-        if not base_path:
-            file_path = os.path.join(basedir, 'resources', file)
-        else:
-            file_path = os.path.join(basedir, 'resources', base_path, file)
-        logging.info('Trying to load game configuration {}'.format(file_path))
+        file_path = os.path.join(basedir, 'resources', file)
+        logging.info('Trying to load game configuration "{}"'.format(file_path))
 
     game_config = {}
 
@@ -203,19 +199,16 @@ def save_highscore_db(cryptography, highscore_db, basedir):
     except Exception as ex:
         logging.error('Failed creating a new directory in home directory "{}"'.format(home_dir_path, ex))
 
-def load_key(basedir, file, base_path=None):
+def load_key(basedir):
     """
     Loads the key
 
     :param basedir: The base path
-    :param file: The file to load from
-    :param base_path: The base path
     """
-    if not base_path:
-        file_path = os.path.join(basedir, 'resources', file)
-    else:
-        file_path = os.path.join(basedir, 'resources', base_path, file)
-    logging.debug('Loading key "{}" from directory "{}"'.format(file, file_path))
+    file = app_conf_get('conf.highscore.key.file')
+    file_path = os.path.join(basedir, 'resources', file)
+    logging.debug('Loading key "{}"'.format(file_path))
+    key = None
     try:
         with open(file_path, 'rb') as f:
             key = f.read()
@@ -223,56 +216,44 @@ def load_key(basedir, file, base_path=None):
         raise SystemExit('Could not load key "{}": {}'.format(file_path, pygame.get_error()))
     return key
 
-def load_image(basedir, file, base_path=None):
+def load_image(basedir, path):
     """
     Loads an image, prepares it for play
 
     :param basedir: The base path
-    :param file: The file to load from
-    :param base_path: The base path
+    :param path: The path + name
     """
-    if not base_path:
-        file_path = os.path.join(basedir, 'resources', file)
-    else:
-        file_path = os.path.join(basedir, 'resources', base_path, file)
-    logging.debug('Loading image "{}" from directory "{}"'.format(file, file_path))
+    file_path = os.path.join(basedir, 'resources', 'images', path)
+    logging.debug('Loading image "{}"'.format(file_path))
     try:
         surface = pygame.image.load(file_path)
     except pygame.error:
         raise SystemExit('Could not load image "{}": {}'.format(file_path, pygame.get_error()))
-    return surface  # .convert()
+    return surface
 
-def load_sound(basedir, file, base_path=None):
+def load_sound(basedir, path):
     """
     Loads a sound, prepares it for play
 
     :param basedir: The base path
-    :param file: The file to load from
-    :param base_path: The base path
+    :param path: The path + name
     """
-    if not base_path:
-        file_path = os.path.join(basedir, 'resources', file)
-    else:
-        file_path = os.path.join(basedir, 'resources', base_path, file)
-    logging.debug('Loading sound "{}" from directory "{}"'.format(file, file_path))
+    file_path = os.path.join(basedir, 'resources', 'sounds', path)
+    logging.debug('Loading sound "{}"'.format(file_path))
     try:
         return pygame.mixer.Sound(file_path) if os.path.exists(file_path) else None
     except:
         raise SystemExit('Could not load sound "{}"'.format(file_path))
 
-def load_music(basedir, file, base_path=None):
+def load_music(basedir, path):
     """
     Loads a sound, prepares it for play
 
     :param basedir: The base path
-    :param file: The file to load from
-    :param base_path: The base path
+    :param path: The path + name
     """
-    if not base_path:
-        file_path = os.path.join(basedir, 'resources', file)
-    else:
-        file_path = os.path.join(basedir, 'resources', base_path, file)
-    logging.debug('Loading sound "{}" from directory "{}"'.format(file, file_path))
+    file_path = os.path.join(basedir, 'resources', 'music', path)
+    logging.debug('Loading sound "{}"'.format(file_path))
     try:
         return pygame.mixer.music.load(file_path) if os.path.exists(file_path) else None
     except:

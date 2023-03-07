@@ -64,9 +64,9 @@ class Background(pygame.sprite.Sprite):
         self.w_clouds_small = self.size_bg_clouds_small[0]
         self.h_clouds_small = self.size_bg_clouds_small[1]
 
-        self.spritesheet_bg_clouds_big_cloud = Spritesheet(self.game_data.sprite_cache, 'bg.clouds', size=self.size_bg_clouds_big, nr_images=1, startpoint=self.startpoint_bg_clouds_big, generate_sides=False)
-        self.spritesheet_bg_clouds_mid_cloud = Spritesheet(self.game_data.sprite_cache, 'bg.clouds', size=self.size_bg_clouds_mid, nr_images=1, startpoint=self.startpoint_bg_clouds_mid, generate_sides=False)
-        self.spritesheet_bg_clouds_small_cloud = Spritesheet(self.game_data.sprite_cache, 'bg.clouds', size=self.size_bg_clouds_small, nr_images=1, startpoint=self.startpoint_bg_clouds_small, generate_sides=False)
+        self.spritesheet_bg_clouds_big_cloud = Spritesheet(self.game_data.cache.sprite_cache, 'bg.clouds', size=self.size_bg_clouds_big, nr_images=1, startpoint=self.startpoint_bg_clouds_big, generate_sides=False)
+        self.spritesheet_bg_clouds_mid_cloud = Spritesheet(self.game_data.cache.sprite_cache, 'bg.clouds', size=self.size_bg_clouds_mid, nr_images=1, startpoint=self.startpoint_bg_clouds_mid, generate_sides=False)
+        self.spritesheet_bg_clouds_small_cloud = Spritesheet(self.game_data.cache.sprite_cache, 'bg.clouds', size=self.size_bg_clouds_small, nr_images=1, startpoint=self.startpoint_bg_clouds_small, generate_sides=False)
         self.big_clouds = []
         self.mid_clouds = []
         self.small_clouds = []

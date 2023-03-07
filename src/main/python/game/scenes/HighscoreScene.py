@@ -35,9 +35,9 @@ class HighscoreScene(Scene):
 
         self.screen = self.game_data.game_config.get('screen')
         self.screen_size = self.game_data.game_config.get('screen.size')
-        self.font_xl = self.game_data.font_cache.get('main.xl')
-        self.font_l = self.game_data.font_cache.get('main.l')
-        self.font_s = self.game_data.font_cache.get('main.s')
+        self.font_xl = self.game_data.cache.font_cache.get('main.xl')
+        self.font_l = self.game_data.cache.font_cache.get('main.l')
+        self.font_s = self.game_data.cache.font_cache.get('main.s')
         self.text_color_logo = self.game_data.game_config.get('text.color.logo')
         self.text_color_highscore = self.game_data.game_config.get('text.color.highscore')
         self.text_color = self.game_data.game_config.get('text.color')
@@ -60,9 +60,9 @@ class HighscoreScene(Scene):
         self.rect_highscore = (self.screen_mid[0] - self.width_highscore / 2, self.screen_mid[1] - self.height_highscore / 2 + 20, self.width_highscore, self.height_highscore)
         self.rect_arrow_down = (self.screen_mid[0] - self.width_highscore / 2 + 15, self.screen_mid[1] + self.height_highscore / 2 - 30, self.width_highscore, self.height_highscore)
         self.rect_arrow_up = (self.screen_mid[0] - self.width_highscore / 2 + 15, self.screen_mid[1] - self.height_highscore / 2 + 7, self.width_highscore, self.height_highscore)
-        self.image_highscore = pygame.transform.scale(self.game_data.sprite_cache.get('highscore').convert_alpha(), (self.width_highscore, self.height_highscore))
-        self.image_arrow_down = pygame.transform.scale(self.game_data.sprite_cache.get('arrow.down').convert_alpha(), self.wh_arrow)
-        self.image_arrow_up = pygame.transform.scale(self.game_data.sprite_cache.get('arrow.up').convert_alpha(), self.wh_arrow)
+        self.image_highscore = pygame.transform.scale(self.game_data.cache.sprite_cache.get('highscore').convert_alpha(), (self.width_highscore, self.height_highscore))
+        self.image_arrow_down = pygame.transform.scale(self.game_data.cache.sprite_cache.get('arrow.down').convert_alpha(), self.wh_arrow)
+        self.image_arrow_up = pygame.transform.scale(self.game_data.cache.sprite_cache.get('arrow.up').convert_alpha(), self.wh_arrow)
         self.image_highscore_filled = self.image_highscore.copy()
         self.highscore_start_index = 0
         self.highscore_max_items_shown = 7
@@ -168,14 +168,14 @@ class HighscoreScene(Scene):
     def _keypress_arrow_up(self):
         if self.highscore_start_index > 0:
             self.highscore_start_index -= 1
-            self.game_data.sound_cache.play('scroll', volume=self.music_volume_bg_menu_effects)
+            self.game_data.cache.sound_cache.play('scroll', volume=self.music_volume_bg_menu_effects)
             self._draw_highscore()
 
     def _keypress_arrow_down(self):
         max_len = len(self.highscore_db) - self.highscore_max_items_shown
         if self.highscore_start_index < max_len:
             self.highscore_start_index += 1
-            self.game_data.sound_cache.play('scroll', volume=self.music_volume_bg_menu_effects)
+            self.game_data.cache.sound_cache.play('scroll', volume=self.music_volume_bg_menu_effects)
             self._draw_highscore()
 
     def _draw_highscore(self):
@@ -225,7 +225,7 @@ class HighscoreScene(Scene):
         if not self.is_state(State.HIGHSCORE):
             self.loaded_highscore = False
             self.highscore_start_index = 0
-            self.game_data.sound_cache.play('menu.back', volume=self.music_volume_bg_menu_effects)
+            self.game_data.cache.sound_cache.play('menu.back', volume=self.music_volume_bg_menu_effects)
             return
 
         if not self.loaded_highscore:

@@ -28,9 +28,9 @@ class PauseScene(Scene):
 
         self.screen = self.game_data.game_config.get('screen')
         self.screen_size = self.game_data.game_config.get('screen.size')
-        self.font_xl = self.game_data.font_cache.get('main.xl')
-        self.font_l = self.game_data.font_cache.get('main.l')
-        self.font_s = self.game_data.font_cache.get('main.s')
+        self.font_xl = self.game_data.cache.font_cache.get('main.xl')
+        self.font_l = self.game_data.cache.font_cache.get('main.l')
+        self.font_s = self.game_data.cache.font_cache.get('main.s')
         self.text_color_score = self.game_data.game_config.get('text.color.score')
         self.text_color_logo = self.game_data.game_config.get('text.color.logo')
         self.text_color = self.game_data.game_config.get('text.color')
@@ -133,7 +133,7 @@ class PauseScene(Scene):
                     self.set_state(State.GAME)
 
         if not self.is_state(State.PAUSE):
-            self.game_data.sound_cache.play('menu.back', volume=self.music_volume_bg_menu_effects)
+            self.game_data.cache.sound_cache.play('menu.back', volume=self.music_volume_bg_menu_effects)
             return
 
         self.game_data.scene_game.loop_visuals(tick)

@@ -79,8 +79,8 @@ class PlayerMenuItem(Drawable):
         self.screen = self.game_config.get('screen')
         self.music_volume_bg_menu_effects = self.game_data.game_config.get('music.volume.background.menu.effects')
 
-        self.image_button_active = pygame.transform.scale(self.game_data.sprite_cache.get('imagebutton.active').convert_alpha(), (self.button_bg_width, self.button_bg_height))
-        self.image_button_inactive = pygame.transform.scale(self.game_data.sprite_cache.get('imagebutton.inactive').convert_alpha(), (self.button_bg_width, self.button_bg_height))
+        self.image_button_active = pygame.transform.scale(self.game_data.cache.sprite_cache.get('imagebutton.active').convert_alpha(), (self.button_bg_width, self.button_bg_height))
+        self.image_button_inactive = pygame.transform.scale(self.game_data.cache.sprite_cache.get('imagebutton.inactive').convert_alpha(), (self.button_bg_width, self.button_bg_height))
 
         self.text = self.player['name']
         self.image = self.player['image']
@@ -130,7 +130,7 @@ class PlayerMenuItem(Drawable):
         """Updates the PlayerMenuItem"""
         if self.active:
             if self.play_sound_on_activation and not self.sound_played:
-                self.game_data.sound_cache.play('menuitem.activate', volume=self.music_volume_bg_menu_effects)
+                self.game_data.cache.sound_cache.play('menuitem.activate', volume=self.music_volume_bg_menu_effects)
                 self.sound_played = True
                 pass
             if self.rotate:

@@ -50,12 +50,12 @@ class Barrier(pygame.sprite.Sprite):
         self.barrier_cannon_left_correction = self.game_data.game_config.get('barrier.cannon.left.correction')
         self.barrier_cannon_right_correction = self.game_data.game_config.get('barrier.cannon.right.correction')
 
-        self.spritesheet_chain = Spritesheet(self.game_data.sprite_cache, 'barrier.chain', self.border_chain_size, 1, generate_sides=False)
-        self.spritesheet_holder_left = Spritesheet(self.game_data.sprite_cache, 'barrier.holder.left', self.barrier_holder_left_size, 16)
-        self.spritesheet_holder_right = Spritesheet(self.game_data.sprite_cache, 'barrier.holder.right', self.barrier_holder_right_size, 12)
-        self.spritesheet_platform = Spritesheet(self.game_data.sprite_cache, 'barrier.platform', self.barrier_platform_size, 8, generate_sides=False)
-        self.spritesheet_cannon = Spritesheet(self.game_data.sprite_cache, 'barrier.cannon', self.barrier_cannon_size, 1, orientation_left=False)
-        self.spritesheet_laserbeam = Spritesheet(self.game_data.sprite_cache, [
+        self.spritesheet_chain = Spritesheet(self.game_data.cache.sprite_cache, 'barrier.chain', self.border_chain_size, 1, generate_sides=False)
+        self.spritesheet_holder_left = Spritesheet(self.game_data.cache.sprite_cache, 'barrier.holder.left', self.barrier_holder_left_size, 16)
+        self.spritesheet_holder_right = Spritesheet(self.game_data.cache.sprite_cache, 'barrier.holder.right', self.barrier_holder_right_size, 12)
+        self.spritesheet_platform = Spritesheet(self.game_data.cache.sprite_cache, 'barrier.platform', self.barrier_platform_size, 8, generate_sides=False)
+        self.spritesheet_cannon = Spritesheet(self.game_data.cache.sprite_cache, 'barrier.cannon', self.barrier_cannon_size, 1, orientation_left=False)
+        self.spritesheet_laserbeam = Spritesheet(self.game_data.cache.sprite_cache, [
             'barrier.laserbeam.1',
             'barrier.laserbeam.2',
             'barrier.laserbeam.3',
@@ -135,7 +135,7 @@ class Barrier(pygame.sprite.Sprite):
         :param fullstop: Fully stops the music
         """
         if self.sound_playing:
-            self.game_data.sound_cache.stop('laser')
+            self.game_data.cache.sound_cache.stop('laser')
             self.sound_playing = False
             if fullstop:
                 self.stopped = True
@@ -222,7 +222,7 @@ class Barrier(pygame.sprite.Sprite):
         if self.is_visible(offset):
             if not self.stopped and not self.sound_playing:
                 self.sound_playing = True
-                self.game_data.sound_cache.play('laser', loops=-1, volume=self.music_volume_bg_game_effects)
+                self.game_data.cache.sound_cache.play('laser', loops=-1, volume=self.music_volume_bg_game_effects)
             self._draw(offset)
         else:
             self.stop(fullstop=False)

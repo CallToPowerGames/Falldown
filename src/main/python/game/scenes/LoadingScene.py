@@ -28,7 +28,7 @@ class LoadingScene(Scene):
 
         self.screen = self.game_data.game_config.get('screen')
         self.screen_size = self.game_data.game_config.get('screen.size')
-        self.font_xl = self.game_data.font_cache.get('main.xl')
+        self.font_xl = self.game_data.cache.font_cache.get('main.xl')
         self.text_color_logo = self.game_data.game_config.get('text.color.logo')
         self.load_filler_bg_color = self.game_data.game_config.get('background.load.filler.color')
 
@@ -43,7 +43,7 @@ class LoadingScene(Scene):
 
         self.load_filler_bg_height = 20
         self.wh_loader = (300, 200)
-        self.image_loader = pygame.transform.scale(self.game_data.sprite_cache.get('loader').convert_alpha(), self.wh_loader)
+        self.image_loader = pygame.transform.scale(self.game_data.cache.sprite_cache.get('loader').convert_alpha(), self.wh_loader)
         self.loader_rect = (
                             self.screen_mid[0] - self.wh_loader[0] / 2,
                             self.screen_mid[1] - self.wh_loader[1] / 2,
@@ -53,7 +53,7 @@ class LoadingScene(Scene):
 
         self.wh_loader_filler = (280, 200)
         self.images_loader_filler = []
-        _raw_img = self.game_data.sprite_cache.get('loader.filler').convert_alpha()
+        _raw_img = self.game_data.cache.sprite_cache.get('loader.filler').convert_alpha()
         for i in range(0, 101):
             wh = (self.wh_loader_filler[0] / 100 * i, self.wh_loader_filler[1])
             img = pygame.transform.scale(_raw_img, wh)
@@ -103,57 +103,6 @@ class LoadingScene(Scene):
                                 )
         self.items.append(item_logo)
 
-    def _cache_sounds(self):
-        """Caches the sounds"""
-        logging.info('Caching sounds')
-        self.game_data.sound_cache.load_sound('menuitem.activate', 'gui/menuitem-activate.wav')
-        self.game_data.sound_cache.load_sound('menu.back', 'gui/menu-back.wav')
-        self.game_data.sound_cache.load_sound('scroll', 'gui/scroll.wav')
-        self.game_data.sound_cache.load_sound('game.start', 'game/game-start.wav')
-        self.game_data.sound_cache.load_sound('game.over', 'game/game-over.wav')
-        self.game_data.sound_cache.load_sound('laser', 'game/laser.wav')
-        self.game_data.sound_cache.load_sound('bump', 'game/bump.wav')
-
-    def _cache_sprites(self):
-        """Caches the sprites"""
-        logging.info('Caching sprites')
-        self.game_data.sprite_cache.get_or_load('sprite.player.idle.1', 'player-idle-1.png', 'sprites/players')
-        self.game_data.sprite_cache.get_or_load('sprite.player.run.1', 'player-run-1.png', 'sprites/players')
-        self.game_data.sprite_cache.get_or_load('sprite.player.idle.2', 'player-idle-2.png', 'sprites/players')
-        self.game_data.sprite_cache.get_or_load('sprite.player.run.2', 'player-run-2.png', 'sprites/players')
-        self.game_data.sprite_cache.get_or_load('sprite.player.idle.3', 'player-idle-3.png', 'sprites/players')
-        self.game_data.sprite_cache.get_or_load('sprite.player.run.3', 'player-run-3.png', 'sprites/players')
-        self.game_data.sprite_cache.get_or_load('sprite.player.idle.4', 'player-idle-4.png', 'sprites/players')
-        self.game_data.sprite_cache.get_or_load('sprite.player.run.4', 'player-run-4.png', 'sprites/players')
-        self.game_data.sprite_cache.get_or_load('sprite.player.idle.5', 'player-idle-5.png', 'sprites/players')
-        self.game_data.sprite_cache.get_or_load('sprite.player.run.5', 'player-run-5.png', 'sprites/players')
-        self.game_data.sprite_cache.get_or_load('sprite.player.idle.6', 'player-idle-6.png', 'sprites/players')
-        self.game_data.sprite_cache.get_or_load('sprite.player.run.6', 'player-run-6.png', 'sprites/players')
-        self.game_data.sprite_cache.get_or_load('sprite.player.idle.7', 'player-idle-7.png', 'sprites/players')
-        self.game_data.sprite_cache.get_or_load('sprite.player.run.7', 'player-run-7.png', 'sprites/players')
-        self.game_data.sprite_cache.get_or_load('sprite.player.idle.8', 'player-idle-8.png', 'sprites/players')
-        self.game_data.sprite_cache.get_or_load('sprite.player.run.8', 'player-run-8.png', 'sprites/players')
-        self.game_data.sprite_cache.get_or_load('barrier.laserbeam.1', 'laser-beam-1.png', 'sprites/laser')
-        self.game_data.sprite_cache.get_or_load('barrier.laserbeam.2', 'laser-beam-2.png', 'sprites/laser')
-        self.game_data.sprite_cache.get_or_load('barrier.laserbeam.3', 'laser-beam-3.png', 'sprites/laser')
-        self.game_data.sprite_cache.get_or_load('barrier.laserbeam.4', 'laser-beam-4.png', 'sprites/laser')
-        self.game_data.sprite_cache.get_or_load('barrier.holder.left', 'barrier-holder-left.png', 'sprites/barrier')
-        self.game_data.sprite_cache.get_or_load('barrier.holder.right', 'barrier-holder-right.png', 'sprites/barrier')
-        self.game_data.sprite_cache.get_or_load('barrier.chain', 'chain.png', 'sprites/barrier')
-        self.game_data.sprite_cache.get_or_load('level.border', 'border.png', 'sprites/barrier')
-        self.game_data.sprite_cache.get_or_load('level.border.out', 'border-out.png', 'sprites/barrier')
-        self.game_data.sprite_cache.get_or_load('barrier.platform', 'barrier-platform.png', 'sprites/barrier')
-        self.game_data.sprite_cache.get_or_load('barrier.cannon', 'barrier-cannon.png', 'sprites/barrier')
-        self.game_data.sprite_cache.get_or_load('level.segment', 'segment.png', 'sprites/segment')
-        self.game_data.sprite_cache.get_or_load('level.segment.propeller', 'propeller.png', 'sprites/segment')
-        self.game_data.sprite_cache.get_or_load('button.active', 'button-active.png', 'items/buttons')
-        self.game_data.sprite_cache.get_or_load('button.inactive', 'button-inactive.png', 'items/buttons')
-        self.game_data.sprite_cache.get_or_load('imagebutton.active', 'imagebutton-active.png', 'items/buttons')
-        self.game_data.sprite_cache.get_or_load('imagebutton.inactive', 'imagebutton-inactive.png', 'items/buttons')
-        self.game_data.sprite_cache.get_or_load('highscore', 'highscore.png', 'items/highscore')
-        self.game_data.sprite_cache.get_or_load('arrow.down', 'arrow-down.png', 'items/highscore')
-        self.game_data.sprite_cache.get_or_load('arrow.up', 'arrow-up.png', 'items/highscore')
-
     def loop(self, tick):
         dt = tick / 1000
         self.background.loop(dt)
@@ -179,7 +128,7 @@ class LoadingScene(Scene):
                 self.init_perc = 30
             elif self.init_perc < 40:
                 self.init_perc = 40
-                self._cache_sounds()
+                self.game_data.cache.cache_sounds()
             elif self.init_perc < 50:
                 self.init_perc = 50
             elif self.init_perc < 60:
@@ -188,7 +137,7 @@ class LoadingScene(Scene):
                 self.init_perc = 70
             elif self.init_perc < 80:
                 self.init_perc = 80
-                self._cache_sprites()
+                self.game_data.cache.cache_sprites()
             elif self.init_perc < 90:
                 self.init_perc = 90
             elif self.init_perc < 100:

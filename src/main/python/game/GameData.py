@@ -26,22 +26,18 @@ from game.scenes.ExitScene import ExitScene
 class GameData():
     """Game data"""
 
-    def __init__(self, game_config, highscore, font_cache, sound_cache, sprite_cache):
+    def __init__(self, game_config, highscore, cache):
         """Initializes the Game data
 
         :param game_config: The game config
         :param highscore: The highscore
-        :param font_cache: The font cache
-        :param sound_cache: The sound cache
-        :param sprite_cache: The sprite cache
+        :param cache: The cache
         """
         logging.info('Initializing game data')
 
         self.game_config = game_config
         self.highscore = highscore
-        self.font_cache = font_cache
-        self.sound_cache = sound_cache
-        self.sprite_cache = sprite_cache
+        self.cache = cache
 
         self.game_state = GameState()
         self.looping = False

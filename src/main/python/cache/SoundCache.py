@@ -38,14 +38,15 @@ class SoundCache():
 
     # Sounds
 
-    def load_sound(self, key, name, path='sounds'):
+    def load_sound(self, key, path):
         """Loads the sound into the cache
 
-        :param sound: Sound to load
+        :param key: Sound key
+        :param path: Sound path + name
         """
         val = self.get_sound(key)
         if not val:
-            self.set_sound(key, load_sound(self.basedir, name, path))
+            self.set_sound(key, load_sound(self.basedir, path))
             val = self.get_sound(key)
 
     def play(self, key, loops=0, volume=1.0):
@@ -92,12 +93,12 @@ class SoundCache():
 
     # Music (streaming)
 
-    def load_music(self, name, path='music'):
+    def load_music(self, path):
         """Loads the music
 
-        :param sound: Music to load
+        :param path: Music path + name
         """
-        load_music(self.basedir, name, path)
+        load_music(self.basedir, path)
 
     def set_music_volume(self, volume=1.0):
         """Sets the volume

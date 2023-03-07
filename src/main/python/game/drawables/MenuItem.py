@@ -82,12 +82,12 @@ class MenuItem(Drawable):
         self.music_volume_bg_menu_effects = self.game_data.game_config.get('music.volume.background.menu.effects')
 
         if self.button_none:
-            self.image_button_none = pygame.transform.scale(self.game_data.sprite_cache.get('button.none').convert_alpha(), (self.width, self.height))
+            self.image_button_none = pygame.transform.scale(self.game_data.cache.sprite_cache.get('button.none').convert_alpha(), (self.width, self.height))
         if self.button:
-            self.image_button_active = pygame.transform.scale(self.game_data.sprite_cache.get('button.active').convert_alpha(), (self.width, self.height))
-            self.image_button_inactive = pygame.transform.scale(self.game_data.sprite_cache.get('button.inactive').convert_alpha(), (self.width, self.height))
+            self.image_button_active = pygame.transform.scale(self.game_data.cache.sprite_cache.get('button.active').convert_alpha(), (self.width, self.height))
+            self.image_button_inactive = pygame.transform.scale(self.game_data.cache.sprite_cache.get('button.inactive').convert_alpha(), (self.width, self.height))
         elif self.banner:
-            self.image_banner = pygame.transform.scale(self.game_data.sprite_cache.get('banner').convert_alpha(), (self.width, self.height))
+            self.image_banner = pygame.transform.scale(self.game_data.cache.sprite_cache.get('banner').convert_alpha(), (self.width, self.height))
 
         self.tick_current = 0
         self.sound_played = False
@@ -111,7 +111,7 @@ class MenuItem(Drawable):
         """Updates the MenuItem"""
         if self.active:
             if self.play_sound_on_activation and not self.sound_played:
-                self.game_data.sound_cache.play('menuitem.activate', volume=self.music_volume_bg_menu_effects)
+                self.game_data.cache.sound_cache.play('menuitem.activate', volume=self.music_volume_bg_menu_effects)
                 self.sound_played = True
                 pass
             if self.rotate:

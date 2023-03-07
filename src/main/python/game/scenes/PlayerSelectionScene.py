@@ -31,10 +31,10 @@ class PlayerSelectionScene(Scene):
 
         self.screen = self.game_data.game_config.get('screen')
         self.screen_size = self.game_data.game_config.get('screen.size')
-        self.font_xl = self.game_data.font_cache.get('main.xl')
-        self.font_l = self.game_data.font_cache.get('main.l')
-        self.font_s = self.game_data.font_cache.get('main.s')
-        self.font_xs = self.game_data.font_cache.get('main.xs')
+        self.font_xl = self.game_data.cache.font_cache.get('main.xl')
+        self.font_l = self.game_data.cache.font_cache.get('main.l')
+        self.font_s = self.game_data.cache.font_cache.get('main.s')
+        self.font_xs = self.game_data.cache.font_cache.get('main.xs')
         self.text_color_logo = self.game_data.game_config.get('text.color.logo')
         self.text_color = self.game_data.game_config.get('text.color')
         self.text_color_inactive = self.game_data.game_config.get('text.color.inactive')
@@ -87,7 +87,7 @@ class PlayerSelectionScene(Scene):
 
         _img_to_select = 'run'
         for player in self.game_data.players:
-            player['spreadsheet'] = Spritesheet(self.game_data.sprite_cache, player[_img_to_select]['key'], size=player['size'], nr_images=player[_img_to_select]['nr_images'], orientation_left=player['orientation_left'])
+            player['spreadsheet'] = Spritesheet(self.game_data.cache.sprite_cache, player[_img_to_select]['key'], size=player['size'], nr_images=player[_img_to_select]['nr_images'], orientation_left=player['orientation_left'])
             player['image'] = player['spreadsheet'].images_left[player['curr_img_index']]
 
     def _init_items(self):
@@ -351,7 +351,7 @@ class PlayerSelectionScene(Scene):
                 self.show_info = False
                 self._update_player_info()
                 self._update_selection(suppress_sound=True)
-            self.game_data.sound_cache.play('menu.back', volume=self.music_volume_bg_menu_effects)
+            self.game_data.cache.sound_cache.play('menu.back', volume=self.music_volume_bg_menu_effects)
             return
         else:
             self.game_data.scene_menu.start_music()

@@ -52,10 +52,10 @@ class Level():
         self.collision_detection_correction_right = self.game_data.game_config.get('level.collision.detection.correction.right')
         self.collision_detection_correction_bottom = self.game_data.game_config.get('level.collision.detection.correction.bottom')
 
-        self.spritesheet_segment_left = Spritesheet(self.game_data.sprite_cache, 'level.segment', size=self.segment_img_left_size, nr_images=1, startpoint=self.segment_img_left_startpoint, generate_sides=False)
-        self.spritesheet_segment_mid = Spritesheet(self.game_data.sprite_cache, 'level.segment', size=self.segment_img_mid_size, nr_images=1, startpoint=self.segment_img_mid_startpoint, generate_sides=False)
-        self.spritesheet_segment_right = Spritesheet(self.game_data.sprite_cache, 'level.segment', size=self.segment_img_right_size, nr_images=1, startpoint=self.segment_img_right_startpoint, generate_sides=False)
-        self.spritesheet_segment_propeller = Spritesheet(self.game_data.sprite_cache, 'level.segment.propeller', size=self.segment_img_propeller_size, nr_images=4, startpoint=self.segment_img_propeller_startpoint, generate_sides=False)
+        self.spritesheet_segment_left = Spritesheet(self.game_data.cache.sprite_cache, 'level.segment', size=self.segment_img_left_size, nr_images=1, startpoint=self.segment_img_left_startpoint, generate_sides=False)
+        self.spritesheet_segment_mid = Spritesheet(self.game_data.cache.sprite_cache, 'level.segment', size=self.segment_img_mid_size, nr_images=1, startpoint=self.segment_img_mid_startpoint, generate_sides=False)
+        self.spritesheet_segment_right = Spritesheet(self.game_data.cache.sprite_cache, 'level.segment', size=self.segment_img_right_size, nr_images=1, startpoint=self.segment_img_right_startpoint, generate_sides=False)
+        self.spritesheet_segment_propeller = Spritesheet(self.game_data.cache.sprite_cache, 'level.segment.propeller', size=self.segment_img_propeller_size, nr_images=4, startpoint=self.segment_img_propeller_startpoint, generate_sides=False)
 
         self.image_segment_right = None
         self.image_segment_mid = None
