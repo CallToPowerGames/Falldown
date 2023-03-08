@@ -18,8 +18,11 @@ def initialize_logger():
     if app_conf_get('logging.log_to_file'):
         logging.info('Logging to file')
         basedir = os.path.dirname(app_conf_get('logging.logfile'))
-        if not os.path.exists(basedir):
-            os.makedirs(basedir)
+        try:
+            if not os.path.exists(basedir):
+                os.makedirs(basedir)
+        except Exception as ex:
+            logging.error('Failed creating a new directory "{}": {}'.format(basedir, ex))
 
     logging.basicConfig(level=app_conf_get('logging.loglevel'),
                         format=app_conf_get('logging.format'),
@@ -48,8 +51,11 @@ def update_logging(loglevel, logtofile=False):
     if not app_conf_get('logging.log_to_file') and logtofile:
         logging.info('Logging to file')
         basedir = os.path.dirname(app_conf_get('logging.logfile'))
-        if not os.path.exists(basedir):
-            os.makedirs(basedir)
+        try:
+            if not os.path.exists(basedir):
+                os.makedirs(basedir)
+        except Exception as ex:
+            logging.error('Failed creating a new directory "{}": {}'.format(basedir, ex))
         handler_file = logging.FileHandler(app_conf_get('logging.logfile'), mode='w', encoding='utf-8', delay=False)
         handler_file.setLevel(_lvl)
         handler_file.setFormatter(logging.Formatter(fmt=app_conf_get('logging.format'), datefmt=app_conf_get('logging.datefmt')))
