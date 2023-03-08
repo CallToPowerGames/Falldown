@@ -12,7 +12,7 @@ import logging
 import time
 from pathlib import Path
 
-from lib.Utils import load_i18n
+from lib.Utils import load_i18n, write_game_conf
 
 class I18n():
     """I18n"""
@@ -108,6 +108,8 @@ class I18n():
         logging.info('Switched language to "{}"'.format(self.language_main))
         lang = self.languages[self.languages.index(self.language_main)] if self.language_main in self.languages else self.languages['en']
         self.load_language(lang)
+        self.game_config.set('languages.main', lang)
+        write_game_conf(self.basedir, lang)
 
     def set(self, key, value):
         """Sets the value for the given key
