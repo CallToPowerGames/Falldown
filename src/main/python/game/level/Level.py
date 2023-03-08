@@ -31,8 +31,9 @@ class Level():
         self.game_data = game_data
 
         self.screen_size = self.game_data.game_config.get('screen.size')
-        self.min_x = self.game_data.game_config.get('offset.max.left') * self.game_data.game_config.get('level.generator.modifier')
-        self.max_x = self.game_data.game_config.get('offset.max.right') * self.game_data.game_config.get('level.generator.modifier')
+        self.level_generator_modifier = self.game_data.game_config.get('level.generator.modifier')
+        self.min_x = self.game_data.game_config.get('offset.max.left') * self.level_generator_modifier
+        self.max_x = self.game_data.game_config.get('offset.max.right') * self.level_generator_modifier
         self.gap_min = self.game_data.game_config.get('level.segments.gap.min')
         self.gap_add_max = self.game_data.game_config.get('level.segments.gap.add.max')
         self.segment_height = self.game_data.game_config.get('level.segments.height')

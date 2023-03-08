@@ -17,7 +17,7 @@
     "scene.pause.pause": "Pause",
     "scene.pause.help": "Drücke <Leerzeichen>, um fortzufahren oder <Escape>, um das Spiel zu beenden.",
     "scene.gameover.gameover": "Spiel vorbei!",
-    "scene.gameover.help": "Drücke <Enter> oder <Escape>, um das Spiel zu beenden",
+    "scene.gameover.help": "Drücke <Enter> oder <Escape>, um das Spiel zu beenden.",
     "scene.exit.txt": "Tschüss!",
     "scene.game.score": "Punkte: {}",
     "scene.game.go": "Los, {}!",
