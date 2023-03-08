@@ -9,7 +9,9 @@ from config.AppConfig import app_conf_get
 
 def log_app_info():
     """Prints app info"""
-    logging.info('Falldown version {} build {}, a game by {}'.format(app_conf_get('version'), app_conf_get('build'), app_conf_get('author')))
+    logging.info('====================================================================')
+    logging.info('|| Falldown version {} build {}, a game by {} ||'.format(app_conf_get('version'), app_conf_get('build'), app_conf_get('author')))
+    logging.info('====================================================================')
 
 def initialize_logger():
     """Initializes the logger"""
@@ -24,7 +26,7 @@ def initialize_logger():
                         datefmt=app_conf_get('logging.datefmt'))
 
     if app_conf_get('logging.log_to_file'):
-        handler_file = logging.FileHandler(app_conf_get('logging.logfile'), mode='w', encoding=None, delay=False)
+        handler_file = logging.FileHandler(app_conf_get('logging.logfile'), mode='w', encoding='utf-8', delay=False)
         handler_file.setLevel(app_conf_get('logging.loglevel'))
         handler_file.setFormatter(logging.Formatter(fmt=app_conf_get('logging.format'), datefmt=app_conf_get('logging.datefmt')))
         logging.getLogger().addHandler(handler_file)
@@ -48,7 +50,7 @@ def update_logging(loglevel, logtofile=False):
         basedir = os.path.dirname(app_conf_get('logging.logfile'))
         if not os.path.exists(basedir):
             os.makedirs(basedir)
-        handler_file = logging.FileHandler(app_conf_get('logging.logfile'), mode='w', encoding=None, delay=False)
+        handler_file = logging.FileHandler(app_conf_get('logging.logfile'), mode='w', encoding='utf-8', delay=False)
         handler_file.setLevel(_lvl)
         handler_file.setFormatter(logging.Formatter(fmt=app_conf_get('logging.format'), datefmt=app_conf_get('logging.datefmt')))
         logging.getLogger().addHandler(handler_file)
@@ -72,8 +74,36 @@ def get_font(name, size, system_font_name, basedir, base_path):
         font = os.path.join(main_font_dir, font_path)
         return pygame.font.Font(font, size)
     except Exception as e:
-        logging.error('Could not find font, falling back to system font')
+        logging.error('Could not find font "{}"'.format(name))
+
+    logging.info('Falling back to system font')
+    try:
         return pygame.font.SysFont(system_font_name, size)
+    except Exception as e:
+        raise SystemExit('Could not system font "{}": {}'.format(file_path, e))
+
+def load_i18n(basedir, lang):
+    """Loads the i18n
+
+    :param basedir: The base path
+    :param lang: The language
+    """
+    file_path = os.path.join(basedir, 'resources', 'i18n', '{}.json'.format(lang))
+    logging.info('Trying to load translations from "{}"'.format(file_path))
+
+    translations = {}
+    
+    if os.path.isfile(file_path):
+        logging.info('Translations exist. Loading from "{}"'.format(file_path))
+        try:
+            with open(file_path, 'r', encoding='utf-8') as jsonfile:
+                translations = json.load(jsonfile)
+        except Exception as ex:
+            logging.error('Failed loading from "{}": {}'.format(file_path, ex))
+    else:
+        logging.info('Translations "{}" do not exist.'.format(file_path))
+
+    return translations
 
 def load_game_conf(basedir):
     """
@@ -105,7 +135,7 @@ def load_game_conf(basedir):
         logging.info('Game config exists. Loading from "{}"'.format(file_path))
         loaded = False
         try:
-            with open(file_path, 'r') as jsonfile:
+            with open(file_path, 'r', encoding='utf-8') as jsonfile:
                 game_config = json.load(jsonfile)
                 loaded = True
         except Exception as ex:
@@ -115,13 +145,14 @@ def load_game_conf(basedir):
             try:
                 if not os.path.exists(home_dir_path):
                     os.makedirs(home_dir_path)
-                try:
-                    with open(home_file_path, 'w') as jsonfile:
-                        json.dump(game_config, jsonfile)
-                except Exception as ex:
-                    logging.error('Failed writing to "{}": {}'.format(home_file_path, ex))
             except Exception as ex:
-                logging.error('Failed creating a new directory in home directory "{}"'.format(home_dir_path, ex))
+                logging.error('Failed creating a new directory in home directory "{}": {}'.format(home_dir_path, ex))
+
+            try:
+                with open(home_file_path, 'w') as jsonfile:
+                    json.dump(game_config, jsonfile)
+            except Exception as ex:
+                logging.error('Failed writing to "{}": {}'.format(home_file_path, ex))
     else:
         logging.info('Not loading any game config')
 
@@ -189,15 +220,16 @@ def save_highscore_db(cryptography, highscore_db, basedir):
     try:
         if not os.path.exists(home_dir_path):
             os.makedirs(home_dir_path)
-        try:
-            with open(home_file_path, 'wb') as file:
-                dump = json.dumps(highscore_db)
-                encrypted = cryptography.encrypt(dump)
-                file.write(encrypted)
-        except Exception as ex:
-            logging.error('Failed writing to "{}": {}'.format(home_file_path, ex))
     except Exception as ex:
-        logging.error('Failed creating a new directory in home directory "{}"'.format(home_dir_path, ex))
+        logging.error('Failed creating a new directory in home directory "{}": {}'.format(home_dir_path, ex))
+
+    try:
+        with open(home_file_path, 'wb') as file:
+            dump = json.dumps(highscore_db)
+            encrypted = cryptography.encrypt(dump)
+            file.write(encrypted)
+    except Exception as ex:
+        logging.error('Failed writing to "{}": {}'.format(home_file_path, ex))
 
 def load_key(basedir):
     """
@@ -214,6 +246,7 @@ def load_key(basedir):
             key = f.read()
     except pygame.error:
         raise SystemExit('Could not load key "{}": {}'.format(file_path, pygame.get_error()))
+
     return key
 
 def load_image(basedir, path):
@@ -229,6 +262,7 @@ def load_image(basedir, path):
         surface = pygame.image.load(file_path)
     except pygame.error:
         raise SystemExit('Could not load image "{}": {}'.format(file_path, pygame.get_error()))
+
     return surface
 
 def load_sound(basedir, path):

@@ -14,8 +14,6 @@ import random
 
 import pygame
 
-from i18n.Translations import translate
-
 from game.scenes.Scene import Scene
 from game.GameState import State
 from game.sprites.Background import Background
@@ -33,6 +31,7 @@ class PlayerSelectionScene(Scene):
         self.screen_size = self.game_data.game_config.get('screen.size')
         self.font_xl = self.game_data.cache.font_cache.get('main.xl')
         self.font_l = self.game_data.cache.font_cache.get('main.l')
+        self.font_m = self.game_data.cache.font_cache.get('main.m')
         self.font_s = self.game_data.cache.font_cache.get('main.s')
         self.font_xs = self.game_data.cache.font_cache.get('main.xs')
         self.text_color_logo = self.game_data.game_config.get('text.color.logo')
@@ -43,14 +42,14 @@ class PlayerSelectionScene(Scene):
 
         self.curr_player_index = 0
         self.last_valid_player_index = self.curr_player_index
-
         self.show_info = False
         self.screen_mid = self.screen_size[0] / 2, self.screen_size[1] / 2
         self.background = None
-        self.items = []
         self.imageitems = []
-        self.item_back = None
+        self.item_logo = None
         self.item_random = None
+        self.item_back = None
+        self.item_help = None
 
         self._load_players()
         self._init_items()
@@ -63,7 +62,8 @@ class PlayerSelectionScene(Scene):
         for i in range(0, self.game_data.game_config.get('player.nr')):
             nr_pl = i + 1
             self.game_data.players.append({
-                'name': self.game_data.game_config.get('player.name.{}'.format(nr_pl)),
+                'name': self.game_data.i18n.get('player.name.{}'.format(nr_pl)),
+                'name_key': 'player.name.{}'.format(nr_pl),
                 'size': self.game_data.game_config.get('player.size.{}'.format(nr_pl)),
                 'speed_start': self.game_data.game_config.get('player.speed.start.{}'.format(nr_pl)),
                 'speed_max': self.game_data.game_config.get('player.speed.max.{}'.format(nr_pl)),
@@ -100,7 +100,7 @@ class PlayerSelectionScene(Scene):
         width = 650
         height = 150
         rect = (self.screen_mid[0] - width / 2, 0, width, height)
-        item_logo = MenuItem(
+        self.item_logo = MenuItem(
                                     self.game_data,
                                     self.font_xl,
                                     rect,
@@ -109,10 +109,10 @@ class PlayerSelectionScene(Scene):
                                     height=height,
                                     color=self.text_color_logo,
                                     rect_width=-1,
-                                    text=translate('game.name'),
+                                    text=self.game_data.i18n.get('game.name'),
                                     banner=True
                                 )
-        self.items.append(item_logo)
+        self.items.append(self.item_logo)
 
         item_width = 520
         item_height = 80
@@ -131,7 +131,7 @@ class PlayerSelectionScene(Scene):
                                 height=height,
                                 color=self.text_color,
                                 rect_width=-1,
-                                text=translate('menu.playerselection.txt')
+                                text=self.game_data.i18n.get('menu.playerselection.txt')
                             )
         self.items.append(item_playerselection)
 
@@ -169,14 +169,14 @@ class PlayerSelectionScene(Scene):
         rect = (self.screen_mid[0] - width - 20, self.screen_mid[1] + height + 85, width, height)
         self.item_random = MenuItem(
                                     self.game_data,
-                                    self.font_l,
+                                    self.font_m,
                                     rect,
                                     (self.screen_mid[0] - width / 2 - 20, self.screen_mid[1] + height + height / 2 + 90),
                                     width=width,
                                     height=height,
                                     color=self.text_color,
                                     color_inactive=self.text_color_inactive,
-                                    text=translate('menu.random.txt'),
+                                    text=self.game_data.i18n.get('menu.random.txt'),
                                     active=False,
                                     play_sound_on_activation=True,
                                     button=True
@@ -189,14 +189,14 @@ class PlayerSelectionScene(Scene):
         rect = (self.screen_mid[0] + 20, self.screen_mid[1] + height + 85, width, height)
         self.item_back = MenuItem(
                                     self.game_data,
-                                    self.font_l,
+                                    self.font_m,
                                     rect,
                                     (self.screen_mid[0] + width / 2 + 20, self.screen_mid[1] + height + height / 2 + 90),
                                     width=width,
                                     height=height,
                                     color=self.text_color,
                                     color_inactive=self.text_color_inactive,
-                                    text=translate('menu.back.txt'),
+                                    text=self.game_data.i18n.get('menu.back.txt'),
                                     active=False,
                                     play_sound_on_activation=True,
                                     button=True
@@ -215,12 +215,24 @@ class PlayerSelectionScene(Scene):
                                     width=width,
                                     height=height,
                                     color=self.text_color_help,
-                                    text=translate('menu.playerselection.help'),
+                                    text=self.game_data.i18n.get('menu.playerselection.help'),
                                     rotate=True,
                                     rotate_ticks_max=6,
                                     button_none=True
                                 )
         self.items.append(self.item_help)
+
+    def reload_i18n_texts(self):
+        """Reloads the i18n texts"""
+        self.item_logo.set_text(self.game_data.i18n.get('game.name'))
+        self.item_random.set_text(self.game_data.i18n.get('menu.random.txt'))
+        self.item_back.set_text(self.game_data.i18n.get('menu.back.txt'))
+        self.item_help.set_text(self.game_data.i18n.get('menu.playerselection.help'))
+        for i, item in enumerate(self.imageitems):
+            nr_pl = i + 1
+            self.imageitems[i].player['name'] = self.game_data.i18n.get('player.name.{}'.format(nr_pl))
+            self.imageitems[i].update()
+        self._update_selection()
 
     def _update_player_info(self):
         for imageitem in self.imageitems:
@@ -237,16 +249,16 @@ class PlayerSelectionScene(Scene):
                 imageitem.sound_played = True
 
         if self.curr_player_index < -1:
-            self.item_help.set_text(translate('menu.back.help'))
+            self.item_help.set_text(self.game_data.i18n.get('menu.back.help'))
             self.item_help.rotate = False
         elif self.curr_player_index == -1:
-            self.item_help.set_text(translate('menu.random.help'))
-            self.item_help.rotate = False
+            self.item_help.set_text(self.game_data.i18n.get('menu.random.help'))
+            self.item_help.rotate = True
         else:
             if not self.show_info:
-                self.item_help.set_text(translate('menu.playerselection.help'))
+                self.item_help.set_text(self.game_data.i18n.get('menu.playerselection.help'))
             else:
-                self.item_help.set_text(translate('menu.playerselection.showinfo.help'))
+                self.item_help.set_text(self.game_data.i18n.get('menu.playerselection.showinfo.help'))
             self.item_help.rotate = True
 
     def _keypress_arrow_up(self):

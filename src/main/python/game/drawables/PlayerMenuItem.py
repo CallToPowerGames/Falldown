@@ -12,7 +12,6 @@ import logging
 
 import pygame
 
-from i18n.Translations import translate
 from game.drawables.Drawable import Drawable
 from game.drawables.DrawableUtils import draw_text_in_rect
 
@@ -90,6 +89,7 @@ class PlayerMenuItem(Drawable):
         self._show_info = False
         self.text_current = ''
         self.text_current_arr = []
+        self.ljust_val = 50
 
         self._init()
 
@@ -97,13 +97,23 @@ class PlayerMenuItem(Drawable):
         """Initiailizes the object"""
         self.reset_text()
 
-        ljust_val = 50
         self.text_current_arr.append('{}'.format(self.player['name']))
-        self.text_current_arr.append(translate('menu.item.player.speed.start').format(self.player['speed_start'][0], self.player['speed_start'][1]).ljust(ljust_val))
-        self.text_current_arr.append(translate('menu.item.player.speed.max').format(self.player['speed_max'][0], self.player['speed_max'][1]).ljust(ljust_val))
-        self.text_current_arr.append(translate('menu.item.player.speed.increase').format(self.player['speed_increase'][0], self.player['speed_increase'][1]).ljust(ljust_val))
-        self.text_current_arr.append(translate('menu.item.player.speed.decrease').format(self.player['speed_decrease']).ljust(ljust_val))
-        self.text_current_arr.append(translate('menu.item.player.falling.increase').format(self.player['falling_factor_increase']).ljust(ljust_val))
+        self.text_current_arr.append(self.game_data.i18n.get('menu.item.player.speed.start').format(self.player['speed_start'][0], self.player['speed_start'][1]).ljust(self.ljust_val))
+        self.text_current_arr.append(self.game_data.i18n.get('menu.item.player.speed.max').format(self.player['speed_max'][0], self.player['speed_max'][1]).ljust(self.ljust_val))
+        self.text_current_arr.append(self.game_data.i18n.get('menu.item.player.speed.increase').format(self.player['speed_increase'][0], self.player['speed_increase'][1]).ljust(self.ljust_val))
+        self.text_current_arr.append(self.game_data.i18n.get('menu.item.player.speed.decrease').format(self.player['speed_decrease']).ljust(self.ljust_val))
+        self.text_current_arr.append(self.game_data.i18n.get('menu.item.player.falling.increase').format(self.player['falling_factor_increase']).ljust(self.ljust_val))
+
+    def update(self):
+        """Updates the item"""
+        self.set_text(self.player['name'])
+        self.text_current_arr = []
+        self.text_current_arr.append('{}'.format(self.player['name']))
+        self.text_current_arr.append(self.game_data.i18n.get('menu.item.player.speed.start').format(self.player['speed_start'][0], self.player['speed_start'][1]).ljust(self.ljust_val))
+        self.text_current_arr.append(self.game_data.i18n.get('menu.item.player.speed.max').format(self.player['speed_max'][0], self.player['speed_max'][1]).ljust(self.ljust_val))
+        self.text_current_arr.append(self.game_data.i18n.get('menu.item.player.speed.increase').format(self.player['speed_increase'][0], self.player['speed_increase'][1]).ljust(self.ljust_val))
+        self.text_current_arr.append(self.game_data.i18n.get('menu.item.player.speed.decrease').format(self.player['speed_decrease']).ljust(self.ljust_val))
+        self.text_current_arr.append(self.game_data.i18n.get('menu.item.player.falling.increase').format(self.player['falling_factor_increase']).ljust(self.ljust_val))
 
     def reset_text(self):
         """Resets rotated to saved text"""

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# -*- coding: 'utf-8 -*-
+# -*- coding: utf-8 -*-
 #
 # Copyright 2023 Denis Meyer
 #
@@ -15,8 +15,8 @@ import tempfile
 
 _app_config = {
     'author': 'Denis Meyer',
-    'version': '1.2',
-    'build': '2023-03-07-3',
+    'version': '1.3',
+    'build': '2023-03-08-1',
     'copyright': '© 2023 Denis Meyer',
     'conf.game.folder': 'falldown',
     'conf.game.name': 'conf.json',

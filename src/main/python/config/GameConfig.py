@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# -*- coding: 'utf-8 -*-
+# -*- coding: utf-8 -*-
 #
 # Copyright 2023 Denis Meyer
 #
@@ -9,11 +9,6 @@
 """GameConfig"""
 
 import logging
-import time
-from pathlib import Path
-import tempfile
-
-import pygame
 
 from lib.Utils import load_game_conf
 import game.Colors as Colors
@@ -23,18 +18,16 @@ class GameConfig():
 
     _config = {
         # In the public config
-        'debug.show': False,
-        'debug.barrier.start': True,
-        'barrier.start.after.lines': 10,
-        'score.plus': 1,
-        'score.plus.clear.linesegment': 2,
-        'score.plus.clear.all': 4,
+        'languages': ['en', 'de'],
+        'languages.main': 'en',
         'logging.level': 'INFO',
         'logging.logtofile': False,
+        'debug.show': False,
+        'debug.barrier.start': True,
         'fps.show': False,
-        'winstyle': 0,
         'font.main.xs.size': 12,
         'font.main.s.size': 25,
+        'font.main.m.size': 40,
         'font.main.l.size': 50,
         'font.main.xl.size': 75,
         'fps.loading': 30,
@@ -46,6 +39,11 @@ class GameConfig():
         'fps.playerselection': 30,
         'fps.game': 60,
         'fps.exit': 30,
+        'barrier.start.after.lines': 10,
+        'score.plus': 1,
+        'score.plus.clear.linesegment': 2,
+        'score.plus.clear.all': 4,
+        'highscore.entries.max': 100,
         'exit.timer1': 2.0,
         'exit.timer2': 0.2,
         'offset.max.up': 0,
@@ -65,11 +63,6 @@ class GameConfig():
         'background.speed.bg.clouds.mid.max': 90,
         'background.speed.bg.clouds.small.min': 30,
         'background.speed.bg.clouds.small.max': 100,
-        'barrier.speed': 130,
-        'barrier.speed.increase': 1,
-        'player.stuck.correction': 2,
-        'player.stuck.threshold': 5,
-        'player.barrier.move.correction': 30,
         'camera.borders': { # Read: "Pixels from [...]"
             'left': 150,
             'right': 150,
@@ -95,6 +88,11 @@ class GameConfig():
         'level.collision.detection.correction.bottom': 8,
         'level.collision.detection.correction.top': 5,
         'level.iterations.showgo': 80,
+        'barrier.speed': 130,
+        'barrier.speed.increase': 1,
+        'player.stuck.correction': 2,
+        'player.stuck.threshold': 5,
+        'player.barrier.move.correction': 30,
         'player.speed.start.1': [0, 80],
         'player.speed.max.1': [550, 700],
         'player.speed.increase.1': [20, 5],
@@ -135,13 +133,13 @@ class GameConfig():
         'player.speed.increase.8': [10, 5],
         'player.speed.decrease.8': 50,
         'player.speed.fallingfactor.increase.8': 0.9,
-        'highscore.entries.max': 100,
         # Not in the public config
         'debug.config.ignore': False,
         'screen.size': (800, 600),
+        'winstyle': 0,
         'menu.music': ['bg/bg-0.wav', 'bg/bg-1.wav'],
         'game.music': ['game/game-0.wav', 'game/game-1.wav', 'game/game-2.wav', 'game/game-3.wav'],
-        'font.sizes': ['xs', 's', 'l', 'xl'],
+        'font.sizes': ['xs', 's', 'm', 'l', 'xl'],
         'font.system': 'freesanbold.ttf',
         'font.main.path': 'yoster-island',
         'font.main.name': 'yoster.ttf',
@@ -164,49 +162,41 @@ class GameConfig():
         'barrier.holder.left.size': (36, 30),
         'barrier.holder.right.size': (36, 30),
         'player.nr': 8, # If number is changed, check logic in PlayerSelectionScene!
-        'player.name.1': 'Grumpy Stone',
         'player.orientationleft.1': True,
         'player.nrimages.idle.1': 14,
         'player.nrimages.run.1': 14,
         'player.size.1': (38, 34),
         'player.rect.inner.1': (3, 4),
-        'player.name.2': 'Pink Finn',
         'player.orientationleft.2': False,
         'player.nrimages.idle.2': 11,
         'player.nrimages.run.2': 12,
         'player.size.2': (32, 32),
         'player.rect.inner.2': (8, 4),
-        'player.name.3': 'VR Guy',
         'player.orientationleft.3': False,
         'player.nrimages.idle.3': 11,
         'player.nrimages.run.3': 12,
         'player.size.3': (32, 32),
         'player.rect.inner.3': (8, 4),
-        'player.name.4': 'Drug Frenzy Bunny',
         'player.orientationleft.4': True,
         'player.nrimages.idle.4': 8,
         'player.nrimages.run.4': 12,
         'player.size.4': (34, 44),
         'player.rect.inner.4': (8, 4),
-        'player.name.5': 'Crazy Chicken',
         'player.orientationleft.5': True,
         'player.nrimages.idle.5': 13,
         'player.nrimages.run.5': 14,
         'player.size.5': (32, 34),
         'player.rect.inner.5': (8, 4),
-        'player.name.6': 'Shroomie',
         'player.orientationleft.6': True,
         'player.nrimages.idle.6': 14,
         'player.nrimages.run.6': 16,
         'player.size.6': (32, 32),
         'player.rect.inner.6': (8, 4),
-        'player.name.7': 'Rhino',
         'player.orientationleft.7': True,
         'player.nrimages.idle.7': 11,
         'player.nrimages.run.7': 6,
         'player.size.7': (52, 34),
         'player.rect.inner.7': (8, 4),
-        'player.name.8': 'Fastest Snail Alive',
         'player.orientationleft.8': True,
         'player.nrimages.idle.8': 15,
         'player.nrimages.run.8': 10,

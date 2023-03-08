@@ -17,6 +17,7 @@ import pygame
 from config.AppConfig import app_conf_set
 from lib.Utils import update_logging, log_app_info
 from cache.Cache import Cache
+from i18n.I18n import I18n
 from config.GameConfig import GameConfig
 from game.GameData import GameData
 from game.Game import Game
@@ -39,6 +40,7 @@ class AppContext():
         self.basedir = basedir
 
         self.game_config = GameConfig(self.basedir)
+        self.i18n = I18n(self.basedir, self.game_config)
         self.cache = Cache(self.basedir, self.game_config)
         self.cryptography = Cryptography(self.basedir)
 
@@ -50,7 +52,7 @@ class AppContext():
         self.cache.cache_initial_sprites()
 
         self.highscore = Highscore(self.cryptography, self.basedir, max_entries=self.game_config.get('highscore.entries.max'))
-        self.game_data = GameData(self.game_config, self.highscore, self.cache)
+        self.game_data = GameData(self.game_config, self.i18n, self.highscore, self.cache)
         self.game = Game(self.game_data)
 
     def _init_modules(self):
@@ -72,10 +74,10 @@ class AppContext():
             pygame.mixer.pre_init(44100, 16, 2, 4096)
             pygame.mixer.init()
         else:
-            raise SystemExit("Sound module required")
+            raise SystemExit('Sound module required')
 
     def run(self):
-        """Initializes and shows the GUI"""
-        logging.info('Initializing AppContext GUI')
+        """Initializes and start the game loop"""
+        logging.info('Initializing AppContext')
 
         return self.game.loop()

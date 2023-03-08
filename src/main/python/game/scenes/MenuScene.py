@@ -15,8 +15,6 @@ from enum import Enum, unique
 import pygame
 
 from config.AppConfig import app_conf_get
-from i18n.Translations import translate
-
 from game.scenes.Scene import Scene
 from game.GameState import State
 from game.sprites.Background import Background
@@ -40,6 +38,7 @@ class MenuScene(Scene):
         self.screen_size = self.game_data.game_config.get('screen.size')
         self.font_xl = self.game_data.cache.font_cache.get('main.xl')
         self.font_l = self.game_data.cache.font_cache.get('main.l')
+        self.font_m = self.game_data.cache.font_cache.get('main.m')
         self.font_s = self.game_data.cache.font_cache.get('main.s')
         self.font_xs = self.game_data.cache.font_cache.get('main.xs')
         self.text_color_logo = self.game_data.game_config.get('text.color.logo')
@@ -55,8 +54,11 @@ class MenuScene(Scene):
         self.curr_bg_music = ''
         self.active_item = MenuSceneActiveItem.START
         self.background = None
-        self.items = []
+        self.item_logo = None
+        self.item_by = None
+        self.item_version = None
         self.item_startgame = None
+        self.item_highscore = None
         self.item_options = None
         self.item_quitgame = None
         self.item_help = None
@@ -73,7 +75,7 @@ class MenuScene(Scene):
         width = 650
         height = 150
         rect = (self.screen_mid[0] - width / 2, 0, width, height)
-        item_logo = MenuItem(
+        self.item_logo = MenuItem(
                                     self.game_data,
                                     self.font_xl,
                                     rect,
@@ -82,16 +84,16 @@ class MenuScene(Scene):
                                     height=height,
                                     color=self.text_color_logo,
                                     rect_width=-1,
-                                    text=translate('game.name'),
+                                    text=self.game_data.i18n.get('game.name'),
                                     banner=True
                                 )
-        self.items.append(item_logo)
+        self.items.append(self.item_logo)
 
         # By
         width = 500
         height = 70
         rect = (self.screen_mid[0] - width / 2, 0 - height / 2, width, height)
-        item_by = MenuItem(
+        self.item_by = MenuItem(
                                     self.game_data,
                                     self.font_s,
                                     rect,
@@ -100,15 +102,15 @@ class MenuScene(Scene):
                                     height=height,
                                     color=self.text_color_inactive,
                                     rect_width=-1,
-                                    text=translate('game.by').format(app_conf_get('author'))
+                                    text=self.game_data.i18n.get('game.by').format(app_conf_get('author'))
                                 )
-        self.items.append(item_by)
+        self.items.append(self.item_by)
 
         # Version
         width = 500
         height = 60
         rect = (self.screen_mid[0] - width / 2, height + 60, width, height)
-        item_version = MenuItem(
+        self.item_version = MenuItem(
                                     self.game_data,
                                     self.font_xs,
                                     rect,
@@ -117,11 +119,11 @@ class MenuScene(Scene):
                                     height=height,
                                     color=self.text_color_inactive,
                                     rect_width=-1,
-                                    text=translate('game.version').format(app_conf_get('version'), app_conf_get('build'))
+                                    text=self.game_data.i18n.get('game.version').format(app_conf_get('version'), app_conf_get('build'))
                                 )
-        self.items.append(item_version)
+        self.items.append(self.item_version)
 
-        item_width = 450
+        item_width = 400
         item_height = 80
         gap = 2
 
@@ -131,14 +133,14 @@ class MenuScene(Scene):
         rect = (self.screen_mid[0] - width / 2, self.screen_mid[1] - height - 60 + gap, width, height)
         self.item_startgame = MenuItem(
                                     self.game_data,
-                                    self.font_l,
+                                    self.font_m,
                                     rect,
                                     (self.screen_mid[0], self.screen_mid[1] - height / 2 - 60 + gap * 3),
                                     width=width,
                                     height=height,
                                     color=self.text_color,
                                     color_inactive=self.text_color_inactive,
-                                    text=translate('menu.start_game.txt'),
+                                    text=self.game_data.i18n.get('menu.start_game.txt'),
                                     play_sound_on_activation=True,
                                     button=True
                                 )
@@ -151,14 +153,14 @@ class MenuScene(Scene):
         rect = (self.screen_mid[0] - width / 2, self.screen_mid[1] - height / 2 - 20, width, height)
         self.item_highscore = MenuItem(
                                     self.game_data,
-                                    self.font_l,
+                                    self.font_m,
                                     rect,
                                     (self.screen_mid[0], self.screen_mid[1] - 20),
                                     width=width,
                                     height=height,
                                     color=self.text_color,
                                     color_inactive=self.text_color_inactive,
-                                    text=translate('menu.highscore.txt'),
+                                    text=self.game_data.i18n.get('menu.highscore.txt'),
                                     active=False,
                                     play_sound_on_activation=True,
                                     button=True
@@ -171,14 +173,14 @@ class MenuScene(Scene):
         rect = (self.screen_mid[0] - width / 2, self.screen_mid[1] + height / 2 - 20, width, height)
         self.item_options = MenuItem(
                                     self.game_data,
-                                    self.font_l,
+                                    self.font_m,
                                     rect,
                                     (self.screen_mid[0], self.screen_mid[1] + height - 20),
                                     width=width,
                                     height=height,
                                     color=self.text_color,
                                     color_inactive=self.text_color_inactive,
-                                    text=translate('menu.options.txt'),
+                                    text=self.game_data.i18n.get('menu.options.txt'),
                                     active=False,
                                     play_sound_on_activation=True,
                                     button=True
@@ -191,14 +193,14 @@ class MenuScene(Scene):
         rect = (self.screen_mid[0] - width / 2, self.screen_mid[1] + height + 20 - gap, width, height)
         self.item_quitgame = MenuItem(
                                     self.game_data,
-                                    self.font_l,
+                                    self.font_m,
                                     rect,
                                     (self.screen_mid[0], self.screen_mid[1] + height + height / 2 + 20 - gap / 2),
                                     width=width,
                                     height=height,
                                     color=self.text_color,
                                     color_inactive=self.text_color_inactive,
-                                    text=translate('menu.quit_game.txt'),
+                                    text=self.game_data.i18n.get('menu.quit_game.txt'),
                                     active=False,
                                     play_sound_on_activation=True,
                                     button=True
@@ -217,17 +219,22 @@ class MenuScene(Scene):
                                     width=width,
                                     height=height,
                                     color=self.text_color_help,
-                                    text=translate('menu.start_game.help'),
+                                    text=self.game_data.i18n.get('menu.start_game.help'),
                                     button_none=True
                                 )
         self.items.append(self.item_help)
 
-    def _reset_texts(self):
-        """Resets the texts to original position"""
-        self.item_startgame.reset_text()
-        self.item_highscore.reset_text()
-        self.item_options.reset_text()
-        self.item_quitgame.reset_text()
+    def reload_i18n_texts(self):
+        """Reloads the i18n texts"""
+        self.item_logo.set_text(self.game_data.i18n.get('game.name'))
+        self.item_by.set_text(self.game_data.i18n.get('game.by').format(app_conf_get('author')))
+        self.item_version.set_text(self.game_data.i18n.get('game.version').format(app_conf_get('version'), app_conf_get('build')))
+        self.item_startgame.set_text(self.game_data.i18n.get('menu.start_game.txt'))
+        self.item_highscore.set_text(self.game_data.i18n.get('menu.highscore.txt'))
+        self.item_options.set_text(self.game_data.i18n.get('menu.options.txt'))
+        self.item_quitgame.set_text(self.game_data.i18n.get('menu.quit_game.txt'))
+        self.item_help.set_text(self.game_data.i18n.get('menu.options.help'))
+        self.reset_texts()
 
     def _keypress_arrow_up(self):
         if self.active_item == MenuSceneActiveItem.HIGHSCORE:
@@ -236,24 +243,24 @@ class MenuScene(Scene):
             self.item_highscore.active = False
             self.item_startgame.active = True
             self.active_item = MenuSceneActiveItem.START
-            self._reset_texts()
-            self.item_help.set_text(translate('menu.start_game.help'))
+            self.reset_texts()
+            self.item_help.set_text(self.game_data.i18n.get('menu.start_game.help'))
         elif self.active_item == MenuSceneActiveItem.OPTIONS:
             self.item_quitgame.active = False
             self.item_options.active = False
             self.item_startgame.active = False
             self.item_highscore.active = True
             self.active_item = MenuSceneActiveItem.HIGHSCORE
-            self._reset_texts()
-            self.item_help.set_text(translate('menu.highscore.help'))
+            self.reset_texts()
+            self.item_help.set_text(self.game_data.i18n.get('menu.highscore.help'))
         elif self.active_item == MenuSceneActiveItem.QUIT:
             self.item_quitgame.active = False
             self.item_startgame.active = False
             self.item_highscore.active = False
             self.item_options.active = True
             self.active_item = MenuSceneActiveItem.OPTIONS
-            self._reset_texts()
-            self.item_help.set_text(translate('menu.options.help'))
+            self.reset_texts()
+            self.item_help.set_text(self.game_data.i18n.get('menu.options.help'))
 
     def _keypress_arrow_down(self):
         if self.active_item == MenuSceneActiveItem.START:
@@ -262,24 +269,24 @@ class MenuScene(Scene):
             self.item_options.active = False
             self.item_highscore.active = True
             self.active_item = MenuSceneActiveItem.HIGHSCORE
-            self._reset_texts()
-            self.item_help.set_text(translate('menu.highscore.help'))
+            self.reset_texts()
+            self.item_help.set_text(self.game_data.i18n.get('menu.highscore.help'))
         elif self.active_item == MenuSceneActiveItem.HIGHSCORE:
             self.item_startgame.active = False
             self.item_highscore.active = False
             self.item_quitgame.active = False
             self.item_options.active = True
             self.active_item = MenuSceneActiveItem.OPTIONS
-            self._reset_texts()
-            self.item_help.set_text(translate('menu.options.help'))
+            self.reset_texts()
+            self.item_help.set_text(self.game_data.i18n.get('menu.options.help'))
         elif self.active_item == MenuSceneActiveItem.OPTIONS:
             self.item_startgame.active = False
             self.item_highscore.active = False
             self.item_options.active = False
             self.item_quitgame.active = True
             self.active_item = MenuSceneActiveItem.QUIT
-            self._reset_texts()
-            self.item_help.set_text(translate('menu.quit_game.help'))
+            self.reset_texts()
+            self.item_help.set_text(self.game_data.i18n.get('menu.quit_game.help'))
 
     def start_music(self):
         if not self.playing_music:
@@ -310,10 +317,10 @@ class MenuScene(Scene):
                     self._keypress_arrow_down()
                 elif event.key == pygame.K_RETURN:
                     if self.active_item == MenuSceneActiveItem.HIGHSCORE:
-                        self._reset_texts()
+                        self.reset_texts()
                         self.set_state(State.HIGHSCORE)
                     elif self.active_item == MenuSceneActiveItem.OPTIONS:
-                        self._reset_texts()
+                        self.reset_texts()
                         self.set_state(State.OPTIONS)
                     elif self.active_item == MenuSceneActiveItem.QUIT:
                         self.exit()

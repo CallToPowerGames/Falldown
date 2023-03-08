@@ -104,13 +104,19 @@ class Cache():
         }
 
     def _cache_sounds(self, sounds_dict):
-        """Caches the given sounds"""
+        """Caches the given sounds
+
+        :param sounds_dict: The sounds dictionary
+        """
         for key, path in sounds_dict.items():
             logging.debug('Caching sound "{}": "{}"'.format(key, path))
             self.sound_cache.load_sound(key, path)
 
     def _cache_sprites(self, sprites_dict):
-        """Caches the given sprites"""
+        """Caches the given sprites
+
+        :param sprites_dict: The sprites dictionary
+        """
         for key, path in sprites_dict.items():
             logging.debug('Caching sprite "{}": "{}"'.format(key, path))
             self.sprite_cache.get_or_load(key, path)

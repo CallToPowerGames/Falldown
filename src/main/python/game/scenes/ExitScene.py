@@ -12,7 +12,6 @@ import logging
 
 import pygame
 
-from i18n.Translations import translate
 from game.drawables.DrawableUtils import draw_text_in_rect
 
 from game.scenes.Scene import Scene
@@ -29,13 +28,14 @@ class ExitScene(Scene):
         self.screen = self.game_data.game_config.get('screen')
         self.screen_size = self.game_data.game_config.get('screen.size')
         self.font_xl = self.game_data.cache.font_cache.get('main.xl')
-        self.font_l = self.game_data.cache.font_cache.get('main.l')
+        self.font_m = self.game_data.cache.font_cache.get('main.m')
         self.text_color_logo = self.game_data.game_config.get('text.color.logo')
         self.text_color = self.game_data.game_config.get('text.color')
 
         self.screen_mid = self.screen_size[0] / 2, self.screen_size[1] / 2
         self.background = None
-        self.items = []
+        self.item_logo = None
+        self.item_exit = None
 
         self._init_items()
 
@@ -49,7 +49,7 @@ class ExitScene(Scene):
         width = 650
         height = 150
         rect = (self.screen_mid[0] - width / 2, 0, width, height)
-        item_logo = MenuItem(
+        self.item_logo = MenuItem(
                                     self.game_data,
                                     self.font_xl,
                                     rect,
@@ -58,25 +58,30 @@ class ExitScene(Scene):
                                     height=height,
                                     color=self.text_color_logo,
                                     rect_width=-1,
-                                    text=translate('game.name')
+                                    text=self.game_data.i18n.get('game.name')
                                 )
-        self.items.append(item_logo)
+        self.items.append(self.item_logo)
 
-        # Loading
+        # Exit
         width = 250
         height = 80
         rect = (self.screen_mid[0] - width / 2, self.screen_mid[1] - height / 2, width, height)
-        item_exit = MenuItem(
+        self.item_exit = MenuItem(
                                     self.game_data,
-                                    self.font_l,
+                                    self.font_m,
                                     rect,
                                     (self.screen_mid[0], self.screen_mid[1] + 5),
                                     width=width,
                                     height=height,
                                     color=self.text_color,
-                                    text='{} '.format(translate('scene.exit.txt'))
+                                    text='{} '.format(self.game_data.i18n.get('scene.exit.txt'))
                                 )
-        self.items.append(item_exit)
+        self.items.append(self.item_exit)
+
+    def reload_i18n_texts(self):
+        """Reloads the i18n texts"""
+        self.item_logo.set_text(self.game_data.i18n.get('game.name'))
+        self.item_exit.set_text('{} '.format(self.game_data.i18n.get('scene.exit.txt')))
 
     def loop(self, tick):
         dt = tick / 1000

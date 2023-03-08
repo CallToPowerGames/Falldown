@@ -24,12 +24,22 @@ class Scene():
         self.fps = fps
         self.game_data = game_data
 
+        self.items = []
         self.init = False
 
     def exit(self):
         """Exits the game"""
         logging.debug('Exit')
         self.game_data.exit()
+
+    def reload_i18n_texts(self):
+        """Reloads the i18n texts"""
+        pass
+
+    def reset_texts(self):
+        """Resets the texts to original position"""
+        for item in self.items:
+            item.reset_text()
 
     def set_state(self, state):
         """Sets the state

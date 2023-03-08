@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# -*- coding: 'utf-8 -*-
+# -*- coding: utf-8 -*-
 #
 # Copyright 2023 Denis Meyer
 #
@@ -18,6 +18,7 @@ class FontCache():
     _cache = {
         'main.xs': None,
         'main.s': None,
+        'main.m': None,
         'main.l': None,
         'main.xl': None
     }
@@ -31,7 +32,7 @@ class FontCache():
         
         self.basedir = basedir
 
-    def get_or_load(self, key, name, size, system_font_name, path=None):
+    def get_or_load(self, key, name, size, system_font_name, path):
         """Gets or, if not present, loads the font
 
         :param key: The key

@@ -26,16 +26,18 @@ from game.scenes.ExitScene import ExitScene
 class GameData():
     """Game data"""
 
-    def __init__(self, game_config, highscore, cache):
+    def __init__(self, game_config, i18n, highscore, cache):
         """Initializes the Game data
 
         :param game_config: The game config
+        :param i18n: The i18n
         :param highscore: The highscore
         :param cache: The cache
         """
         logging.info('Initializing game data')
 
         self.game_config = game_config
+        self.i18n = i18n
         self.highscore = highscore
         self.cache = cache
 
@@ -89,6 +91,15 @@ class GameData():
         self.scenes[State.GAME] = self.scene_game
         self.scenes[State.PAUSE] = self.scene_pause
         self.scenes[State.GAMEOVER] = self.scene_gameover
+
+    def reload_i18n_texts(self):
+        """Reloads the i18n texts of all scenes"""
+        for i, player in enumerate(self.players):
+            nr_pl = i + 1
+            player['name'] = self.i18n.get('player.name.{}'.format(nr_pl))
+        for state in self.scenes:
+            self.scenes[state].reload_i18n_texts()
+            self.scenes[state].reset_texts()
 
     def toggle_fullscreen(self):
         """Toggles between fullscreen modes"""

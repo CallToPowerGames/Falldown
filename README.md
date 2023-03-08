@@ -4,10 +4,15 @@
 * Two evil swines on the left and on the right side have a laser gun and will hunt the player down
 * Some of the lines are moving from left to right
 * Every sketchy guys have slightly different behaviour
-* Two Powers
+* Two "Powers" to run over
     * Clear a single segment
     * Clear all segments
 * Local highscore
+* Options
+    * Play in windowed or fullscreen mode
+    * Different languages
+        * English
+        * German
 
 ## Key mappings
 

@@ -12,10 +12,7 @@ import logging
 
 import pygame
 
-from i18n.Translations import translate
-
 from game.drawables.DrawableUtils import draw_text_in_rect
-
 from game.scenes.Scene import Scene
 from game.GameState import State
 from game.drawables.MenuItem import MenuItem
@@ -28,7 +25,7 @@ class GameOverScene(Scene):
 
         self.screen_size = self.game_data.game_config.get('screen.size')
         self.font_xl = self.game_data.cache.font_cache.get('main.xl')
-        self.font_l = self.game_data.cache.font_cache.get('main.l')
+        self.font_m = self.game_data.cache.font_cache.get('main.m')
         self.font_s = self.game_data.cache.font_cache.get('main.s')
         self.text_color_logo = self.game_data.game_config.get('text.color.logo')
         self.text_color_score = self.game_data.game_config.get('text.color.score')
@@ -37,8 +34,10 @@ class GameOverScene(Scene):
         self.text_color_help = self.game_data.game_config.get('text.color.help')
 
         self.screen_mid = self.screen_size[0] / 2, self.screen_size[1] / 2
-        self.items = []
+        self.item_logo = None
         self.item_score = None
+        self.item_gameover = None
+        self.item_help = None
         self.highscore_db = []
         self.saved_highscore = False
 
@@ -52,7 +51,7 @@ class GameOverScene(Scene):
         width = 650
         height = 150
         rect = (self.screen_mid[0] - width / 2, 0, width, height)
-        item_logo = MenuItem(
+        self.item_logo = MenuItem(
                                     self.game_data,
                                     self.font_xl,
                                     rect,
@@ -61,9 +60,9 @@ class GameOverScene(Scene):
                                     height=height,
                                     color=self.text_color_logo,
                                     rect_width=-1,
-                                    text=translate('game.name')
+                                    text=self.game_data.i18n.get('game.name')
                                 )
-        self.items.append(item_logo)
+        self.items.append(self.item_logo)
 
         # Score
         width = 500
@@ -71,14 +70,14 @@ class GameOverScene(Scene):
         rect = (self.screen_mid[0] - width / 2, self.screen_mid[1] - height - height / 2, width, height)
         self.item_score = MenuItem(
                                     self.game_data,
-                                    self.font_l,
+                                    self.font_m,
                                     rect,
                                     (self.screen_mid[0], self.screen_mid[1] - height),
                                     width=width,
                                     height=height,
                                     color=self.text_color_score,
                                     rect_width=-1,
-                                    text=translate('scene.pause.score').format(self.game_data.score),
+                                    text=self.game_data.i18n.get('scene.gameover.score').format(self.game_data.score),
                                     banner=True
                                 )
         self.items.append(self.item_score)
@@ -87,25 +86,25 @@ class GameOverScene(Scene):
         width = 400
         height = 80
         rect = (self.screen_mid[0] - width / 2, self.screen_mid[1] - height / 2, width, height)
-        item_gameover = MenuItem(
+        self.item_gameover = MenuItem(
                                     self.game_data,
-                                    self.font_l,
+                                    self.font_m,
                                     rect,
                                     (self.screen_mid[0], self.screen_mid[1] + 5),
                                     width=width,
                                     height=height,
                                     color=self.text_color,
                                     color_inactive=self.text_color_inactive,
-                                    text=translate('scene.gameover.gameover'),
+                                    text=self.game_data.i18n.get('scene.gameover.gameover'),
                                     button_none=True
                                 )
-        self.items.append(item_gameover)
+        self.items.append(self.item_gameover)
 
         # Help
         width = self.screen_size[0] - 20
         height = 80
         rect = (self.screen_mid[0] - width / 2, self.screen_size[1] - height - 10, width, height)
-        item_help = MenuItem(
+        self.item_help = MenuItem(
                                     self.game_data,
                                     self.font_s,
                                     rect,
@@ -113,10 +112,19 @@ class GameOverScene(Scene):
                                     width=width,
                                     height=height,
                                     color=self.text_color_help,
-                                    text=translate('scene.gameover.help'),
+                                    text=self.game_data.i18n.get('scene.gameover.help'),
+                                    rotate=True,
+                                    rotate_ticks_max=6,
                                     button_none=True
                                 )
-        self.items.append(item_help)
+        self.items.append(self.item_help)
+
+    def reload_i18n_texts(self):
+        """Reloads the i18n texts"""
+        self.item_logo.set_text(self.game_data.i18n.get('game.name'))
+        self.item_score.set_text(self.game_data.i18n.get('scene.gameover.score').format(self.game_data.score))
+        self.item_gameover.set_text(self.game_data.i18n.get('scene.gameover.gameover'))
+        self.item_help.set_text(self.game_data.i18n.get('scene.gameover.help'))
 
     def loop(self, tick):
         # Handle events
@@ -136,7 +144,7 @@ class GameOverScene(Scene):
 
         if not self.saved_highscore:
             if self.game_data.score > 0:
-                self.game_data.highscore.add_entry(self.game_data.player_info['name'], self.game_data.score)
+                self.game_data.highscore.add_entry(self.game_data.player_info['name_key'], self.game_data.score)
             else:
                 logging.info('Score not high enough, not saving...')
             self.saved_highscore = True
@@ -146,7 +154,7 @@ class GameOverScene(Scene):
     def draw(self):
         self.game_data.scene_game.draw(show_score=False, show_fps=False)
 
-        self.item_score.set_text(translate('scene.pause.score').format(self.game_data.score))
+        self.item_score.set_text(self.game_data.i18n.get('scene.pause.score').format(self.game_data.score))
 
         for item in self.items:
             item.loop()

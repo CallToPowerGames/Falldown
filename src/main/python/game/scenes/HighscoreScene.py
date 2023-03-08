@@ -13,9 +13,7 @@ from enum import Enum, unique
 
 import pygame
 
-from i18n.Translations import translate
 from game.drawables.DrawableUtils import draw_text_in_rect
-
 from game.scenes.Scene import Scene
 from game.GameState import State
 from game.sprites.Background import Background
@@ -37,6 +35,7 @@ class HighscoreScene(Scene):
         self.screen_size = self.game_data.game_config.get('screen.size')
         self.font_xl = self.game_data.cache.font_cache.get('main.xl')
         self.font_l = self.game_data.cache.font_cache.get('main.l')
+        self.font_m = self.game_data.cache.font_cache.get('main.m')
         self.font_s = self.game_data.cache.font_cache.get('main.s')
         self.text_color_logo = self.game_data.game_config.get('text.color.logo')
         self.text_color_highscore = self.game_data.game_config.get('text.color.highscore')
@@ -48,12 +47,12 @@ class HighscoreScene(Scene):
         self.screen_mid = self.screen_size[0] / 2, self.screen_size[1] / 2
         self.active_item = HighscoreSceneActiveItem.BACK
         self.background = None
-        self.items = []
+        self.item_logo = None
+        self.item_highscore = None
         self.item_back = None
         self.item_help = None
         self.highscore_db = []
         self.loaded_highscore = False
-
         self.wh_arrow = (64, 64)
         self.width_highscore = 600
         self.height_highscore = 230
@@ -79,7 +78,7 @@ class HighscoreScene(Scene):
         width = 650
         height = 150
         rect = (self.screen_mid[0] - width / 2, 0, width, height)
-        item_logo = MenuItem(
+        self.item_logo = MenuItem(
                                     self.game_data,
                                     self.font_xl,
                                     rect,
@@ -88,19 +87,18 @@ class HighscoreScene(Scene):
                                     height=height,
                                     color=self.text_color_logo,
                                     rect_width=-1,
-                                    text=translate('game.name'),
+                                    text=self.game_data.i18n.get('game.name'),
                                     banner=True
                                 )
-        self.items.append(item_logo)
+        self.items.append(self.item_logo)
 
-        item_width = 520
         item_height = 80
 
         # Highscore
         width = 500
         height = 70
         rect = (self.screen_mid[0] - width / 2, 0 + height / 2, width, height)
-        item_by = MenuItem(
+        self.item_highscore = MenuItem(
                                 self.game_data,
                                 self.font_l,
                                 rect,
@@ -109,24 +107,24 @@ class HighscoreScene(Scene):
                                 height=height,
                                 color=self.text_color,
                                 rect_width=-1,
-                                text=translate('menu.highscore.txt')
+                                text=self.game_data.i18n.get('menu.highscore.txt')
                             )
-        self.items.append(item_by)
+        self.items.append(self.item_highscore)
 
         # Back
-        width = 480
+        width = 300
         height = 65
         rect = (self.screen_mid[0] - width / 2, self.screen_mid[1] + height + 85, width, height)
         self.item_back = MenuItem(
                                     self.game_data,
-                                    self.font_l,
+                                    self.font_m,
                                     rect,
                                     (self.screen_mid[0], self.screen_mid[1] + height + height / 2 + 85),
                                     width=width,
                                     height=height,
                                     color=self.text_color,
                                     color_inactive=self.text_color_inactive,
-                                    text=translate('menu.back.highscore.txt'),
+                                    text=self.game_data.i18n.get('menu.back.highscore.txt'),
                                     play_sound_on_activation=True,
                                     button=True
                                 )
@@ -145,24 +143,27 @@ class HighscoreScene(Scene):
                                     width=width,
                                     height=height,
                                     color=self.text_color_help,
-                                    text=translate('menu.back.highscore.help'),
+                                    text=self.game_data.i18n.get('menu.back.highscore.help'),
                                     rotate=True,
                                     rotate_ticks_max=8,
                                     button_none=True
                                 )
         self.items.append(self.item_help)
 
-    def _reset_texts(self):
-        """Resets the texts to original position"""
-        self.item_back.reset_text()
-        self.item_help.reset_text()
+    def reload_i18n_texts(self):
+        """Reloads the i18n texts"""
+        self.item_logo.set_text(self.game_data.i18n.get('game.name'))
+        self.item_highscore.set_text(self.game_data.i18n.get('menu.highscore.txt'))
+        self.item_back.set_text(self.game_data.i18n.get('menu.back.highscore.txt'))
+        self.item_help.set_text(self.game_data.i18n.get('menu.back.highscore.help'))
+        self._reset_button_to_init(sound_played=True)
 
     def _reset_button_to_init(self, sound_played=False):
         """Resets the buttons to initial activation status"""
         self.item_back.active = True
         self.active_item = HighscoreSceneActiveItem.BACK
-        self._reset_texts()
-        self.item_help.set_text(translate('menu.back.highscore.help'))
+        self.reset_texts()
+        self.item_help.set_text(self.game_data.i18n.get('menu.back.highscore.help'))
         self.item_back.sound_played = sound_played
 
     def _keypress_arrow_up(self):
@@ -191,7 +192,12 @@ class HighscoreScene(Scene):
             entry = self.highscore_db[i]
             if i >= (self.highscore_max_items_shown + self.highscore_start_index):
                 break
-            _str = '{:3}. {} - {}'.format(i + 1, entry['name'], entry['score']).ljust(100)
+            _name = ''
+            if ('name_key' in entry and 'score' in entry):
+                _name = self.game_data.i18n.get(entry['name_key'])
+            else:
+                _name = self.game_data.i18n.get('player.name.unknown')
+            _str = '{:3}. {} - {}'.format(i + 1, _name, entry['score']).ljust(100)
             draw_text_in_rect(self.image_highscore_filled, _str, self.text_color_highscore, self.font_s, (
                 0,
                 0,

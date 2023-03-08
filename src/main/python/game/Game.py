@@ -12,7 +12,6 @@ import logging
 import sys
 import pygame
 
-from i18n.Translations import translate
 from game.GameState import State
 
 
@@ -40,7 +39,7 @@ class Game():
 
         self._init_library()
 
-        pygame.display.set_caption(translate('game.name'))
+        pygame.display.set_caption(self.game_data.i18n.get('game.name'))
         img_icon = self.game_data.cache.sprite_cache.get('app.logo').convert()
         icon = pygame.transform.scale(img_icon, self.game_data.game_config.get('app.icon.size'))
         pygame.display.set_icon(icon)

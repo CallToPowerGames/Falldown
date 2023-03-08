@@ -13,7 +13,6 @@ import logging
 import pygame
 
 from game.drawables.MenuItem import MenuItem
-from i18n.Translations import translate
 from game.drawables.DrawableUtils import draw_text_in_rect
 
 
@@ -103,7 +102,7 @@ class Camera():
                                 height=height_score,
                                 color=self.text_color_score,
                                 rect_width=-1,
-                                text=translate('scene.game.score').format(self.game_data.score),
+                                text=self.game_data.i18n.get('scene.game.score').format(self.game_data.score),
                                 banner=True
                             )
 
@@ -389,7 +388,7 @@ class Camera():
         self.barrier.draw(self.offset)
 
         if self.show_go:
-            txt = translate('scene.game.go').format(self.game_data.player_info['name'])
+            txt = self.game_data.i18n.get('scene.game.go').format(self.game_data.player_info['name'])
             width_go = len(txt) * 50
             height_go = 50
             draw_text_in_rect(
@@ -403,7 +402,7 @@ class Camera():
 
         # Score
         if show_score:
-            self.item_score.set_text(translate('scene.game.score').format(self.game_data.score))
+            self.item_score.set_text(self.game_data.i18n.get('scene.game.score').format(self.game_data.score))
             self.item_score.draw()
 
         # FPS information
@@ -412,7 +411,7 @@ class Camera():
             height_fps = 40
             draw_text_in_rect(
                 self.screen,
-                translate('scene.game.fps').format(int(self.game_data.fps)),
+                self.game_data.i18n.get('scene.game.fps').format(int(self.game_data.fps)),
                 self.fps_text_color,
                 self.font_xs,
                 (0, 0, width_fps, height_fps),

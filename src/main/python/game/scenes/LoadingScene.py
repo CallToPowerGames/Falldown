@@ -12,9 +12,6 @@ import logging
 
 import pygame
 
-from i18n.Translations import translate
-from game.drawables.DrawableUtils import draw_text_in_rect
-
 from game.scenes.Scene import Scene
 from game.GameState import State
 from game.sprites.Background import Background
@@ -36,11 +33,9 @@ class LoadingScene(Scene):
         self.curr_initial_wait = 0
         self.initial_wait = 10
         self.background = None
-        self.items = []
-
+        self.item_logo = None
         self.init = False
         self.init_perc = 0
-
         self.load_filler_bg_height = 20
         self.wh_loader = (300, 200)
         self.image_loader = pygame.transform.scale(self.game_data.cache.sprite_cache.get('loader').convert_alpha(), self.wh_loader)
@@ -50,7 +45,6 @@ class LoadingScene(Scene):
                             self.wh_loader[0],
                             self.wh_loader[1]
                         )
-
         self.wh_loader_filler = (280, 200)
         self.images_loader_filler = []
         _raw_img = self.game_data.cache.sprite_cache.get('loader.filler').convert_alpha()
@@ -90,7 +84,7 @@ class LoadingScene(Scene):
         width = 650
         height = 150
         rect = (self.screen_mid[0] - width / 2, 0, width, height)
-        item_logo = MenuItem(
+        self.item_logo = MenuItem(
                                     self.game_data,
                                     self.font_xl,
                                     rect,
@@ -99,9 +93,13 @@ class LoadingScene(Scene):
                                     height=height,
                                     color=self.text_color_logo,
                                     rect_width=-1,
-                                    text=translate('game.name')
+                                    text=self.game_data.i18n.get('game.name')
                                 )
-        self.items.append(item_logo)
+        self.items.append(self.item_logo)
+
+    def reload_i18n_texts(self):
+        """Reloads the i18n texts"""
+        self.item_logo.set_text(self.game_data.i18n.get('game.name'))
 
     def loop(self, tick):
         dt = tick / 1000

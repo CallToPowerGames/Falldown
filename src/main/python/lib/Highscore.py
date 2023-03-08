@@ -30,6 +30,10 @@ class Highscore():
 
         self.highscore_db = None
 
+    def _get_sorted(self, db):
+        """Returns a sorted database"""
+        return sorted(db, key=lambda e: e['score'], reverse=True)
+
     def _save(self):
         """Save the highscore db"""
         self.save(self.highscore_db)
@@ -38,7 +42,7 @@ class Highscore():
         """Reloads the highscore db"""
         logging.info('Reloading highscore')
         self.highscore_db = load_highscore_db(self.cryptography, self.basedir)
-        self.highscore_db = sorted(self.highscore_db, key=lambda e: e['score'], reverse=True)
+        self.highscore_db = self._get_sorted(self.highscore_db)
 
     def load(self, reload_db=False):
         """(Re-)Loads the highscore db
@@ -57,25 +61,25 @@ class Highscore():
         :param db: The new db
         """
         logging.info('Saving highscore')
-        self.highscore_db = sorted(db, key=lambda e: e['score'], reverse=True)
+        self.highscore_db = self._get_sorted(self.highscore_db)
         if len(self.highscore_db) > self.max_entries:
-            logging.info('Cutting highscore db to {} entries'.format(self.max_entries))
+            logging.info('Cutting highscore db at {} entries'.format(self.max_entries))
             self.highscore_db = self.highscore_db[:self.max_entries]
         save_highscore_db(self.cryptography, self.highscore_db, self.basedir)
 
-    def add_entry(self, name, score, reload_db=True, save_db=True):
+    def add_entry(self, name_key, score, reload_db=True, save_db=True):
         """Adds an entry to the highscore db
 
-        :param name: The name of the player
+        :param name_key: The name key of the player
         :param score: The score
         :param reload: Whether to reload the db before adding/saving
         :param save_db: Whether to save the db after adding the entry
         """
-        logging.info('Adding highscore entry [name={}, score={}] to db'.format(name, score))
+        logging.info('Adding highscore entry [name_key={}, score={}] to db'.format(name_key, score))
         if reload_db:
             self._reload_db()
         self.highscore_db.append({
-            'name': name,
+            'name_key': name_key,
             'score': score
         })
         if save_db:

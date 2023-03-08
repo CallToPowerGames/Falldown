@@ -12,10 +12,6 @@ import logging
 
 import pygame
 
-from i18n.Translations import translate
-
-from game.drawables.DrawableUtils import draw_text_in_rect
-
 from game.scenes.Scene import Scene
 from game.GameState import State
 from game.drawables.MenuItem import MenuItem
@@ -30,6 +26,7 @@ class PauseScene(Scene):
         self.screen_size = self.game_data.game_config.get('screen.size')
         self.font_xl = self.game_data.cache.font_cache.get('main.xl')
         self.font_l = self.game_data.cache.font_cache.get('main.l')
+        self.font_m = self.game_data.cache.font_cache.get('main.m')
         self.font_s = self.game_data.cache.font_cache.get('main.s')
         self.text_color_score = self.game_data.game_config.get('text.color.score')
         self.text_color_logo = self.game_data.game_config.get('text.color.logo')
@@ -39,9 +36,10 @@ class PauseScene(Scene):
         self.music_volume_bg_menu_effects = self.game_data.game_config.get('music.volume.background.menu.effects')
 
         self.screen_mid = self.screen_size[0] / 2, self.screen_size[1] / 2
-        self.items = []
+        self.item_logo = None
         self.item_score = None
-        self.item_score = None
+        self.item_pause = None
+        self.item_help = None
 
         self._init_items()
 
@@ -53,7 +51,7 @@ class PauseScene(Scene):
         width = 650
         height = 150
         rect = (self.screen_mid[0] - width / 2, 0, width, height)
-        item_logo = MenuItem(
+        self.item_logo = MenuItem(
                                     self.game_data,
                                     self.font_xl,
                                     rect,
@@ -62,9 +60,9 @@ class PauseScene(Scene):
                                     height=height,
                                     color=self.text_color_logo,
                                     rect_width=-1,
-                                    text=translate('game.name')
+                                    text=self.game_data.i18n.get('game.name')
                                 )
-        self.items.append(item_logo)
+        self.items.append(self.item_logo)
 
         # Score
         width = 500
@@ -79,7 +77,7 @@ class PauseScene(Scene):
                                     height=height,
                                     color=self.text_color_score,
                                     rect_width=-1,
-                                    text=translate('scene.pause.score').format(self.game_data.score),
+                                    text=self.game_data.i18n.get('scene.pause.score').format(self.game_data.score),
                                     banner=True
                                 )
         self.items.append(self.item_score)
@@ -88,25 +86,25 @@ class PauseScene(Scene):
         width = 250
         height = 80
         rect = (self.screen_mid[0] - width / 2, self.screen_mid[1] - height / 2, width, height)
-        item_pause = MenuItem(
+        self.item_pause = MenuItem(
                                     self.game_data,
-                                    self.font_l,
+                                    self.font_m,
                                     rect,
                                     (self.screen_mid[0], self.screen_mid[1] + 5),
                                     width=width,
                                     height=height,
                                     color=self.text_color,
                                     color_inactive=self.text_color_inactive,
-                                    text=translate('scene.pause.pause'),
+                                    text=self.game_data.i18n.get('scene.pause.pause'),
                                     button_none=True
                                 )
-        self.items.append(item_pause)
+        self.items.append(self.item_pause)
 
         # Help
         width = self.screen_size[0] - 20
         height = 80
         rect = (self.screen_mid[0] - width / 2, self.screen_size[1] - height - 10, width, height)
-        item_help = MenuItem(
+        self.item_help = MenuItem(
                                     self.game_data,
                                     self.font_s,
                                     rect,
@@ -114,10 +112,19 @@ class PauseScene(Scene):
                                     width=width,
                                     height=height,
                                     color=self.text_color_help,
-                                    text=translate('scene.pause.help'),
+                                    text=self.game_data.i18n.get('scene.pause.help'),
+                                    rotate=True,
+                                    rotate_ticks_max=6,
                                     button_none=True
                                 )
-        self.items.append(item_help)
+        self.items.append(self.item_help)
+
+    def reload_i18n_texts(self):
+        """Reloads the i18n texts"""
+        self.item_logo.set_text(self.game_data.i18n.get('game.name'))
+        self.item_score.set_text(self.game_data.i18n.get('scene.pause.score').format(self.game_data.score))
+        self.item_pause.set_text(self.game_data.i18n.get('scene.pause.pause'))
+        self.item_help.set_text(self.game_data.i18n.get('scene.pause.help'))
 
     def loop(self, tick):
         # Handle events
@@ -141,7 +148,7 @@ class PauseScene(Scene):
     def draw(self):
         self.game_data.scene_game.draw(show_score=False, show_fps=False)
 
-        self.item_score.set_text(translate('scene.pause.score').format(self.game_data.score))
+        self.item_score.set_text(self.game_data.i18n.get('scene.pause.score').format(self.game_data.score))
 
         for item in self.items:
             item.loop()
