@@ -105,35 +105,15 @@ def load_i18n(basedir, lang):
 
     return translations
 
-def write_game_conf(basedir, lang):
-    """Writes the game config with an updated version
+def _load_game_conf(file_path):
+    """Loads the game configuration
 
-    :param basedir: The base path
-    :param lang: The language
+    :param file_path: The file path
     """
-    homedir = str(Path.home())
-    homefolder = app_conf_get('conf.game.folder')
-    file = app_conf_get('conf.game.name')
-    
-    # Try to load from user home directory
-    home_dir_path = os.path.join(homedir, homefolder)
-    home_file_path = os.path.join(homedir, homefolder, file)
-    file_path = home_file_path
-    logging.info('Trying to load game configuration from home directory {}'.format(file_path))
-    load_from_home_dir = False
-    if os.path.isfile(file_path):
-        logging.info('Game config in user folder exists')
-        load_from_home_dir = True
-    ## Fallback to resources folder
-    else:
-        file_path = os.path.join(basedir, 'resources', file)
-        logging.info('Trying to load game configuration "{}"'.format(file_path))
-
     game_config = {}
-
+    loaded = False
     if os.path.isfile(file_path):
         logging.info('Game config exists. Loading from "{}"'.format(file_path))
-        loaded = False
         try:
             with open(file_path, 'r', encoding='utf-8') as jsonfile:
                 game_config = json.load(jsonfile)
@@ -141,27 +121,75 @@ def write_game_conf(basedir, lang):
         except Exception as ex:
             logging.error('Failed loading from "{}": {}'.format(file_path, ex))
 
-        logging.info('Removing game config from "{}"'.format(home_file_path))
-        try:
-            os.remove(home_file_path)
-        except Exception as ex:
-            logging.error('Failed removing "{}": {}'.format(home_file_path, ex))
+    return loaded, game_config
 
+def _load_game_conf_from_home_folder(basedir):
+    """Loads the game configuration from home folder
+
+    :param basedir: The base path
+    """
+    homedir = str(Path.home())
+    homefolder = app_conf_get('conf.game.folder')
+    file = app_conf_get('conf.game.name')
+
+    file_path = os.path.join(homedir, homefolder, file)
+    logging.info('Trying to load game configuration from home directory {}'.format(file_path))
+
+    return _load_game_conf(file_path)
+
+def _load_game_conf_from_resources(basedir):
+    """Loads the game configuration from resources
+
+    :param basedir: The base path
+    """
+    file = app_conf_get('conf.game.name')
+    file_path = os.path.join(basedir, 'resources', file)
+    logging.info('Trying to load game configuration from "{}"'.format(file_path))
+
+    return _load_game_conf(file_path)
+
+def _save_game_conf(basedir, game_config):
+    """Loads the game configuration to the home directory
+
+    :param basedir: The base path
+    :param game_config: The game config
+    """
+    homedir = str(Path.home())
+    homefolder = app_conf_get('conf.game.folder')
+    file = app_conf_get('conf.game.name')
+
+    home_dir_path = os.path.join(homedir, homefolder)
+    file_path = os.path.join(homedir, homefolder, file)
+
+    logging.info('Writing game config to home directory "{}"'.format(file_path))
+    try:
+        if not os.path.exists(home_dir_path):
+            os.makedirs(home_dir_path)
+    except Exception as ex:
+        logging.error('Failed creating a new directory in home directory "{}": {}'.format(home_dir_path, ex))
+
+    try:
+        with open(file_path, 'w') as jsonfile:
+            json.dump(game_config, jsonfile)
+    except Exception as ex:
+        logging.error('Failed writing to "{}": {}'.format(file_path, ex))
+
+def write_game_conf(basedir, lang):
+    """Writes the game config with an updated version
+
+    :param basedir: The base path
+    :param lang: The language
+    """
+    loaded, game_config = _load_game_conf_from_home_folder(basedir)
+    if not loaded:
+        loaded, game_config = _load_game_conf_from_resources(basedir)
+
+    if loaded:
         logging.info('Overriding game config language "{}" with "{}"'.format(game_config['languages.main'], lang))
         game_config['languages.main'] = lang
-
-        logging.info('Writing game config to home directory "{}"'.format(home_file_path))
-        try:
-            if not os.path.exists(home_dir_path):
-                os.makedirs(home_dir_path)
-        except Exception as ex:
-            logging.error('Failed creating a new directory in home directory "{}": {}'.format(home_dir_path, ex))
-
-        try:
-            with open(home_file_path, 'w') as jsonfile:
-                json.dump(game_config, jsonfile)
-        except Exception as ex:
-            logging.error('Failed writing to "{}": {}'.format(home_file_path, ex))
+        _save_game_conf(basedir, game_config)
+    else:
+        logging.info('Could not load any game config')
 
 def load_game_conf(basedir, config_version):
     """Loads the game configuration
@@ -169,70 +197,33 @@ def load_game_conf(basedir, config_version):
     :param basedir: The base path
     :param config_version: The config version. If the loaded config version is smaller than the given, it gets overwritten
     """
-    homedir = str(Path.home())
-    homefolder = app_conf_get('conf.game.folder')
-    file = app_conf_get('conf.game.name')
+    loaded_from_home_dir, game_config = _load_game_conf_from_home_folder(basedir)
+    loaded = loaded_from_home_dir
+    if not loaded_from_home_dir:
+        loaded, game_config = _load_game_conf_from_resources(basedir)
 
-    # Try to load from user home directory
-    home_dir_path = os.path.join(homedir, homefolder)
-    home_file_path = os.path.join(homedir, homefolder, file)
-    file_path = home_file_path
-    logging.info('Trying to load game configuration from home directory {}'.format(file_path))
-    load_from_home_dir = False
-    if os.path.isfile(file_path):
-        logging.info('Game config in user folder exists')
-        load_from_home_dir = True
-    ## Fallback to resources folder
-    else:
-        file_path = os.path.join(basedir, 'resources', file)
-        logging.info('Trying to load game configuration "{}"'.format(file_path))
-
-    game_config = {}
-
-    if os.path.isfile(file_path):
-        logging.info('Game config exists. Loading from "{}"'.format(file_path))
-        loaded = False
-        try:
-            with open(file_path, 'r', encoding='utf-8') as jsonfile:
-                game_config = json.load(jsonfile)
-                loaded = True
-        except Exception as ex:
-            logging.error('Failed loading from "{}": {}'.format(file_path, ex))
-
+    if loaded:
         _version = game_config['config.version'] if 'config.version' in game_config else 0
-        if load_from_home_dir and _version < config_version:
+        if loaded_from_home_dir and _version < config_version:
+            homedir = str(Path.home())
+            homefolder = app_conf_get('conf.game.folder')
+            file = app_conf_get('conf.game.name')
+            file_path = os.path.join(homedir, homefolder, file)
+
             logging.info('Version number {} < specified version number {}'.format(_version, config_version))
-            logging.info('Removing game config from "{}"'.format(home_file_path))
+            lang = game_config['languages.main']
+            logging.info('Removing game config from "{}"'.format(file_path))
             try:
-                os.remove(home_file_path)
+                os.remove(file_path)
             except Exception as ex:
-                logging.error('Failed removing "{}": {}'.format(home_file_path, ex))
-            file_path = os.path.join(basedir, 'resources', file)
-            logging.info('Trying to load game configuration "{}"'.format(file_path))
-            if os.path.isfile(file_path):
-                logging.info('Game config exists. Loading from "{}"'.format(file_path))
-                loaded = False
-                try:
-                    with open(file_path, 'r', encoding='utf-8') as jsonfile:
-                        game_config = json.load(jsonfile)
-                        loaded = True
-                        load_from_home_dir = False
-                except Exception as ex:
-                    logging.error('Failed loading from "{}": {}'.format(file_path, ex))
+                logging.error('Failed removing "{}": {}'.format(file_path, ex))
 
-        if loaded and not load_from_home_dir:
-            logging.info('Writing game config to home directory "{}"'.format(home_file_path))
-            try:
-                if not os.path.exists(home_dir_path):
-                    os.makedirs(home_dir_path)
-            except Exception as ex:
-                logging.error('Failed creating a new directory in home directory "{}": {}'.format(home_dir_path, ex))
+            loaded_from_home_dir = False
+            loaded, game_config = _load_game_conf_from_resources(basedir)
+            game_config['languages.main'] = lang
 
-            try:
-                with open(home_file_path, 'w') as jsonfile:
-                    json.dump(game_config, jsonfile)
-            except Exception as ex:
-                logging.error('Failed writing to "{}": {}'.format(home_file_path, ex))
+        if not loaded_from_home_dir:
+            _save_game_conf(basedir, game_config)
     else:
         logging.info('Not loading any game config')
 
