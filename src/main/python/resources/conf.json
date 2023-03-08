@@ -1,4 +1,5 @@
 {
+    "config.version": 1,
     "languages": ["en", "de"],
     "languages.main": "en",
     "logging.level": "INFO",

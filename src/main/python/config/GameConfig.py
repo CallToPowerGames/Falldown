@@ -18,6 +18,7 @@ class GameConfig():
 
     _config = {
         # In the public config
+        'config.version': 1, # if user folder conf.json is < this version, it gets overwritten
         'languages': ['en', 'de'],
         'languages.main': 'en',
         'logging.level': 'INFO',
@@ -247,7 +248,7 @@ class GameConfig():
             logging.info('Ignoring loading external config')
             return
 
-        config = load_game_conf(self.basedir)
+        config = load_game_conf(self.basedir, self.get('config.version', 1))
         for key, val in config.items():
             if key in self._config:
                 logging.debug('Overwriting: {}: {}'.format(key, val))

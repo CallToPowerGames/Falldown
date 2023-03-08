@@ -94,7 +94,7 @@ def load_i18n(basedir, lang):
     translations = {}
     
     if os.path.isfile(file_path):
-        logging.info('Translations exist. Loading from "{}"'.format(file_path))
+        logging.info('Translations exist. Loading.')
         try:
             with open(file_path, 'r', encoding='utf-8') as jsonfile:
                 translations = json.load(jsonfile)
@@ -105,11 +105,12 @@ def load_i18n(basedir, lang):
 
     return translations
 
-def load_game_conf(basedir):
+def load_game_conf(basedir, config_version):
     """
     Loads the game configuration
 
     :param basedir: The base path
+    :param config_version: The config version. If the loaded config version is smaller than the given, it gets overwritten
     """
     homedir = str(Path.home())
     homefolder = app_conf_get('conf.game.folder')
@@ -140,7 +141,29 @@ def load_game_conf(basedir):
                 loaded = True
         except Exception as ex:
             logging.error('Failed loading from "{}": {}'.format(file_path, ex))
-        if not load_from_home_dir and loaded:
+
+        _version = game_config['config.version'] if 'config.version' in game_config else 0
+        if load_from_home_dir and _version < config_version:
+            logging.info('Version number {} < specified version number {}'.format(_version, config_version))
+            logging.info('Removing game config from "{}"'.format(home_file_path))
+            try:
+                os.remove(home_file_path)
+            except Exception as ex:
+                logging.error('Failed removing "{}": {}'.format(home_file_path, ex))
+            file_path = os.path.join(basedir, 'resources', file)
+            logging.info('Trying to load game configuration "{}"'.format(file_path))
+            if os.path.isfile(file_path):
+                logging.info('Game config exists. Loading from "{}"'.format(file_path))
+                loaded = False
+                try:
+                    with open(file_path, 'r', encoding='utf-8') as jsonfile:
+                        game_config = json.load(jsonfile)
+                        loaded = True
+                        load_from_home_dir = False
+                except Exception as ex:
+                    logging.error('Failed loading from "{}": {}'.format(file_path, ex))
+
+        if loaded and not load_from_home_dir:
             logging.info('Writing game config to home directory "{}"'.format(home_file_path))
             try:
                 if not os.path.exists(home_dir_path):
