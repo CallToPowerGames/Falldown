@@ -19,7 +19,6 @@ class GameConfig():
     _config = {
         # In the public config
         'config.version': 1, # if user folder conf.json is < this version, it gets overwritten
-        'languages': ['en', 'de'],
         'languages.main': 'en',
         'logging.level': 'INFO',
         'logging.logtofile': False,

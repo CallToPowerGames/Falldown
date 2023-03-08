@@ -12,7 +12,7 @@ import logging
 import time
 from pathlib import Path
 
-from lib.Utils import load_i18n, write_game_conf
+from lib.Utils import load_languages, load_i18n, write_game_conf
 
 class I18n():
     """I18n"""
@@ -79,7 +79,7 @@ class I18n():
         self.basedir = basedir
         self.game_config = game_config
 
-        self.languages = self.game_config.get('languages')
+        self.languages = load_languages(self.basedir)
         self.language_main = self.game_config.get('languages.main')
 
         self._init()

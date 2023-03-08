@@ -88,6 +88,17 @@ def get_font(name, size, system_font_name, basedir, base_path):
     except Exception as e:
         raise SystemExit('Could not system font "{}": {}'.format(file_path, e))
 
+def load_languages(basedir):
+    """Loads the available languages
+
+    :param basedir: The base path
+    """
+    logging.info('Loading available languages')
+    path = os.path.join(basedir, 'resources', 'i18n')
+    lang_files = [f[:-len('.json')] for f in os.listdir(path) if os.path.isfile(os.path.join(path, f)) and f.endswith('.json')]
+    logging.info('Available languages: {}'.format(lang_files))
+    return lang_files
+
 def load_i18n(basedir, lang):
     """Loads the i18n
 
