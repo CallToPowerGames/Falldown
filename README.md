@@ -1,3 +1,5 @@
+![Banner](resources/images/banner.png "Banner")
+
 # Falldown
 
 * A game where the player - one of eight sketchy guys - has to fall down as far as possible
