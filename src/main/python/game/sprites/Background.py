@@ -56,7 +56,11 @@ class Background(pygame.sprite.Sprite):
         self.bg_size = self.game_data.game_config.get('background.size')
         self.bg_startpoint = self.game_data.game_config.get('background.startpoint')
         self.bg_draw = self.game_data.game_config.get('background.draw')
-        self.offset_factor_bg_image = self.game_data.game_config.get('background.offset.factor.bg.image')
+        self.offset_factor_x_bg_image = self.game_data.game_config.get('background.offset.factor.x.bg.image')
+        self.offset_factor_x_small = self.game_data.game_config.get('background.offset.factor.x.small')
+        self.offset_factor_x_mid = self.game_data.game_config.get('background.offset.factor.x.mid')
+        self.offset_factor_x_big = self.game_data.game_config.get('background.offset.factor.x.big')
+        self.offset_factor_y_bg_image = self.game_data.game_config.get('background.offset.factor.y.bg.image')
         self.offset_factor_y_small = self.game_data.game_config.get('background.offset.factor.y.small')
         self.offset_factor_y_mid = self.game_data.game_config.get('background.offset.factor.y.mid')
         self.offset_factor_y_big = self.game_data.game_config.get('background.offset.factor.y.big')
@@ -278,14 +282,14 @@ class Background(pygame.sprite.Sprite):
         self.offset = offset
 
         if self.bg_draw:
-            _offset = pygame.math.Vector2(self.offset.x, self.offset.y * self.offset_factor_bg_image)
+            _offset = pygame.math.Vector2(self.offset.x * self.offset_factor_x_bg_image, self.offset.y * self.offset_factor_y_bg_image)
             self._draw_bg(_offset)
         else:
             self.screen.fill(self.bg_main_color)
 
-        self.offset_small = pygame.math.Vector2(self.offset.x, self.offset.y * self.offset_factor_y_small)
-        self.offset_mid = pygame.math.Vector2(self.offset.x, self.offset.y * self.offset_factor_y_mid)
-        self.offset_big = pygame.math.Vector2(self.offset.x, self.offset.y * self.offset_factor_y_big)
+        self.offset_small = pygame.math.Vector2(self.offset.x * self.offset_factor_x_small, self.offset.y * self.offset_factor_y_small)
+        self.offset_mid = pygame.math.Vector2(self.offset.x * self.offset_factor_x_mid, self.offset.y * self.offset_factor_y_mid)
+        self.offset_big = pygame.math.Vector2(self.offset.x * self.offset_factor_x_big, self.offset.y * self.offset_factor_y_big)
 
         self._draw(self.small_clouds, self.offset_small)
         self._draw(self.mid_clouds, self.offset_mid)
