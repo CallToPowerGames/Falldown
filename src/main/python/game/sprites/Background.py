@@ -56,6 +56,10 @@ class Background(pygame.sprite.Sprite):
         self.bg_size = self.game_data.game_config.get('background.size')
         self.bg_startpoint = self.game_data.game_config.get('background.startpoint')
         self.bg_draw = self.game_data.game_config.get('background.draw')
+        self.offset_factor_bg_image = self.game_data.game_config.get('background.offset.factor.bg.image')
+        self.offset_factor_y_small = self.game_data.game_config.get('background.offset.factor.y.small')
+        self.offset_factor_y_mid = self.game_data.game_config.get('background.offset.factor.y.mid')
+        self.offset_factor_y_big = self.game_data.game_config.get('background.offset.factor.y.big')
 
         self.min_size_x = self.offset_max_left
         self.max_size_x = self.screen_size[0] + abs(self.offset_max_left) + self.offset_max_right
@@ -262,18 +266,15 @@ class Background(pygame.sprite.Sprite):
         self.offset = offset
 
         if self.bg_draw:
-            _offset = pygame.math.Vector2(self.offset.x * 2 / 3, self.offset.y * 2 / 3)
+            _offset = pygame.math.Vector2(self.offset.x, self.offset.y * self.offset_factor_bg_image)
             self._draw_bg(_offset)
         else:
             self.screen.fill(self.bg_main_color)
 
-        offset_factor_y_small = 9 / 10
-        offset_factor_y_mid = 8 / 10
-        offset_factor_y_big = 7 / 10
-        self.offset_small = pygame.math.Vector2(self.offset.x, self.offset.y * offset_factor_y_small)
-        self.offset_mid = pygame.math.Vector2(self.offset.x, self.offset.y * offset_factor_y_mid)
-        self.offset_big = pygame.math.Vector2(self.offset.x, self.offset.y * offset_factor_y_big)
+        self.offset_small = pygame.math.Vector2(self.offset.x, self.offset.y * self.offset_factor_y_small)
+        self.offset_mid = pygame.math.Vector2(self.offset.x, self.offset.y * self.offset_factor_y_mid)
+        self.offset_big = pygame.math.Vector2(self.offset.x, self.offset.y * self.offset_factor_y_big)
 
-        self._draw(self.big_clouds, self.offset_big)
-        self._draw(self.mid_clouds, self.offset_mid)
         self._draw(self.small_clouds, self.offset_small)
+        self._draw(self.mid_clouds, self.offset_mid)
+        self._draw(self.big_clouds, self.offset_big)

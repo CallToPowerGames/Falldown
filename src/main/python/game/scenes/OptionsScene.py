@@ -82,7 +82,6 @@ class OptionsScene(Scene):
 
         item_width = 450
         item_height = 80
-        gap = 2
 
         # Options
         width = 500
@@ -104,12 +103,12 @@ class OptionsScene(Scene):
         # Fullscreen
         width = item_width
         height = item_height
-        rect = (self.screen_mid[0] - width / 2, self.screen_mid[1] - height - 40, width, height)
+        rect = (self.screen_mid[0] - width / 2, self.screen_mid[1] - height - 30, width, height)
         self.item_fullscreen = MenuItem(
                                     self.game_data,
                                     self.font_m,
                                     rect,
-                                    (self.screen_mid[0], self.screen_mid[1] - height / 2 - 40),
+                                    (self.screen_mid[0], self.screen_mid[1] - height / 2 - 30),
                                     width=width,
                                     height=height,
                                     color=self.text_color,
@@ -124,12 +123,12 @@ class OptionsScene(Scene):
         # Language
         width = item_width
         height = item_height
-        rect = (self.screen_mid[0] - width / 2, self.screen_mid[1] - 40, width, height)
+        rect = (self.screen_mid[0] - width / 2, self.screen_mid[1] - 30, width, height)
         self.item_language = MenuItem(
                                     self.game_data,
                                     self.font_m,
                                     rect,
-                                    (self.screen_mid[0], self.screen_mid[1] + height / 2 - 40),
+                                    (self.screen_mid[0], self.screen_mid[1] + height / 2 - 30),
                                     width=width,
                                     height=height,
                                     color=self.text_color,
@@ -146,12 +145,12 @@ class OptionsScene(Scene):
         height = item_height
         width_lc = 60
         height_lc = 60
-        rect = (self.screen_mid[0] + width / 2 + 5, self.screen_mid[1] - 26, width_lc, height_lc)
+        rect = (self.screen_mid[0] + width / 2 + 5, self.screen_mid[1] - 16, width_lc, height_lc)
         self.item_language_current = MenuItem(
                                     self.game_data,
                                     self.font_s,
                                     rect,
-                                    (self.screen_mid[0] + width / 2 + width_lc / 2 + 5, self.screen_mid[1] + height_lc / 2 - 20),
+                                    (self.screen_mid[0] + width / 2 + width_lc / 2 + 5, self.screen_mid[1] + height_lc / 2 - 10),
                                     width=width_lc,
                                     height=height_lc,
                                     color=self.text_color,
@@ -166,20 +165,18 @@ class OptionsScene(Scene):
         # Background
         width = item_width
         height = item_height
-        rect = (self.screen_mid[0] - width / 2, self.screen_mid[1] + height - 40, width, height)
+        rect = (self.screen_mid[0] - width / 2, self.screen_mid[1] + height - 30, width, height)
         self.item_background = MenuItem(
                                     self.game_data,
                                     self.font_m,
                                     rect,
-                                    (self.screen_mid[0], self.screen_mid[1] + height + height / 2 - 40),
+                                    (self.screen_mid[0], self.screen_mid[1] + height + height / 2 - 30),
                                     width=width,
                                     height=height,
                                     color=self.text_color,
                                     color_inactive=self.text_color_inactive,
                                     text=self.game_data.i18n.get('menu.background.txt'),
                                     active=False,
-                                    rotate=True,
-                                    rotate_ticks_max=8,
                                     play_sound_on_activation=True,
                                     button=True
                                 )
@@ -188,12 +185,12 @@ class OptionsScene(Scene):
         # Back
         width = item_width
         height = item_height
-        rect = (self.screen_mid[0] - width / 2, self.screen_mid[1] + height + height / 2 - gap, width, height)
+        rect = (self.screen_mid[0] - width / 2, self.screen_mid[1] + height + height / 2 + 10, width, height)
         self.item_back = MenuItem(
                                     self.game_data,
                                     self.font_m,
                                     rect,
-                                    (self.screen_mid[0], self.screen_mid[1] + height + height - gap / 2),
+                                    (self.screen_mid[0], self.screen_mid[1] + height + height + 10),
                                     width=width,
                                     height=height,
                                     color=self.text_color,
