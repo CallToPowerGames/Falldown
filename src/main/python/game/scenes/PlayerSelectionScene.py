@@ -16,7 +16,6 @@ import pygame
 
 from game.scenes.Scene import Scene
 from game.GameState import State
-from game.sprites.Background import Background
 from game.drawables.MenuItem import MenuItem
 from game.drawables.PlayerMenuItem import PlayerMenuItem
 from game.sprites.Spritesheet import Spritesheet
@@ -44,7 +43,6 @@ class PlayerSelectionScene(Scene):
         self.last_valid_player_index = self.curr_player_index
         self.show_info = False
         self.screen_mid = self.screen_size[0] / 2, self.screen_size[1] / 2
-        self.background = None
         self.imageitems = []
         self.item_logo = None
         self.item_random = None
@@ -93,8 +91,6 @@ class PlayerSelectionScene(Scene):
     def _init_items(self):
         """Initializes the items"""
         logging.debug('Initializing items')
-
-        self.background = Background(self.game_data)
 
         # Logo
         width = 650
@@ -325,7 +321,7 @@ class PlayerSelectionScene(Scene):
     def loop(self, tick):
         dt = tick / 1000
 
-        self.background.loop(dt)
+        self.game_data.background.loop(dt)
 
         # Handle events
         for event in pygame.event.get():
@@ -379,7 +375,7 @@ class PlayerSelectionScene(Scene):
 
     def draw(self):
         """Draws the scene"""
-        self.background.draw()
+        self.game_data.background.draw()
 
         for item in self.items:
             item.loop()

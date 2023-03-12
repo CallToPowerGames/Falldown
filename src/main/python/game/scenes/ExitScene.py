@@ -16,7 +16,6 @@ from game.drawables.DrawableUtils import draw_text_in_rect
 
 from game.scenes.Scene import Scene
 from game.GameState import State
-from game.sprites.Background import Background
 from game.drawables.MenuItem import MenuItem
 
 class ExitScene(Scene):
@@ -33,7 +32,6 @@ class ExitScene(Scene):
         self.text_color = self.game_data.game_config.get('text.color')
 
         self.screen_mid = self.screen_size[0] / 2, self.screen_size[1] / 2
-        self.background = None
         self.item_logo = None
         self.item_exit = None
 
@@ -42,8 +40,6 @@ class ExitScene(Scene):
     def _init_items(self):
         """Initializes the items"""
         logging.debug('Initializing items')
-
-        self.background = Background(self.game_data)
 
         # Logo
         width = 650
@@ -85,7 +81,7 @@ class ExitScene(Scene):
 
     def loop(self, tick):
         dt = tick / 1000
-        self.background.loop(dt)
+        self.game_data.background.loop(dt)
 
         # Handle events
         for event in pygame.event.get():
@@ -99,7 +95,7 @@ class ExitScene(Scene):
             return
 
     def draw(self):
-        self.background.draw()
+        self.game_data.background.draw()
 
         for item in self.items:
             item.loop()

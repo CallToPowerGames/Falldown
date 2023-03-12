@@ -12,7 +12,7 @@ import logging
 import time
 from pathlib import Path
 
-from lib.Utils import load_languages, load_i18n, write_game_conf
+from lib.Utils import load_languages, load_i18n
 
 class I18n():
     """I18n"""
@@ -62,6 +62,8 @@ class I18n():
         'menu.random.help': 'Press <Enter> to start a game with a random player.',
         'menu.language.txt': 'Switch language',
         'menu.language.help': 'Press <Enter> to switch the language.',
+        'menu.background.txt': 'Show background',
+        'menu.background.help': 'Press <Enter> to show or hide the background image.',
         'menu.back.txt': 'Back',
         'menu.back.help': 'Press <Enter> to get back to the menu.',
         'menu.back.highscore.txt': 'Back',
@@ -109,7 +111,7 @@ class I18n():
         lang = self.languages[self.languages.index(self.language_main)] if self.language_main in self.languages else self.languages['en']
         self.load_language(lang)
         self.game_config.set('languages.main', lang)
-        write_game_conf(self.basedir, lang)
+        self.game_config.save_game_conf()
 
     def set(self, key, value):
         """Sets the value for the given key

@@ -19,14 +19,13 @@ from game.drawables.DrawableUtils import draw_text_in_rect
 class Camera():
     """The camera"""
 
-    def __init__(self, game_data, border, barrier, player, background, level):
+    def __init__(self, game_data, border, barrier, player, level):
         """Initializes the camera
 
         :param game_data: The game data
         :param border: The border
         :param barrier: The barrier
         :param player: The player
-        :param background: The background
         :param level: The level
         """
         logging.info('Initializing camera')
@@ -35,7 +34,6 @@ class Camera():
         self.border = border
         self.barrier = barrier
         self.player = player
-        self.background = background
         self.level = level
 
         self.screen = self.game_data.game_config.get('screen')
@@ -256,7 +254,7 @@ class Camera():
             self.game_data.cache.sound_cache.set_music_volume(self.music_volume_bg_game)
 
     def loop_visuals(self, dt):
-        self.background.loop(dt)
+        self.game_data.background.loop(dt)
         self.level.loop_visuals(dt)
         self.barrier.update_sprite()
         self.player.update_sprite()
@@ -267,7 +265,7 @@ class Camera():
         :param dt: Tick rate, milliseconds between each call to 'tick'
         :param keys: The keys
         """
-        self.background.loop(dt)
+        self.game_data.background.loop(dt)
         self.level.loop(dt)
         self.item_score.loop()
 
@@ -381,7 +379,7 @@ class Camera():
         :param show_score: Flag whether to show the score
         :param show_fps: Flag whether to show the fps, shows only if toggled on
         """
-        self.background.draw(self.offset)
+        self.game_data.background.draw(self.offset)
         self.level.draw(self.offset)
         self.border.draw(self.offset)
         self.player.draw()

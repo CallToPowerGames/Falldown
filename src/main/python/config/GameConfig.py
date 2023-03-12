@@ -10,7 +10,7 @@
 
 import logging
 
-from lib.Utils import load_game_conf
+from lib.Utils import load_game_conf, write_game_conf
 import game.Colors as Colors
 
 class GameConfig():
@@ -18,7 +18,7 @@ class GameConfig():
 
     _config = {
         # In the public config
-        'config.version': 1, # if user folder conf.json is < this version, it gets overwritten
+        'config.version': 2, # if user folder conf.json is < this version, it gets overwritten
         'languages.main': 'en',
         'logging.level': 'INFO',
         'logging.logtofile': False,
@@ -54,6 +54,7 @@ class GameConfig():
         'music.volume.background.game': 1.0, # 0.0-1.0
         'music.volume.background.game.barriervisible': 0.3, # 0.0-1.0
         'music.volume.background.game.effects': 1.0, # 0.0-1.0
+        'background.draw': True,
         'background.number.bg.clouds.big': 90,
         'background.number.bg.clouds.mid': 60,
         'background.number.bg.clouds.small': 30,
@@ -150,6 +151,9 @@ class GameConfig():
         'background.size.bg.clouds.mid': (36, 16),
         'background.startpoint.bg.clouds.small': (176, 218),
         'background.size.bg.clouds.small': (25, 13),
+        'background.nr': 8,
+        'background.size': (512, 512),
+        'background.startpoint': (0, 0),
         'border.chain.size': (8, 8),
         'barrier.platform.size': (32, 8),
         'barrier.cannon.size': (39, 25),
@@ -254,6 +258,15 @@ class GameConfig():
                 self.set(key, val)
             else:
                 logging.warn('Key-Value pair not found: {}, {}'.format(key, val))
+
+    def save_game_conf(self):
+        """Writes the game config"""
+        logging.info('Saving game config')
+        dict_overwrites = {
+            'background.draw': self.get('background.draw'),
+            'languages.main': self.get('languages.main')
+        }
+        write_game_conf(self.basedir, dict_overwrites)
 
     def set(self, key, value):
         """Sets the value for the given key

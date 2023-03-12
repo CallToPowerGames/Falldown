@@ -17,7 +17,6 @@ import pygame
 from config.AppConfig import app_conf_get
 from game.scenes.Scene import Scene
 from game.GameState import State
-from game.sprites.Background import Background
 from game.drawables.MenuItem import MenuItem
 
 @unique
@@ -53,7 +52,6 @@ class MenuScene(Scene):
         self.playing_music = False
         self.curr_bg_music = ''
         self.active_item = MenuSceneActiveItem.START
-        self.background = None
         self.item_logo = None
         self.item_by = None
         self.item_version = None
@@ -68,8 +66,6 @@ class MenuScene(Scene):
     def _init_items(self):
         """Initializes the items"""
         logging.debug('Initializing items')
-
-        self.background = Background(self.game_data)
 
         # Logo
         width = 650
@@ -302,7 +298,7 @@ class MenuScene(Scene):
     def loop(self, tick):
         dt = tick / 1000
 
-        self.background.loop(dt)
+        self.game_data.background.loop(dt)
 
         # Handle events
         for event in pygame.event.get():
@@ -337,7 +333,7 @@ class MenuScene(Scene):
 
     def draw(self):
         """Draws the scene"""
-        self.background.draw()
+        self.game_data.background.draw()
 
         for item in self.items:
             item.loop()

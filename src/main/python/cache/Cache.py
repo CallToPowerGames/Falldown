@@ -7,7 +7,7 @@
 #
 
 """Cache"""
-
+import random
 import logging
 
 from cache.FontCache import FontCache
@@ -31,6 +31,10 @@ class Cache():
         self.font_cache = FontCache(self.basedir)
         self.sound_cache = SoundCache(self.basedir)
         self.sprite_cache = SpriteCache(self.basedir)
+
+        self.bg_nr = self.game_config.get('background.nr')
+
+        self.bg_index = random.randint(0, self.bg_nr - 1)
 
         self.sounds = {}
         self.initial_sprites = {}
@@ -59,7 +63,8 @@ class Cache():
             'loader': 'items/loading/loader.png',
             'loader.filler': 'items/loading/loader-filler.png',
             'banner': 'items/banner.png',
-            'button.none': 'items/buttons/button-none.png'
+            'button.none': 'items/buttons/button-none.png',
+            'bg': 'bg/bg-{}.png'.format(self.bg_index)
         }
 
         self.sprites = {

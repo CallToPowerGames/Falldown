@@ -14,7 +14,6 @@ import pygame
 
 from game.scenes.Scene import Scene
 from game.GameState import State
-from game.sprites.Background import Background
 from game.drawables.MenuItem import MenuItem
 
 class LoadingScene(Scene):
@@ -32,7 +31,6 @@ class LoadingScene(Scene):
         self.screen_mid = self.screen_size[0] / 2, self.screen_size[1] / 2
         self.curr_initial_wait = 0
         self.initial_wait = 10
-        self.background = None
         self.item_logo = None
         self.init = False
         self.init_perc = 0
@@ -78,8 +76,6 @@ class LoadingScene(Scene):
         """Initializes the items"""
         logging.debug('Initializing items')
 
-        self.background = Background(self.game_data)
-
         # Logo
         width = 650
         height = 150
@@ -103,7 +99,7 @@ class LoadingScene(Scene):
 
     def loop(self, tick):
         dt = tick / 1000
-        self.background.loop(dt)
+        self.game_data.background.loop(dt)
 
         # Handle events
         for event in pygame.event.get():
@@ -148,7 +144,7 @@ class LoadingScene(Scene):
             self.curr_initial_wait += 1
 
     def draw(self):
-        self.background.draw()
+        self.game_data.background.draw()
 
         pygame.draw.rect(
             self.screen,

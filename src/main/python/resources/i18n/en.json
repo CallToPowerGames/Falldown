@@ -43,6 +43,8 @@
     "menu.random.help": "Press <Enter> to start a game with a random player.",
     "menu.language.txt": "Switch language",
     "menu.language.help": "Press <Enter> to switch the language.",
+    "menu.background.txt": "Show background",
+    "menu.background.help": "Press <Enter> to show or hide the background image.",
     "menu.back.txt": "Back",
     "menu.back.help": "Press <Enter> to get back to the menu.",
     "menu.back.highscore.txt": "Back",

@@ -15,7 +15,6 @@ import pygame
 
 from game.scenes.Scene import Scene
 from game.GameState import State
-from game.sprites.Background import Background
 from game.drawables.MenuItem import MenuItem
 
 @unique
@@ -23,6 +22,7 @@ class OptionsSceneActiveItem(Enum):
     """The active item"""
     FULLSCREEN = 0
     LANGUAGE = 1
+    BACKGROUND = 2
     BACK = 10
 
 
@@ -46,13 +46,13 @@ class OptionsScene(Scene):
 
         self.screen_mid = self.screen_size[0] / 2, self.screen_size[1] / 2
         self.active_item = OptionsSceneActiveItem.FULLSCREEN
-        self.background = None
 
         self.item_logo = None
         self.item_options = None
         self.item_fullscreen = None
         self.item_language = None
         self.item_language_current = None
+        self.item_background = None
         self.item_back = None
         self.item_help = None
 
@@ -61,8 +61,6 @@ class OptionsScene(Scene):
     def _init_items(self):
         """Initializes the items"""
         logging.debug('Initializing items')
-
-        self.background = Background(self.game_data)
 
         # Logo
         width = 650
@@ -106,12 +104,12 @@ class OptionsScene(Scene):
         # Fullscreen
         width = item_width
         height = item_height
-        rect = (self.screen_mid[0] - width / 2, self.screen_mid[1] - height / 2 - 40, width, height)
+        rect = (self.screen_mid[0] - width / 2, self.screen_mid[1] - height - 40, width, height)
         self.item_fullscreen = MenuItem(
                                     self.game_data,
                                     self.font_m,
                                     rect,
-                                    (self.screen_mid[0], self.screen_mid[1] - 40),
+                                    (self.screen_mid[0], self.screen_mid[1] - height / 2 - 40),
                                     width=width,
                                     height=height,
                                     color=self.text_color,
@@ -126,12 +124,12 @@ class OptionsScene(Scene):
         # Language
         width = item_width
         height = item_height
-        rect = (self.screen_mid[0] - width / 2, self.screen_mid[1] + height / 2 - 40, width, height)
+        rect = (self.screen_mid[0] - width / 2, self.screen_mid[1] - 40, width, height)
         self.item_language = MenuItem(
                                     self.game_data,
                                     self.font_m,
                                     rect,
-                                    (self.screen_mid[0], self.screen_mid[1] + height - 40),
+                                    (self.screen_mid[0], self.screen_mid[1] + height / 2 - 40),
                                     width=width,
                                     height=height,
                                     color=self.text_color,
@@ -148,12 +146,12 @@ class OptionsScene(Scene):
         height = item_height
         width_lc = 60
         height_lc = 60
-        rect = (self.screen_mid[0] + width / 2 + 5, self.screen_mid[1] + height / 2 - 26, width_lc, height_lc)
+        rect = (self.screen_mid[0] + width / 2 + 5, self.screen_mid[1] - 26, width_lc, height_lc)
         self.item_language_current = MenuItem(
                                     self.game_data,
                                     self.font_s,
                                     rect,
-                                    (self.screen_mid[0] + width / 2 + width_lc / 2 + 5, self.screen_mid[1] + height / 2 + height_lc / 2 - 20),
+                                    (self.screen_mid[0] + width / 2 + width_lc / 2 + 5, self.screen_mid[1] + height_lc / 2 - 20),
                                     width=width_lc,
                                     height=height_lc,
                                     color=self.text_color,
@@ -165,15 +163,37 @@ class OptionsScene(Scene):
                                 )
         self.items.append(self.item_language_current)
 
+        # Background
+        width = item_width
+        height = item_height
+        rect = (self.screen_mid[0] - width / 2, self.screen_mid[1] + height - 40, width, height)
+        self.item_background = MenuItem(
+                                    self.game_data,
+                                    self.font_m,
+                                    rect,
+                                    (self.screen_mid[0], self.screen_mid[1] + height + height / 2 - 40),
+                                    width=width,
+                                    height=height,
+                                    color=self.text_color,
+                                    color_inactive=self.text_color_inactive,
+                                    text=self.game_data.i18n.get('menu.background.txt'),
+                                    active=False,
+                                    rotate=True,
+                                    rotate_ticks_max=8,
+                                    play_sound_on_activation=True,
+                                    button=True
+                                )
+        self.items.append(self.item_background)
+
         # Back
         width = item_width
         height = item_height
-        rect = (self.screen_mid[0] - width / 2, self.screen_mid[1] + height - gap, width, height)
+        rect = (self.screen_mid[0] - width / 2, self.screen_mid[1] + height + height / 2 - gap, width, height)
         self.item_back = MenuItem(
                                     self.game_data,
                                     self.font_m,
                                     rect,
-                                    (self.screen_mid[0], self.screen_mid[1] + height + height / 2 - gap / 2),
+                                    (self.screen_mid[0], self.screen_mid[1] + height + height - gap / 2),
                                     width=width,
                                     height=height,
                                     color=self.text_color,
@@ -211,6 +231,7 @@ class OptionsScene(Scene):
         self.item_fullscreen.set_text(self.game_data.i18n.get('menu.fullscreen.txt'))
         self.item_language.set_text(self.game_data.i18n.get('menu.language.txt'))
         self.item_language_current.set_text(self.game_data.i18n.language_main)
+        self.item_background.set_text(self.game_data.i18n.get('menu.background.txt'))
         self.item_back.set_text(self.game_data.i18n.get('menu.back.txt'))
         self.item_help.set_text(self.game_data.i18n.get('menu.language.help'))
 
@@ -218,6 +239,7 @@ class OptionsScene(Scene):
         """Resets the buttons to initial activation status"""
         self.item_back.active = False
         self.item_language.active = False
+        self.item_background.active = False
         self.item_fullscreen.active = True
         self.active_item = OptionsSceneActiveItem.FULLSCREEN
         self.reset_texts()
@@ -228,19 +250,31 @@ class OptionsScene(Scene):
     def _keypress_arrow_up(self):
         if self.active_item == OptionsSceneActiveItem.LANGUAGE:
             self._reset_button_to_init()
-        elif self.active_item == OptionsSceneActiveItem.BACK:
+        elif self.active_item == OptionsSceneActiveItem.BACKGROUND:
             self.item_back.active = False
             self.item_fullscreen.active = False
+            self.item_background.active = False
             self.item_language.active = True
             self.active_item = OptionsSceneActiveItem.LANGUAGE
             self.reset_texts()
             self.item_help.rotate = False
             self.item_help.set_text(self.game_data.i18n.get('menu.language.help'))
+        elif self.active_item == OptionsSceneActiveItem.BACK:
+            self.item_back.active = False
+            self.item_fullscreen.active = False
+            self.item_language.active = False
+            self.item_background.active = False
+            self.item_background.active = True
+            self.active_item = OptionsSceneActiveItem.BACKGROUND
+            self.reset_texts()
+            self.item_help.rotate = True
+            self.item_help.set_text(self.game_data.i18n.get('menu.background.help'))
 
     def _keypress_arrow_down(self):
         if self.active_item == OptionsSceneActiveItem.FULLSCREEN:
             self.item_fullscreen.active = False
             self.item_back.active = False
+            self.item_background.active = False
             self.item_language.active = True
             self.active_item = OptionsSceneActiveItem.LANGUAGE
             self.reset_texts()
@@ -249,6 +283,16 @@ class OptionsScene(Scene):
         elif self.active_item == OptionsSceneActiveItem.LANGUAGE:
             self.item_fullscreen.active = False
             self.item_language.active = False
+            self.item_back.active = False
+            self.item_background.active = True
+            self.active_item = OptionsSceneActiveItem.BACKGROUND
+            self.reset_texts()
+            self.item_help.rotate = True
+            self.item_help.set_text(self.game_data.i18n.get('menu.background.help'))
+        elif self.active_item == OptionsSceneActiveItem.BACKGROUND:
+            self.item_fullscreen.active = False
+            self.item_language.active = False
+            self.item_background.active = False
             self.item_back.active = True
             self.active_item = OptionsSceneActiveItem.BACK
             self.reset_texts()
@@ -258,7 +302,7 @@ class OptionsScene(Scene):
     def loop(self, tick):
         dt = tick / 1000
 
-        self.background.loop(dt)
+        self.game_data.background.loop(dt)
 
         # Handle events
         for event in pygame.event.get():
@@ -278,6 +322,10 @@ class OptionsScene(Scene):
                         self.game_data.i18n.switch_language()
                         self.game_data.reload_i18n_texts()
                         self.reset_texts()
+                    elif self.active_item == OptionsSceneActiveItem.BACKGROUND:
+                        self.game_data.game_config.set('background.draw', not self.game_data.game_config.get('background.draw'))
+                        self.game_data.background.reload_conf()
+                        self.game_data.game_config.save_game_conf()
                     elif self.active_item == OptionsSceneActiveItem.BACK:
                         self._reset_button_to_init(sound_played=True)
                         self.set_state(State.MENU)
@@ -288,7 +336,7 @@ class OptionsScene(Scene):
 
     def draw(self):
         """Draws the scene"""
-        self.background.draw()
+        self.game_data.background.draw()
 
         for item in self.items:
             item.loop()

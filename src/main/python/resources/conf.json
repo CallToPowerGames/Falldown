@@ -1,5 +1,5 @@
 {
-    "config.version": 1,
+    "config.version": 2,
     "languages.main": "en",
     "logging.level": "INFO",
     "logging.logtofile": false,
@@ -35,6 +35,7 @@
     "music.volume.background.game": 1.0,
     "music.volume.background.game.barriervisible": 0.3,
     "music.volume.background.game.effects": 1.0,
+    "background.draw": true,
     "background.number.bg.clouds.big": 90,
     "background.number.bg.clouds.mid": 60,
     "background.number.bg.clouds.small": 30,

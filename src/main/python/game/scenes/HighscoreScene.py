@@ -16,7 +16,6 @@ import pygame
 from game.drawables.DrawableUtils import draw_text_in_rect
 from game.scenes.Scene import Scene
 from game.GameState import State
-from game.sprites.Background import Background
 from game.drawables.MenuItem import MenuItem
 
 @unique
@@ -46,7 +45,6 @@ class HighscoreScene(Scene):
 
         self.screen_mid = self.screen_size[0] / 2, self.screen_size[1] / 2
         self.active_item = HighscoreSceneActiveItem.BACK
-        self.background = None
         self.item_logo = None
         self.item_highscore = None
         self.item_back = None
@@ -71,8 +69,6 @@ class HighscoreScene(Scene):
     def _init_items(self):
         """Initializes the items"""
         logging.debug('Initializing items')
-
-        self.background = Background(self.game_data)
 
         # Logo
         width = 650
@@ -210,7 +206,7 @@ class HighscoreScene(Scene):
     def loop(self, tick):
         dt = tick / 1000
 
-        self.background.loop(dt)
+        self.game_data.background.loop(dt)
 
         # Handle events
         for event in pygame.event.get():
@@ -242,7 +238,7 @@ class HighscoreScene(Scene):
 
     def draw(self):
         """Draws the scene"""
-        self.background.draw()
+        self.game_data.background.draw()
 
         self.screen.blit(self.image_highscore_filled, self.rect_highscore)
 

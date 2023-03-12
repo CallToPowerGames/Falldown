@@ -141,6 +141,8 @@ class PauseScene(Scene):
 
         if not self.is_state(State.PAUSE):
             self.game_data.cache.sound_cache.play('menu.back', volume=self.music_volume_bg_menu_effects)
+            if not self.is_state(State.GAME):
+                self.game_data.background.reset()
             return
 
         self.game_data.scene_game.loop_visuals(tick)

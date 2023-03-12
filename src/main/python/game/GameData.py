@@ -13,6 +13,7 @@ from threading import Timer
 import pygame
 
 from game.GameState import GameState, State
+from game.sprites.Background import Background
 from game.scenes.LoadingScene import LoadingScene
 from game.scenes.MenuScene import MenuScene
 from game.scenes.HighscoreScene import HighscoreScene
@@ -56,6 +57,8 @@ class GameData():
         self.scene_gameover = None
         self.timer_exit = None
 
+        self.background = None
+
         self.players = []
         self.player_index = 0
         self.player_info = None
@@ -65,6 +68,7 @@ class GameData():
     def init_loading_scene(self):
         """Initializes the scenes"""
         logging.debug('Initializing loading scene')
+        self.background = Background(self)
 
         self.scene_loading = LoadingScene(State.LOADING, self.game_config.get('fps.loading'), self)
         self.scene_exit = ExitScene(State.EXIT, self.game_config.get('fps.exit'), self)

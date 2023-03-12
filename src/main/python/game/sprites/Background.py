@@ -53,6 +53,9 @@ class Background(pygame.sprite.Sprite):
         self.size_bg_clouds_small = self.game_data.game_config.get('background.size.bg.clouds.small')
         self.speed_bg_clouds_small_min = self.game_data.game_config.get('background.speed.bg.clouds.small.min')
         self.speed_bg_clouds_small_max = self.game_data.game_config.get('background.speed.bg.clouds.small.max')
+        self.bg_size = self.game_data.game_config.get('background.size')
+        self.bg_startpoint = self.game_data.game_config.get('background.startpoint')
+        self.bg_draw = self.game_data.game_config.get('background.draw')
 
         self.min_size_x = self.offset_max_left
         self.max_size_x = self.screen_size[0] + abs(self.offset_max_left) + self.offset_max_right
@@ -71,6 +74,9 @@ class Background(pygame.sprite.Sprite):
         self.mid_clouds = []
         self.small_clouds = []
 
+        self.spritesheet_bg = Spritesheet(self.game_data.cache.sprite_cache, 'bg', size=self.bg_size, nr_images=1, startpoint=self.bg_startpoint, generate_sides=False, colorkey=None)
+        self.image_bg = None
+
         self.clean_every_nth = update_every_nth_loop
         self.curr_clean = 0
         self.offset = pygame.math.Vector2(0, 0)
@@ -79,28 +85,33 @@ class Background(pygame.sprite.Sprite):
 
     def _init(self):
         """Initializes the background"""
+        self.big_clouds = []
         for i in range(int(self.nr_of_clouds_big / 2)):
             x = random.randint(self.min_size_x, self.max_size_x)
             y = random.randint(0, self.screen_size[1])
             cloud = Cloud(self.game_data, self.spritesheet_bg_clouds_big_cloud.images_left[0], (x, y), self.w_clouds_big, self.h_clouds_big, self.speed_bg_clouds_big_min, self.speed_bg_clouds_big_max)
             self.big_clouds.append(cloud)
+        self.mid_clouds = []
         for i in range(int(self.nr_of_clouds_mid)):
             x = random.randint(self.min_size_x, self.max_size_x)
             y = random.randint(0, self.screen_size[1])
             cloud = Cloud(self.game_data, self.spritesheet_bg_clouds_mid_cloud.images_left[0], (x, y), self.w_clouds_mid, self.h_clouds_mid, self.speed_bg_clouds_mid_min, self.speed_bg_clouds_mid_max)
             self.mid_clouds.append(cloud)
+        self.small_clouds = []
         for i in range(int(self.nr_of_clouds_small)):
             x = random.randint(self.min_size_x, self.max_size_x)
             y = random.randint(0, self.screen_size[1])
             cloud = Cloud(self.game_data, self.spritesheet_bg_clouds_small_cloud.images_left[0], (x, y), self.w_clouds_small, self.h_clouds_small, self.speed_bg_clouds_small_min, self.speed_bg_clouds_small_max)
             self.small_clouds.append(cloud)
 
+        self.image_bg = self.spritesheet_bg.images_left[0]
+
     def clean(self):
         """Cleans the background elements, removes all lines not in the offset area"""
         new_big_clouds = []
         for cloud in self.big_clouds:
             in_x = cloud.get_curr_x() + cloud.width >= self.offset_max_left
-            in_y = cloud.startpoint[1] >= self.offset.y
+            in_y = cloud.startpoint[1] >= self.offset_big.y
             if in_x and in_y:
                 new_big_clouds.append(cloud)
         self.big_clouds = new_big_clouds
@@ -108,7 +119,7 @@ class Background(pygame.sprite.Sprite):
         new_mid_clouds = []
         for cloud in self.mid_clouds:
             in_x = cloud.get_curr_x() + cloud.width >= self.offset_max_left
-            in_y = cloud.startpoint[1] >= self.offset.y
+            in_y = cloud.startpoint[1] >= self.offset_mid.y
             if in_x and in_y:
                 new_mid_clouds.append(cloud)
         self.mid_clouds = new_mid_clouds
@@ -116,14 +127,13 @@ class Background(pygame.sprite.Sprite):
         new_small_clouds = []
         for cloud in self.small_clouds:
             in_x = cloud.get_curr_x() + cloud.width >= self.offset_max_left
-            in_y = cloud.startpoint[1] >= self.offset.y
+            in_y = cloud.startpoint[1] >= self.offset_small.y
             if in_x and in_y:
                 new_small_clouds.append(cloud)
         self.small_clouds = new_small_clouds
 
     def fill(self):
         """Fills up clouds"""
-        
         # In the current screen
         y_min = int(self.offset.y)
         y_max = int(self.offset.y) + self.screen_size[1]
@@ -176,6 +186,12 @@ class Background(pygame.sprite.Sprite):
             cloud = Cloud(self.game_data, self.spritesheet_bg_clouds_small_cloud.images_left[0], (x, y), self.w_clouds_small, self.h_clouds_small, self.speed_bg_clouds_small_min, self.speed_bg_clouds_small_max)
             self.small_clouds.append(cloud)
 
+    def reset(self):
+        """Resets the background"""
+        logging.info('Resetting clouds')
+        self.offset = pygame.math.Vector2(0, 0)
+        self._init()
+
     def loop(self, dt):
         """Loops the background
 
@@ -196,27 +212,65 @@ class Background(pygame.sprite.Sprite):
         for cloud in self.small_clouds:
             cloud.loop(dt)
 
-    def _draw(self, clouds):
+    def _draw(self, clouds, offset):
         """Draws the background
 
         :param clouds: Cloud array
         """
         for cloud in clouds:
-            x_left_in_screen = (cloud.startpoint[0] + cloud.width) > self.offset.x
-            x_right_in_screen = (cloud.startpoint[0] - self.offset.x) < self.screen_size[0]
-            y_in_top_screen = (cloud.startpoint[1] + cloud.height) > self.offset.y
+            x_left_in_screen = (cloud.startpoint[0] + cloud.width) > offset.x
+            x_right_in_screen = (cloud.startpoint[0] - offset.x) < self.screen_size[0]
+            y_in_top_screen = (cloud.startpoint[1] + cloud.height) > offset.y
             if x_left_in_screen and x_right_in_screen and y_in_top_screen:
-                cloud.draw(self.offset)
+                cloud.draw(offset)
+
+    def _draw_bg(self, offset):
+        """Draws the background"""
+        startpoint_y = 0
+        while (startpoint_y + self.image_bg.get_height()) <= offset.y:
+            startpoint_y += self.image_bg.get_height()
+        curr_y = startpoint_y - offset.y
+        for i in range(int(self.screen_size[1] / self.image_bg.get_height()) + 2):
+            startpoint_x = self.offset_max_left - self.image_bg.get_width()
+            while (startpoint_x + self.image_bg.get_width()) <= offset.x:
+                startpoint_x += self.image_bg.get_width()
+            curr_x = startpoint_x - offset.x
+            for i in range(int(self.screen_size[0] / self.image_bg.get_width()) + 2):
+                self.screen.blit(self.image_bg,
+                    pygame.Rect(
+                        curr_x,
+                        curr_y,
+                        self.image_bg.get_width(),
+                        self.image_bg.get_height()
+                    )
+                )
+                curr_x += self.image_bg.get_width()
+            curr_y += self.image_bg.get_height()
+
+    def reload_conf(self):
+        """Reloads relevant config parameters"""
+        self.bg_draw = self.game_data.game_config.get('background.draw')
 
     def draw(self, offset=pygame.math.Vector2(0, 0)):
         """Draws the background
 
         :param offset: The offset
         """
-        self.screen.fill(self.bg_main_color)
-
         self.offset = offset
 
-        self._draw(self.big_clouds)
-        self._draw(self.mid_clouds)
-        self._draw(self.small_clouds)
+        if self.bg_draw:
+            _offset = pygame.math.Vector2(self.offset.x * 2 / 3, self.offset.y * 2 / 3)
+            self._draw_bg(_offset)
+        else:
+            self.screen.fill(self.bg_main_color)
+
+        offset_factor_y_small = 9 / 10
+        offset_factor_y_mid = 8 / 10
+        offset_factor_y_big = 7 / 10
+        self.offset_small = pygame.math.Vector2(self.offset.x, self.offset.y * offset_factor_y_small)
+        self.offset_mid = pygame.math.Vector2(self.offset.x, self.offset.y * offset_factor_y_mid)
+        self.offset_big = pygame.math.Vector2(self.offset.x, self.offset.y * offset_factor_y_big)
+
+        self._draw(self.big_clouds, self.offset_big)
+        self._draw(self.mid_clouds, self.offset_mid)
+        self._draw(self.small_clouds, self.offset_small)

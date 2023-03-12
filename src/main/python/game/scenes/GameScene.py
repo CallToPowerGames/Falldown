@@ -15,7 +15,6 @@ import pygame
 
 from game.scenes.Scene import Scene
 from game.GameState import State
-from game.sprites.Background import Background
 from game.sprites.Border import Border
 from game.sprites.Barrier import Barrier
 from game.sprites.Player import Player
@@ -35,7 +34,6 @@ class GameScene(Scene):
         self.music_volume_bg_menu_effects = self.game_data.game_config.get('music.volume.background.menu.effects')
         self.game_music = self.game_data.game_config.get('game.music')
 
-        self.background = None
         self.border = None
         self.barrier = None
         self.player = None
@@ -61,8 +59,7 @@ class GameScene(Scene):
         self.player.init(pos_player)
 
         self.level = Level(self.game_data)
-        self.background = Background(self.game_data)
-        self.camera = Camera(self.game_data, self.border, self.barrier, self.player, self.background, self.level)
+        self.camera = Camera(self.game_data, self.border, self.barrier, self.player, self.level)
 
         self.game_init_done = True
 
@@ -115,6 +112,7 @@ class GameScene(Scene):
             self.game_data.cache.sound_cache.play('menu.back', volume=self.music_volume_bg_menu_effects)
             if not self.is_state(State.PAUSE) and not self.is_state(State.GAMEOVER):
                 self.stop_music()
+                self.game_data.background.reset()
             return
         else:
             if not self.game_init_done:

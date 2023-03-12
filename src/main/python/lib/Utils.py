@@ -191,19 +191,20 @@ def _save_game_conf(basedir, game_config):
     except Exception as ex:
         logging.error('Failed writing to "{}": {}'.format(file_path, ex))
 
-def write_game_conf(basedir, lang):
+def write_game_conf(basedir, dict_overwrites):
     """Writes the game config with an updated version
 
     :param basedir: The base path
-    :param lang: The language
+    :param dict_overwrites: An overwrite dict
     """
     loaded, game_config = _load_game_conf_from_home_folder(basedir)
     if not loaded:
         loaded, game_config = _load_game_conf_from_resources(basedir)
 
     if loaded:
-        logging.info('Overriding game config language "{}" with "{}"'.format(game_config['languages.main'], lang))
-        game_config['languages.main'] = lang
+        for k, v in dict_overwrites.items():
+            logging.info('Overriding game config key "{}={}" with "{}={}"'.format(k, game_config[k], k, v))
+            game_config[k] = v
         _save_game_conf(basedir, game_config)
     else:
         logging.info('Could not load any game config')
@@ -214,6 +215,8 @@ def load_game_conf(basedir, config_version):
     :param basedir: The base path
     :param config_version: The config version. If the loaded config version is smaller than the given, it gets overwritten
     """
+    logging.info('Loading game configuration, current version: {}'.format(config_version))
+
     loaded_from_home_dir, game_config = _load_game_conf_from_home_folder(basedir)
     loaded = loaded_from_home_dir
     if not loaded_from_home_dir:
@@ -221,6 +224,8 @@ def load_game_conf(basedir, config_version):
 
     if loaded:
         _version = game_config['config.version'] if 'config.version' in game_config else 0
+        logging.info('Loaded game configuration version: {}'.format(_version))
+
         if loaded_from_home_dir and _version < config_version:
             homedir = str(Path.home())
             homefolder = app_conf_get('conf.game.folder')

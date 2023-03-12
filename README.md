@@ -56,6 +56,7 @@ The Highscore View:
 
 ### Sprites
 
+* "Seemless Sky Backgrounds" by Screaming Brain Studios (https://screamingbrainstudios.itch.io/seamless-sky-backgrounds)
 * "Pixel Clouds" by GarzettDev (https://garzettdev.itch.io/pixel-clouds)
 * "Industrial Tileset" by Atomicrealm (https://atomicrealm.itch.io/industrial-tileset)
 * "Pixel Adventure 1" by Pixelfrog (https://pixelfrog-assets.itch.io/pixel-adventure-1)

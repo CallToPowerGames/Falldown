@@ -43,6 +43,7 @@ class SpriteCache():
         'barrier.laserbeam.3': None,
         'barrier.laserbeam.4': None,
         'bg.clouds': None,
+        'bg': None,
         'level.segment': None,
         'level.segment.propeller': None,
         'level.segment.clear.all': None,
