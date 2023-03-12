@@ -321,7 +321,7 @@ class PlayerSelectionScene(Scene):
     def loop(self, tick):
         dt = tick / 1000
 
-        self.game_data.background.loop(dt)
+        self.game_data.background.loop(dt, iterate_offset=True)
 
         # Handle events
         for event in pygame.event.get():
@@ -359,7 +359,10 @@ class PlayerSelectionScene(Scene):
                 self.show_info = False
                 self._update_player_info()
                 self._update_selection(suppress_sound=True)
-            self.game_data.cache.sound_cache.play('menu.back', volume=self.music_volume_bg_menu_effects)
+            if self.is_state(State.GAME):
+                self.game_data.background.reset()
+            else:
+                self.game_data.cache.sound_cache.play('menu.back', volume=self.music_volume_bg_menu_effects)
             return
         else:
             self.game_data.scene_menu.start_music()

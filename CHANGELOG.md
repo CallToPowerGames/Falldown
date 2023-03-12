@@ -7,6 +7,7 @@
 * Added (randomized) cloud background images
 * Added parallax scrolling for the background (background image and clouds)
 * Added an option to deactivate the background image
+* Added a (random) cloud scale factor for cloud variations
 * General bug fixing, cleaning up and refactoring
 
 ### v1.3.0

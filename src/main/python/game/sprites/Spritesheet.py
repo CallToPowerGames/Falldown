@@ -15,7 +15,7 @@ import pygame
 class Spritesheet(object):
     """A Spritesheet"""
 
-    def __init__(self, sprite_cache, name, size, nr_images, startpoint=(0, 0), generate_sides=True, orientation_left=True, colorkey=(0, 0, 0)):
+    def __init__(self, sprite_cache, name, size, nr_images, startpoint=(0, 0), generate_sides=True, orientation_left=True, colorkey=(0, 0, 0), smooth=False):
         """Initializes the Spritesheet
 
         :param sprite_cache: The sprite cache
@@ -26,6 +26,7 @@ class Spritesheet(object):
         :param generate_sides: Flag whether to generate both sides (normal and flipped)
         :param orientation_left: Flag whether to the sprite is left-oriented
         :param colorkey: The color key
+        :param smooth: Flag whether to use smoothscale instead of scale
         """
         super().__init__()
 
@@ -39,6 +40,7 @@ class Spritesheet(object):
         self.generate_sides = generate_sides
         self.orientation_left = orientation_left
         self.colorkey = colorkey
+        self.smooth = smooth
 
         self.images_left = []
         self.images_right = []
@@ -57,12 +59,13 @@ class Spritesheet(object):
             curr_w += self.size[0]
 
         imgs = self._images_at(coordinates)
+        _func = pygame.transform.scale if self.smooth else pygame.transform.smoothscale
         if self.orientation_left:
-            self.images_left = [pygame.transform.scale(img.convert_alpha(), self.size) for img in imgs]
+            self.images_left = [_func(img.convert_alpha(), self.size) for img in imgs]
             if self.generate_sides:
                 self.images_right = [pygame.transform.flip(img, True, False) for img in self.images_left]
         else:
-            self.images_right = [pygame.transform.scale(img.convert_alpha(), self.size) for img in imgs]
+            self.images_right = [_func(img.convert_alpha(), self.size) for img in imgs]
             if self.generate_sides:
                 self.images_left = [pygame.transform.flip(img, True, False) for img in self.images_right]
 

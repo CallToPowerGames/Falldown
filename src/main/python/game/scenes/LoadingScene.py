@@ -99,7 +99,8 @@ class LoadingScene(Scene):
 
     def loop(self, tick):
         dt = tick / 1000
-        self.game_data.background.loop(dt)
+
+        self.game_data.background.loop(dt, iterate_offset=True)
 
         # Handle events
         for event in pygame.event.get():

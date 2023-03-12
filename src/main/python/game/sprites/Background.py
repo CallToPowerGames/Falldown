@@ -64,6 +64,9 @@ class Background(pygame.sprite.Sprite):
         self.offset_factor_y_small = self.game_data.game_config.get('background.offset.factor.y.small')
         self.offset_factor_y_mid = self.game_data.game_config.get('background.offset.factor.y.mid')
         self.offset_factor_y_big = self.game_data.game_config.get('background.offset.factor.y.big')
+        self.background_scale_factor_max_small = self.game_data.game_config.get('background.scale.factor.max.small')
+        self.background_scale_factor_max_mid = self.game_data.game_config.get('background.scale.factor.max.mid')
+        self.background_scale_factor_max_big = self.game_data.game_config.get('background.scale.factor.max.big')
 
         self.min_size_x = self.offset_max_left
         self.max_size_x = self.screen_size[0] + abs(self.offset_max_left) + self.offset_max_right
@@ -87,7 +90,9 @@ class Background(pygame.sprite.Sprite):
 
         self.clean_every_nth = update_every_nth_loop
         self.curr_clean = 0
+
         self.offset = pygame.math.Vector2(0, 0)
+        self.offset_plus = 1
 
         self._init()
 
@@ -97,19 +102,31 @@ class Background(pygame.sprite.Sprite):
         for i in range(int(self.nr_of_clouds_big / 2)):
             x = random.randint(self.min_size_x, self.max_size_x)
             y = random.randint(0, self.screen_size[1])
-            cloud = Cloud(self.game_data, self.spritesheet_bg_clouds_big_cloud.images_left[0], (x, y), self.w_clouds_big, self.h_clouds_big, self.speed_bg_clouds_big_min, self.speed_bg_clouds_big_max)
+            rand_float = round(random.uniform(1, self.background_scale_factor_max_big), 1)
+            _width = self.w_clouds_big * rand_float
+            _height = self.h_clouds_big * rand_float
+            _img = pygame.transform.scale(self.spritesheet_bg_clouds_big_cloud.images_left[0], (_width, _height))
+            cloud = Cloud(self.game_data, _img, (x, y), _width, _height, self.speed_bg_clouds_big_min, self.speed_bg_clouds_big_max)
             self.big_clouds.append(cloud)
         self.mid_clouds = []
         for i in range(int(self.nr_of_clouds_mid)):
             x = random.randint(self.min_size_x, self.max_size_x)
             y = random.randint(0, self.screen_size[1])
-            cloud = Cloud(self.game_data, self.spritesheet_bg_clouds_mid_cloud.images_left[0], (x, y), self.w_clouds_mid, self.h_clouds_mid, self.speed_bg_clouds_mid_min, self.speed_bg_clouds_mid_max)
+            rand_float = round(random.uniform(1, self.background_scale_factor_max_mid), 1)
+            _width = self.w_clouds_mid * rand_float
+            _height = self.h_clouds_mid * rand_float
+            _img = pygame.transform.scale(self.spritesheet_bg_clouds_mid_cloud.images_left[0], (_width, _height))
+            cloud = Cloud(self.game_data, _img, (x, y), _width, _height, self.speed_bg_clouds_mid_min, self.speed_bg_clouds_mid_max)
             self.mid_clouds.append(cloud)
         self.small_clouds = []
         for i in range(int(self.nr_of_clouds_small)):
             x = random.randint(self.min_size_x, self.max_size_x)
             y = random.randint(0, self.screen_size[1])
-            cloud = Cloud(self.game_data, self.spritesheet_bg_clouds_small_cloud.images_left[0], (x, y), self.w_clouds_small, self.h_clouds_small, self.speed_bg_clouds_small_min, self.speed_bg_clouds_small_max)
+            rand_float = round(random.uniform(1, self.background_scale_factor_max_small), 1)
+            _width = self.w_clouds_small * rand_float
+            _height = self.h_clouds_small * rand_float
+            _img = pygame.transform.scale(self.spritesheet_bg_clouds_small_cloud.images_left[0], (_width, _height))
+            cloud = Cloud(self.game_data, _img, (x, y), _width, _height, self.speed_bg_clouds_small_min, self.speed_bg_clouds_small_max)
             self.small_clouds.append(cloud)
 
         self.sort_clouds()
@@ -119,28 +136,25 @@ class Background(pygame.sprite.Sprite):
     def clean(self):
         """Cleans the background elements, removes all lines not in the offset area"""
         new_big_clouds = []
-        cloud_height = self.spritesheet_bg_clouds_big_cloud.images_left[0].get_height()
         for cloud in self.big_clouds:
             in_x = cloud.get_curr_x() + cloud.width >= self.offset_max_left
-            in_y = cloud.startpoint[1] + cloud_height >= self.offset_big.y
+            in_y = cloud.startpoint[1] + cloud.height >= self.offset_big.y
             if in_x and in_y:
                 new_big_clouds.append(cloud)
         self.big_clouds = new_big_clouds
 
         new_mid_clouds = []
-        cloud_height = self.spritesheet_bg_clouds_mid_cloud.images_left[0].get_height()
         for cloud in self.mid_clouds:
             in_x = cloud.get_curr_x() + cloud.width >= self.offset_max_left
-            in_y = cloud.startpoint[1] + cloud_height >= self.offset_mid.y
+            in_y = cloud.startpoint[1] + cloud.height >= self.offset_mid.y
             if in_x and in_y:
                 new_mid_clouds.append(cloud)
         self.mid_clouds = new_mid_clouds
 
         new_small_clouds = []
-        cloud_height = self.spritesheet_bg_clouds_small_cloud.images_left[0].get_height()
         for cloud in self.small_clouds:
             in_x = cloud.get_curr_x() + cloud.width >= self.offset_max_left
-            in_y = cloud.startpoint[1] + cloud_height >= self.offset_small.y
+            in_y = cloud.startpoint[1] + cloud.height >= self.offset_small.y
             if in_x and in_y:
                 new_small_clouds.append(cloud)
         self.small_clouds = new_small_clouds
@@ -157,21 +171,33 @@ class Background(pygame.sprite.Sprite):
         for i in range(int(big_clouds_missing / 3)):
             x = self.max_size_x
             y = random.randint(y_min, y_max)
-            cloud = Cloud(self.game_data, self.spritesheet_bg_clouds_big_cloud.images_left[0], (x, y), self.w_clouds_big, self.h_clouds_big, self.speed_bg_clouds_big_min, self.speed_bg_clouds_big_max)
+            rand_float = round(random.uniform(1, self.background_scale_factor_max_big), 1)
+            _width = self.w_clouds_big * rand_float
+            _height = self.h_clouds_big * rand_float
+            _img = pygame.transform.scale(self.spritesheet_bg_clouds_big_cloud.images_left[0], (_width, _height))
+            cloud = Cloud(self.game_data, _img, (x, y), _width, _height, self.speed_bg_clouds_big_min, self.speed_bg_clouds_big_max)
             self.big_clouds.append(cloud)
 
         mid_clouds_missing = self.nr_of_clouds_mid - len(self.mid_clouds)
         for i in range(int(mid_clouds_missing / 3)):
             x = self.max_size_x
             y = random.randint(y_min, y_max)
-            cloud = Cloud(self.game_data, self.spritesheet_bg_clouds_mid_cloud.images_left[0], (x, y), self.w_clouds_mid, self.h_clouds_mid, self.speed_bg_clouds_mid_min, self.speed_bg_clouds_mid_max)
+            rand_float = round(random.uniform(1, self.background_scale_factor_max_mid), 1)
+            _width = self.w_clouds_mid * rand_float
+            _height = self.h_clouds_mid * rand_float
+            _img = pygame.transform.scale(self.spritesheet_bg_clouds_mid_cloud.images_left[0], (_width, _height))
+            cloud = Cloud(self.game_data, _img, (x, y), _width, _height, self.speed_bg_clouds_mid_min, self.speed_bg_clouds_mid_max)
             self.mid_clouds.append(cloud)
 
         small_clouds_missing = self.nr_of_clouds_small - len(self.small_clouds)
         for i in range(int(small_clouds_missing / 3)):
             x = self.max_size_x
             y = random.randint(y_min, y_max)
-            cloud = Cloud(self.game_data, self.spritesheet_bg_clouds_small_cloud.images_left[0], (x, y), self.w_clouds_small, self.h_clouds_small, self.speed_bg_clouds_small_min, self.speed_bg_clouds_small_max)
+            rand_float = round(random.uniform(1, self.background_scale_factor_max_small), 1)
+            _width = self.w_clouds_small * rand_float
+            _height = self.h_clouds_small * rand_float
+            _img = pygame.transform.scale(self.spritesheet_bg_clouds_small_cloud.images_left[0], (_width, _height))
+            cloud = Cloud(self.game_data, _img, (x, y), _width, _height, self.speed_bg_clouds_small_min, self.speed_bg_clouds_small_max)
             self.small_clouds.append(cloud)
 
         # Below the current screen
@@ -184,21 +210,33 @@ class Background(pygame.sprite.Sprite):
         for i in range(int(big_clouds_missing / 3)):
             x = random.randint(x_min, x_max)
             y = random.randint(y_min, y_max)
-            cloud = Cloud(self.game_data, self.spritesheet_bg_clouds_big_cloud.images_left[0], (x, y), self.w_clouds_big, self.h_clouds_big, self.speed_bg_clouds_big_min, self.speed_bg_clouds_big_max)
+            rand_float = round(random.uniform(1, self.background_scale_factor_max_big), 1)
+            _width = self.w_clouds_big * rand_float
+            _height = self.h_clouds_big * rand_float
+            _img = pygame.transform.scale(self.spritesheet_bg_clouds_big_cloud.images_left[0], (_width, _height))
+            cloud = Cloud(self.game_data, _img, (x, y), _width, _height, self.speed_bg_clouds_big_min, self.speed_bg_clouds_big_max)
             self.big_clouds.append(cloud)
 
         mid_clouds_missing = self.nr_of_clouds_mid - len(self.mid_clouds)
         for i in range(int(mid_clouds_missing / 3)):
             x = random.randint(x_min, x_max)
             y = random.randint(y_min, y_max)
-            cloud = Cloud(self.game_data, self.spritesheet_bg_clouds_mid_cloud.images_left[0], (x, y), self.w_clouds_mid, self.h_clouds_mid, self.speed_bg_clouds_mid_min, self.speed_bg_clouds_mid_max)
+            rand_float = round(random.uniform(1, self.background_scale_factor_max_mid), 1)
+            _width = self.w_clouds_mid * rand_float
+            _height = self.h_clouds_mid * rand_float
+            _img = pygame.transform.scale(self.spritesheet_bg_clouds_mid_cloud.images_left[0], (_width, _height))
+            cloud = Cloud(self.game_data, _img, (x, y), _width, _height, self.speed_bg_clouds_mid_min, self.speed_bg_clouds_mid_max)
             self.mid_clouds.append(cloud)
 
         small_clouds_missing = self.nr_of_clouds_small - len(self.small_clouds)
         for i in range(int(small_clouds_missing / 3)):
             x = random.randint(x_min, x_max)
             y = random.randint(y_min, y_max)
-            cloud = Cloud(self.game_data, self.spritesheet_bg_clouds_small_cloud.images_left[0], (x, y), self.w_clouds_small, self.h_clouds_small, self.speed_bg_clouds_small_min, self.speed_bg_clouds_small_max)
+            rand_float = round(random.uniform(1, self.background_scale_factor_max_small), 1)
+            _width = self.w_clouds_small * rand_float
+            _height = self.h_clouds_small * rand_float
+            _img = pygame.transform.scale(self.spritesheet_bg_clouds_small_cloud.images_left[0], (_width, _height))
+            cloud = Cloud(self.game_data, _img, (x, y), _width, _height, self.speed_bg_clouds_small_min, self.speed_bg_clouds_small_max)
             self.small_clouds.append(cloud)
 
         self.sort_clouds()
@@ -215,11 +253,19 @@ class Background(pygame.sprite.Sprite):
         self.offset = pygame.math.Vector2(0, 0)
         self._init()
 
-    def loop(self, dt):
+    def reload_conf(self):
+        """Reloads relevant config parameters"""
+        self.bg_draw = self.game_data.game_config.get('background.draw')
+
+    def loop(self, dt, iterate_offset=False):
         """Loops the background
 
         :param dt: Tick rate, milliseconds between each call to 'tick'
+        :param iterate_offset: Flag whether to slowly iterate the offset
         """
+        if iterate_offset:
+            self.offset += (0, self.offset_plus)
+
         if self.curr_clean >= self.clean_every_nth:
             self.curr_clean = 0
             self.clean()
@@ -270,10 +316,6 @@ class Background(pygame.sprite.Sprite):
                 curr_x += self.image_bg.get_width()
             curr_y += self.image_bg.get_height()
 
-    def reload_conf(self):
-        """Reloads relevant config parameters"""
-        self.bg_draw = self.game_data.game_config.get('background.draw')
-
     def draw(self, offset=pygame.math.Vector2(0, 0)):
         """Draws the background
 
@@ -281,11 +323,10 @@ class Background(pygame.sprite.Sprite):
         """
         self.offset = offset
 
+        self.screen.fill(self.bg_main_color)
         if self.bg_draw:
             _offset = pygame.math.Vector2(self.offset.x * self.offset_factor_x_bg_image, self.offset.y * self.offset_factor_y_bg_image)
             self._draw_bg(_offset)
-        else:
-            self.screen.fill(self.bg_main_color)
 
         self.offset_small = pygame.math.Vector2(self.offset.x * self.offset_factor_x_small, self.offset.y * self.offset_factor_y_small)
         self.offset_mid = pygame.math.Vector2(self.offset.x * self.offset_factor_x_mid, self.offset.y * self.offset_factor_y_mid)
