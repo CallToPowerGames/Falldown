@@ -108,6 +108,8 @@ class Background(pygame.sprite.Sprite):
             cloud = Cloud(self.game_data, self.spritesheet_bg_clouds_small_cloud.images_left[0], (x, y), self.w_clouds_small, self.h_clouds_small, self.speed_bg_clouds_small_min, self.speed_bg_clouds_small_max)
             self.small_clouds.append(cloud)
 
+        self.sort_clouds()
+
         self.image_bg = self.spritesheet_bg.images_left[0]
 
     def clean(self):
@@ -138,6 +140,8 @@ class Background(pygame.sprite.Sprite):
             if in_x and in_y:
                 new_small_clouds.append(cloud)
         self.small_clouds = new_small_clouds
+
+        self.sort_clouds()
 
     def fill(self):
         """Fills up clouds"""
@@ -192,6 +196,14 @@ class Background(pygame.sprite.Sprite):
             y = random.randint(y_min, y_max)
             cloud = Cloud(self.game_data, self.spritesheet_bg_clouds_small_cloud.images_left[0], (x, y), self.w_clouds_small, self.h_clouds_small, self.speed_bg_clouds_small_min, self.speed_bg_clouds_small_max)
             self.small_clouds.append(cloud)
+
+        self.sort_clouds()
+
+    def sort_clouds(self):
+        """Sorts clouds so that slower clouds can be drawn first"""
+        self.big_clouds = sorted(self.big_clouds, key=lambda e: e.speed)
+        self.mid_clouds = sorted(self.mid_clouds, key=lambda e: e.speed)
+        self.small_clouds = sorted(self.small_clouds, key=lambda e: e.speed)
 
     def reset(self):
         """Resets the background"""
