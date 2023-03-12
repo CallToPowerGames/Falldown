@@ -109,25 +109,28 @@ class Background(pygame.sprite.Sprite):
     def clean(self):
         """Cleans the background elements, removes all lines not in the offset area"""
         new_big_clouds = []
+        cloud_height = self.spritesheet_bg_clouds_big_cloud.images_left[0].get_height()
         for cloud in self.big_clouds:
             in_x = cloud.get_curr_x() + cloud.width >= self.offset_max_left
-            in_y = cloud.startpoint[1] >= self.offset_big.y
+            in_y = cloud.startpoint[1] + cloud_height >= self.offset_big.y
             if in_x and in_y:
                 new_big_clouds.append(cloud)
         self.big_clouds = new_big_clouds
 
         new_mid_clouds = []
+        cloud_height = self.spritesheet_bg_clouds_mid_cloud.images_left[0].get_height()
         for cloud in self.mid_clouds:
             in_x = cloud.get_curr_x() + cloud.width >= self.offset_max_left
-            in_y = cloud.startpoint[1] >= self.offset_mid.y
+            in_y = cloud.startpoint[1] + cloud_height >= self.offset_mid.y
             if in_x and in_y:
                 new_mid_clouds.append(cloud)
         self.mid_clouds = new_mid_clouds
 
         new_small_clouds = []
+        cloud_height = self.spritesheet_bg_clouds_small_cloud.images_left[0].get_height()
         for cloud in self.small_clouds:
             in_x = cloud.get_curr_x() + cloud.width >= self.offset_max_left
-            in_y = cloud.startpoint[1] >= self.offset_small.y
+            in_y = cloud.startpoint[1] + cloud_height >= self.offset_small.y
             if in_x and in_y:
                 new_small_clouds.append(cloud)
         self.small_clouds = new_small_clouds
