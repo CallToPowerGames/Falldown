@@ -238,7 +238,7 @@ class HighscoreScene(Scene):
 
     def draw(self):
         """Draws the scene"""
-        self.game_data.background.draw()
+        self.game_data.background.draw(draw_background_level=True)
 
         self.screen.blit(self.image_highscore_filled, self.rect_highscore)
 

@@ -35,6 +35,8 @@ class ExitScene(Scene):
         self.item_logo = None
         self.item_exit = None
 
+        self.draw_background_level = True
+
         self._init_items()
 
     def _init_items(self):
@@ -54,7 +56,8 @@ class ExitScene(Scene):
                                     height=height,
                                     color=self.text_color_logo,
                                     rect_width=-1,
-                                    text=self.game_data.i18n.get('game.name')
+                                    text=self.game_data.i18n.get('game.name'),
+                                    banner=True
                                 )
         self.items.append(self.item_logo)
 
@@ -70,7 +73,9 @@ class ExitScene(Scene):
                                     width=width,
                                     height=height,
                                     color=self.text_color,
-                                    text='{} '.format(self.game_data.i18n.get('scene.exit.txt'))
+                                    rect_width=-1,
+                                    text=self.game_data.i18n.get('scene.exit.txt'),
+                                    button=True
                                 )
         self.items.append(self.item_exit)
 
@@ -96,7 +101,7 @@ class ExitScene(Scene):
             return
 
     def draw(self):
-        self.game_data.background.draw()
+        self.game_data.background.draw(draw_background_level=self.draw_background_level)
 
         for item in self.items:
             item.loop()

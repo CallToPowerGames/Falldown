@@ -17,6 +17,8 @@ from game.GameState import State
 from game.Direction import Direction
 from game.sprites.Spritesheet import Spritesheet
 from game.sprites.Cloud import Cloud
+from game.level.Level import Level
+from game.Camera import Camera
 
 class Background(pygame.sprite.Sprite):
     """The background"""
@@ -85,7 +87,12 @@ class Background(pygame.sprite.Sprite):
         self.curr_clean = 0
 
         self.offset = pygame.math.Vector2(0, 0)
-        self.offset_plus = 1
+        self.offset_plus = pygame.math.Vector2(1, 1)
+        self.offset_max = 1000000
+
+        self.background_level_active = True
+        self.background_level = None
+        self.background_camera = None
 
         self._init()
 
@@ -127,6 +134,20 @@ class Background(pygame.sprite.Sprite):
         rand_float = round(random.uniform(1, factor), 1)
         _size = (original_size[0] * rand_float, original_size[1] * rand_float)
         return _size, spritesheet.get_scaled_left(_size)[0]
+
+    def _init_background_level(self):
+        """Initializes the background level"""
+        self.background_level_active = True
+        self.background_level = Level(self.game_data)
+        self.background_level.last_y = -1
+        self.background_camera = Camera(self.game_data, level=self.background_level, show_go=False, directly_generate_segments=True)
+
+    def clear_background_level(self):
+        """Clears the background level"""
+        self.background_level_active = False
+        self.background_level = None
+        self.background_camera = None
+        self.background_level_active = False
 
     def clean(self):
         """Cleans the background elements, removes all lines not in the offset area"""
@@ -224,24 +245,35 @@ class Background(pygame.sprite.Sprite):
         self.mid_clouds = sorted(self.mid_clouds, key=lambda e: e.speed)
         self.small_clouds = sorted(self.small_clouds, key=lambda e: e.speed)
 
-    def reset(self):
+    def reset(self, init_background_level=False):
         """Resets the background"""
-        logging.info('Resetting clouds')
+        logging.info('Resetting background')
         self.offset = pygame.math.Vector2(0, 0)
+        self.offset_plus = pygame.math.Vector2(1, 1)
+        self.clear_background_level()
+        if init_background_level:
+            self._init_background_level()
         self._init()
 
     def reload_conf(self):
         """Reloads relevant config parameters"""
         self.bg_draw = self.game_data.game_config.get('background.draw')
 
-    def loop(self, dt, iterate_offset=False):
+    def loop(self, dt, offset=pygame.math.Vector2(0, 0), iterate_offset=False):
         """Loops the background
 
         :param dt: Tick rate, milliseconds between each call to 'tick'
+        :param offset: The offset. Only set if iterate_offset is False
         :param iterate_offset: Flag whether to slowly iterate the offset
         """
         if iterate_offset:
-            self.offset += (0, self.offset_plus)
+            self.offset += self.offset_plus
+            if self.offset.y > self.offset_max:
+                self.reset(init_background_level=True)
+            elif (self.offset[0] > self.offset_max_right) or (self.offset[0] < self.offset_max_left):
+                self.offset_plus = (-1 * self.offset_plus[0], self.offset_plus[1])
+        else:
+            self.offset = offset
 
         if self.curr_clean >= self.clean_every_nth:
             self.curr_clean = 0
@@ -257,6 +289,10 @@ class Background(pygame.sprite.Sprite):
             cloud.loop(dt)
         for cloud in self.small_clouds:
             cloud.loop(dt)
+
+        if self.background_camera:
+            self.background_camera.offset = self.offset
+            self.background_camera.loop(dt)
 
     def _draw(self, clouds, offset):
         """Draws the background
@@ -301,17 +337,16 @@ class Background(pygame.sprite.Sprite):
 
         return nr_drawn
 
-    def draw(self, offset=pygame.math.Vector2(0, 0)):
+    def draw(self, draw_background_level=False):
         """Draws the background
 
         :param offset: The offset
         """
-        self.offset = offset
-
-        self.screen.fill(self.bg_main_color)
         if self.bg_draw:
             _offset = pygame.math.Vector2(self.offset.x * self.offset_factor_x_bg_image, self.offset.y * self.offset_factor_y_bg_image)
             self._draw_bg(_offset)
+        else:
+            self.screen.fill(self.bg_main_color)
 
         self.offset_small = pygame.math.Vector2(self.offset.x * self.offset_factor_x_small, self.offset.y * self.offset_factor_y_small)
         self.offset_mid = pygame.math.Vector2(self.offset.x * self.offset_factor_x_mid, self.offset.y * self.offset_factor_y_mid)
@@ -322,3 +357,7 @@ class Background(pygame.sprite.Sprite):
         nr_drawn += self._draw(self.big_clouds, self.offset_big)
 
         # logging.debug('#Clouds drawn: {}'.format(nr_drawn))
+
+        if draw_background_level and self.background_camera:
+            self.background_camera.offset = self.offset
+            self.background_camera.draw(show_score=False, show_fps=False)

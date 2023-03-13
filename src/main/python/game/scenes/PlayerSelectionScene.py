@@ -359,9 +359,9 @@ class PlayerSelectionScene(Scene):
                 self.show_info = False
                 self._update_player_info()
                 self._update_selection(suppress_sound=True)
-            if self.is_state(State.GAME):
-                self.game_data.background.reset()
-            else:
+            #if self.is_state(State.GAME):
+            #     self.game_data.background.reset()
+            if not self.is_state(State.GAME):
                 self.game_data.cache.sound_cache.play('menu.back', volume=self.music_volume_bg_menu_effects)
             return
         else:
@@ -378,7 +378,7 @@ class PlayerSelectionScene(Scene):
 
     def draw(self):
         """Draws the scene"""
-        self.game_data.background.draw()
+        self.game_data.background.draw(draw_background_level=True)
 
         for item in self.items:
             item.loop()

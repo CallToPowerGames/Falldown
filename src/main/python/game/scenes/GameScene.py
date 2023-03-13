@@ -34,17 +34,17 @@ class GameScene(Scene):
         self.music_volume_bg_menu_effects = self.game_data.game_config.get('music.volume.background.menu.effects')
         self.game_music = self.game_data.game_config.get('game.music')
 
+        self.game_init_done = False
         self.border = None
         self.barrier = None
         self.player = None
         self.level = None
         self.camera = None
+
         self.sound_played = False
         self.paused = False
         self.playing_music = False
         self.curr_bg_music = ''
-
-        self.game_init_done = False
 
     def init_game(self):
         """Initializes the game objects"""
@@ -59,13 +59,19 @@ class GameScene(Scene):
         self.player.init(pos_player)
 
         self.level = Level(self.game_data)
-        self.camera = Camera(self.game_data, self.border, self.barrier, self.player, self.level)
+        self.camera = Camera(self.game_data, self.level, self.border, self.barrier, self.player)
 
         self.game_init_done = True
 
     def reset(self):
         """Resets the scene"""
         self.game_init_done = False
+        self.border = None
+        self.barrier = None
+        self.player = None
+        self.level = None
+        self.camera = None
+
         self.init_game()
 
     def toggle_show_fps(self):
@@ -74,6 +80,7 @@ class GameScene(Scene):
 
     def loop_visuals(self, tick):
         dt = tick / 1000
+        self.game_data.background.loop(dt, self.camera.offset)
         self.camera.loop_visuals(dt)
 
     def stop_music(self):
@@ -102,6 +109,7 @@ class GameScene(Scene):
                 self.sound_played = True
                 self.game_data.cache.sound_cache.play('game.start', volume=self.music_volume_bg_game_effects)
             dt = tick / 1000
+            self.game_data.background.loop(dt, self.camera.offset)
             self.camera.loop(dt, pygame.key.get_pressed())
             if self.camera.game_over:
                 self.set_state(State.GAMEOVER)
@@ -132,4 +140,5 @@ class GameScene(Scene):
         :param show_score: Flag whether to show the score
         :param show_fps: Flag whether to show the fps, shows only if toggled on
         """
+        self.game_data.background.draw()
         self.camera.draw(show_score=show_score, show_fps=show_fps)

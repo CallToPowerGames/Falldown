@@ -63,6 +63,7 @@ class GameState():
         :return: True if the state changed happened, False else
         """
         if isinstance(state, State) and not self.is_state(state):
+            logging.info('Set state "{}"'.format(state))
             logging.debug('Setting game state to {}'.format(state.name))
             self.state = state
             self._state_changed = True

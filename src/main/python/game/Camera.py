@@ -19,7 +19,7 @@ from game.drawables.DrawableUtils import draw_text_in_rect
 class Camera():
     """The camera"""
 
-    def __init__(self, game_data, border, barrier, player, level):
+    def __init__(self, game_data, level, border=None, barrier=None, player=None, show_go=True, directly_generate_segments=False):
         """Initializes the camera
 
         :param game_data: The game data
@@ -27,14 +27,18 @@ class Camera():
         :param barrier: The barrier
         :param player: The player
         :param level: The level
+        :param show_go: Flag whether to show the "Go, Player" text
+        :param directly_generate_segments: Flag whether to directly start generating segments
         """
         logging.info('Initializing camera')
 
         self.game_data = game_data
+        self.level = level
         self.border = border
         self.barrier = barrier
         self.player = player
-        self.level = level
+        self.show_go = show_go
+        self.directly_generate_segments = directly_generate_segments
 
         self.screen = self.game_data.game_config.get('screen')
         self.font_xs = self.game_data.cache.font_cache.get('main.xs')
@@ -72,7 +76,6 @@ class Camera():
         self.player_first_time_colliding_right = True
         self.player_first_time_colliding_bottom = True
         self.screen_mid = self.screen_size[0] / 2, self.screen_size[1] / 2
-        self.show_go = True
         self.nr_it_show_go = self.nr_iterations_show_go
 
         self.camera_rect = pygame.Rect(
@@ -106,71 +109,81 @@ class Camera():
 
         self.game_over = False
 
+        if directly_generate_segments:
+            self._clean_and_generate_new_level_elements()
+
     def stop(self):
         """Stops"""
-        self.barrier.stop()
+        if self.barrier:
+            self.barrier.stop()
 
     def pause(self):
         """Pauses"""
-        self.barrier.pause()
+        if self.barrier:
+            self.barrier.pause()
 
     def unpause(self):
         """Unpauses"""
-        self.barrier.unpause()
+        if self.barrier:
+            self.barrier.unpause()
 
     def _player_move_left(self, velocity):
         """Moves the player left
 
         :param velocity: The x velocity
         """
-        self.player.rect.x -= velocity
-        if self.player.rect.left < self.camera_rect.left:
-            self.player.rect.left = self.camera_rect.left
-            self.offset.x -= velocity
-            if self.offset.x < self.offset_max_left:
-                self.offset.x = self.offset_max_left
-                self.player.reset_speed_x()
+        if self.player:
+            self.player.rect.x -= velocity
+            if self.player.rect.left < self.camera_rect.left:
+                self.player.rect.left = self.camera_rect.left
+                self.offset.x -= velocity
+                if self.offset.x < self.offset_max_left:
+                    self.offset.x = self.offset_max_left
+                    self.player.reset_speed_x()
 
     def _player_move_right(self, velocity):
         """Moves the player right
 
         :param velocity: The x velocity
         """
-        self.player.rect.x += velocity
-        if self.player.rect.right > self.camera_rect.right:
-            self.player.rect.right = self.camera_rect.right
-            self.offset.x += velocity
-            if self.offset.x > self.offset_max_right:
-                self.offset.x = self.offset_max_right
-                self.player.reset_speed_x()
+        if self.player:
+            self.player.rect.x += velocity
+            if self.player.rect.right > self.camera_rect.right:
+                self.player.rect.right = self.camera_rect.right
+                self.offset.x += velocity
+                if self.offset.x > self.offset_max_right:
+                    self.offset.x = self.offset_max_right
+                    self.player.reset_speed_x()
 
     def _player_move_top(self, velocity):
         """Moves the player top
 
         :param velocity: The y velocity
         """
-        self.player.rect.y = self.player.rect.y - velocity
-        if self.player.rect.top < self.camera_rect.top:
-            self.player.rect.top = self.camera_rect.top
-            self.offset.y -= velocity
-            if self.offset.y < self.offset_max_up:
-                self.offset.y = self.offset_max_up
+        if self.player:
+            self.player.rect.y = self.player.rect.y - velocity
+            if self.player.rect.top < self.camera_rect.top:
+                self.player.rect.top = self.camera_rect.top
+                self.offset.y -= velocity
+                if self.offset.y < self.offset_max_up:
+                    self.offset.y = self.offset_max_up
 
     def _player_move_bottom_ignore_collision(self, velocity):
         """Moves the player bottom
 
         :param velocity: The y velocity
         """
-        player_rect = self.player.rect
-        player_plus_velocity_y = player_rect.y + player_rect.height + velocity
-        if player_plus_velocity_y <= self.camera_rect.bottom:
-            self.player.rect.y = self.player.rect.y + velocity
-        else:
-            self.player.rect.y = self.camera_rect.bottom - self.player.rect.height
-            self.offset.y += velocity
-        
-        self.player.falling = True
-        self.player_first_time_colliding_bottom = True
+        if self.player:
+            player_rect = self.player.rect
+            player_plus_velocity_y = player_rect.y + player_rect.height + velocity
+            if player_plus_velocity_y <= self.camera_rect.bottom:
+                self.player.rect.y = self.player.rect.y + velocity
+            else:
+                self.player.rect.y = self.camera_rect.bottom - self.player.rect.height
+                self.offset.y += velocity
+            
+            self.player.falling = True
+            self.player_first_time_colliding_bottom = True
 
     def _player_move_bottom(self, velocity, segment_top_y):
         """Moves the player bottom
@@ -178,48 +191,49 @@ class Camera():
         :param velocity: The y velocity
         :param segment_top_y: The y of the segment
         """
-        collides = False
-        player_rect = self.player.rect
-        player_plus_velocity_y = player_rect.y + player_rect.height + velocity
-        segment_top_y_corr = segment_top_y - self.collision_detection_correction_bottom
-        if player_plus_velocity_y <= self.camera_rect.bottom:
-            if segment_top_y > 0 and player_plus_velocity_y >= segment_top_y_corr:
-                self.player.rect.y = segment_top_y - self.player.rect.height
-                collides = True
+        if self.player:
+            collides = False
+            player_rect = self.player.rect
+            player_plus_velocity_y = player_rect.y + player_rect.height + velocity
+            segment_top_y_corr = segment_top_y - self.collision_detection_correction_bottom
+            if player_plus_velocity_y <= self.camera_rect.bottom:
+                if segment_top_y > 0 and player_plus_velocity_y >= segment_top_y_corr:
+                    self.player.rect.y = segment_top_y - self.player.rect.height
+                    collides = True
+                else:
+                    self.player.rect.y = self.player.rect.y + velocity
             else:
-                self.player.rect.y = self.player.rect.y + velocity
-        else:
-            if segment_top_y > 0 and player_plus_velocity_y >= segment_top_y_corr:
-                old_y = self.player.rect.y
-                self.player.rect.y = segment_top_y - self.player.rect.height
-                corrected_velocity = velocity - abs(self.player.rect.y - old_y)
-                self.offset.y += abs(corrected_velocity)
-                collides = True
+                if segment_top_y > 0 and player_plus_velocity_y >= segment_top_y_corr:
+                    old_y = self.player.rect.y
+                    self.player.rect.y = segment_top_y - self.player.rect.height
+                    corrected_velocity = velocity - abs(self.player.rect.y - old_y)
+                    self.offset.y += abs(corrected_velocity)
+                    collides = True
+                else:
+                    self.player.rect.y = self.camera_rect.bottom - self.player.rect.height
+                    self.offset.y += velocity
+            
+            if collides:
+                if self.player_first_time_colliding_bottom:
+                    self.player_first_time_colliding_bottom = False
+                    self.game_data.cache.sound_cache.play('bump', volume=self.music_volume_bg_game_effects)
+                self.player.reset_speed_y()
             else:
-                self.player.rect.y = self.camera_rect.bottom - self.player.rect.height
-                self.offset.y += velocity
-        
-        if collides:
-            if self.player_first_time_colliding_bottom:
-                self.player_first_time_colliding_bottom = False
-                self.game_data.cache.sound_cache.play('bump', volume=self.music_volume_bg_game_effects)
-            self.player.reset_speed_y()
-        else:
-            self.player.falling = True
-            self.player_first_time_colliding_bottom = True
+                self.player.falling = True
+                self.player_first_time_colliding_bottom = True
 
     def _update_current_key(self, keys):
         """Updates the current key on the player
 
         :param keys: The keys
         """
-        self.player.current_key = None
-        if not (keys[pygame.K_LEFT] and keys[pygame.K_RIGHT]):
-            if keys[pygame.K_LEFT]:
-                self.player.current_key = pygame.K_LEFT
-            elif keys[pygame.K_RIGHT]:
-                self.player.current_key = pygame.K_RIGHT
-
+        if self.player:
+            self.player.current_key = None
+            if not (keys[pygame.K_LEFT] and keys[pygame.K_RIGHT]):
+                if keys[pygame.K_LEFT]:
+                    self.player.current_key = pygame.K_LEFT
+                elif keys[pygame.K_RIGHT]:
+                    self.player.current_key = pygame.K_RIGHT
 
     def _clean_and_generate_new_level_elements(self):
         """Cleans up and - if it's time - generates new level elements"""
@@ -228,7 +242,7 @@ class Camera():
             self.level.generate_new_line()
             self.nr_lines_created_since_last_clean += 1
             if self.level.nr_or_lines_generated > self.barrier_start_after_lines:
-                if self.start_barrier:
+                if self.barrier and self.start_barrier:
                     self.barrier.started = True
                     self.barrier.increase_speed()
                 self.game_data.score += self.score_plus
@@ -239,33 +253,34 @@ class Camera():
 
     def _check_game_over(self):
         """Checks whether the game is over and sets a flag"""
-        if self.barrier.is_visible(self.offset):
-            if self.music_volume != self.music_volume_bg_game_barriervisible:
-                self.music_volume = self.music_volume_bg_game_barriervisible
-                self.game_data.cache.sound_cache.set_music_volume(self.music_volume)
-            if self.barrier.collides_with(self.player, self.offset):
-                logging.info('Player collided with barrier')
-                self.game_data.cache.sound_cache.play('game.over', volume=self.music_volume_bg_game_effects)
-                self.stop()
+        if self.barrier and self.player:
+            if self.barrier.is_visible(self.offset):
+                if self.music_volume != self.music_volume_bg_game_barriervisible:
+                    self.music_volume = self.music_volume_bg_game_barriervisible
+                    self.game_data.cache.sound_cache.set_music_volume(self.music_volume)
+                if self.barrier.collides_with(self.player, self.offset):
+                    logging.info('Player collided with barrier')
+                    self.game_data.cache.sound_cache.play('game.over', volume=self.music_volume_bg_game_effects)
+                    self.stop()
+                    self.game_data.cache.sound_cache.set_music_volume(self.music_volume_bg_game)
+                    self.game_over = True
+            elif self.music_volume != self.music_volume_bg_game:
+                self.music_volume = self.music_volume_bg_game
                 self.game_data.cache.sound_cache.set_music_volume(self.music_volume_bg_game)
-                self.game_over = True
-        elif self.music_volume != self.music_volume_bg_game:
-            self.music_volume = self.music_volume_bg_game
-            self.game_data.cache.sound_cache.set_music_volume(self.music_volume_bg_game)
 
     def loop_visuals(self, dt):
-        self.game_data.background.loop(dt)
         self.level.loop_visuals(dt)
-        self.barrier.update_sprite()
-        self.player.update_sprite()
+        if self.barrier:
+            self.barrier.update_sprite()
+        if self.player:
+            self.player.update_sprite()
 
-    def loop(self, dt, keys):
+    def loop(self, dt, keys=[]):
         """Updates the camera
 
         :param dt: Tick rate, milliseconds between each call to 'tick'
         :param keys: The keys
         """
-        self.game_data.background.loop(dt)
         self.level.loop(dt)
         self.item_score.loop()
 
@@ -278,6 +293,9 @@ class Camera():
                 self.show_go = False
 
         self._clean_and_generate_new_level_elements()
+
+        if not self.player:
+            return
 
         self._update_current_key(keys)
 
@@ -297,7 +315,7 @@ class Camera():
             self.game_data.score += self.score_plus_clear_all
             self.game_data.cache.sound_cache.play('clear.all', volume=self.music_volume_bg_game_effects)
         if collisioninfo.collides_clear_linesegment or collisioninfo.collides_clear_all:
-            if self.barrier.started:
+            if self.barrier and self.barrier.started:
                 self.barrier.increase_speed()
             return
 
@@ -364,12 +382,14 @@ class Camera():
             self._player_move_bottom(self.velocity_player[1], collisioninfo.segment_top_y)
 
         # Move the barrier
-        if self.barrier.started:
+        if self.barrier and self.barrier.started:
             self.barrier.rect.y += self.barrier.get_velocity(dt)
 
         # Update all sprites
-        self.barrier.update_sprite()
-        self.player.update_sprite()
+        if self.barrier:
+            self.barrier.update_sprite()
+        if self.player:
+            self.player.update_sprite()
 
         self._check_game_over()
 
@@ -379,13 +399,15 @@ class Camera():
         :param show_score: Flag whether to show the score
         :param show_fps: Flag whether to show the fps, shows only if toggled on
         """
-        self.game_data.background.draw(self.offset)
         self.level.draw(self.offset)
-        self.border.draw(self.offset)
-        self.player.draw()
-        self.barrier.draw(self.offset)
+        if self.border:
+            self.border.draw(self.offset)
+        if self.player:
+            self.player.draw()
+        if self.barrier:
+            self.barrier.draw(self.offset)
 
-        if self.show_go:
+        if self.show_go and self.game_data.player_info:
             txt = self.game_data.i18n.get('scene.game.go').format(self.game_data.player_info['name'])
             width_go = len(txt) * 50
             height_go = 50

@@ -333,7 +333,7 @@ class MenuScene(Scene):
 
     def draw(self):
         """Draws the scene"""
-        self.game_data.background.draw()
+        self.game_data.background.draw(draw_background_level=True)
 
         for item in self.items:
             item.loop()

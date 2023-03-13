@@ -236,6 +236,7 @@ class OptionsScene(Scene):
         """Resets the buttons to initial activation status"""
         self.item_back.active = False
         self.item_language.active = False
+        self.item_language_current.active = False
         self.item_background.active = False
         self.item_fullscreen.active = True
         self.active_item = OptionsSceneActiveItem.FULLSCREEN
@@ -252,6 +253,8 @@ class OptionsScene(Scene):
             self.item_fullscreen.active = False
             self.item_background.active = False
             self.item_language.active = True
+            self.item_language_current.active = True
+            self.item_language_current.sound_played = True
             self.active_item = OptionsSceneActiveItem.LANGUAGE
             self.reset_texts()
             self.item_help.rotate = False
@@ -260,6 +263,7 @@ class OptionsScene(Scene):
             self.item_back.active = False
             self.item_fullscreen.active = False
             self.item_language.active = False
+            self.item_language_current.active = False
             self.item_background.active = False
             self.item_background.active = True
             self.active_item = OptionsSceneActiveItem.BACKGROUND
@@ -273,6 +277,8 @@ class OptionsScene(Scene):
             self.item_back.active = False
             self.item_background.active = False
             self.item_language.active = True
+            self.item_language_current.active = True
+            self.item_language_current.sound_played = True
             self.active_item = OptionsSceneActiveItem.LANGUAGE
             self.reset_texts()
             self.item_help.rotate = False
@@ -280,6 +286,7 @@ class OptionsScene(Scene):
         elif self.active_item == OptionsSceneActiveItem.LANGUAGE:
             self.item_fullscreen.active = False
             self.item_language.active = False
+            self.item_language_current.active = False
             self.item_back.active = False
             self.item_background.active = True
             self.active_item = OptionsSceneActiveItem.BACKGROUND
@@ -289,6 +296,7 @@ class OptionsScene(Scene):
         elif self.active_item == OptionsSceneActiveItem.BACKGROUND:
             self.item_fullscreen.active = False
             self.item_language.active = False
+            self.item_language_current.active = False
             self.item_background.active = False
             self.item_back.active = True
             self.active_item = OptionsSceneActiveItem.BACK
@@ -333,7 +341,7 @@ class OptionsScene(Scene):
 
     def draw(self):
         """Draws the scene"""
-        self.game_data.background.draw()
+        self.game_data.background.draw(draw_background_level=True)
 
         for item in self.items:
             item.loop()

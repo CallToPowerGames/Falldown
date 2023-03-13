@@ -46,7 +46,6 @@ class Scene():
 
         :param state: The state
         """
-        logging.info('Set state "{}"'.format(state))
         self.game_data.game_state.set_state(state)
 
     def is_state(self, state):

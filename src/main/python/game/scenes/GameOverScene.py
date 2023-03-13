@@ -60,7 +60,8 @@ class GameOverScene(Scene):
                                     height=height,
                                     color=self.text_color_logo,
                                     rect_width=-1,
-                                    text=self.game_data.i18n.get('game.name')
+                                    text=self.game_data.i18n.get('game.name'),
+                                    banner=True
                                 )
         self.items.append(self.item_logo)
 
@@ -140,7 +141,7 @@ class GameOverScene(Scene):
         if not self.is_state(State.GAMEOVER):
             self.game_data.scene_game.stop_music()
             self.saved_highscore = False
-            self.game_data.background.reset()
+            self.game_data.background.reset(init_background_level=True)
             return
 
         if not self.saved_highscore:

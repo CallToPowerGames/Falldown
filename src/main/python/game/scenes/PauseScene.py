@@ -60,7 +60,8 @@ class PauseScene(Scene):
                                     height=height,
                                     color=self.text_color_logo,
                                     rect_width=-1,
-                                    text=self.game_data.i18n.get('game.name')
+                                    text=self.game_data.i18n.get('game.name'),
+                                    banner=True
                                 )
         self.items.append(self.item_logo)
 
@@ -142,7 +143,7 @@ class PauseScene(Scene):
         if not self.is_state(State.PAUSE):
             self.game_data.cache.sound_cache.play('menu.back', volume=self.music_volume_bg_menu_effects)
             if not self.is_state(State.GAME):
-                self.game_data.background.reset()
+                self.game_data.background.reset(init_background_level=True)
             return
 
         self.game_data.scene_game.loop_visuals(tick)

@@ -92,7 +92,8 @@ class LoadingScene(Scene):
                                     height=height,
                                     color=self.text_color_logo,
                                     rect_width=-1,
-                                    text=self.game_data.i18n.get('game.name')
+                                    text=self.game_data.i18n.get('game.name'),
+                                    banner=True
                                 )
         self.items.append(self.item_logo)
 
@@ -171,10 +172,12 @@ class LoadingScene(Scene):
             elif self.init_perc == 50:
                 self.init_perc += _plus_loading
                 self.game_data.init_game_scenes()
+                self.item_loading.set_text(self.game_data.i18n.get('menu.loading.loading.background_level.txt'))
             elif self.init_perc < 60:
                 self.init_perc += _plus_loading_empty
             elif self.init_perc == 60:
                 self.init_perc += _plus_loading
+                self.game_data.background._init_background_level()
             elif self.init_perc < 70:
                 self.init_perc += _plus_loading_empty
             elif self.init_perc == 70:
@@ -197,7 +200,7 @@ class LoadingScene(Scene):
             self.curr_initial_wait += _plus_loading
 
     def draw(self):
-        self.game_data.background.draw()
+        self.game_data.background.draw(draw_background_level=True)
 
         pygame.draw.rect(
             self.screen,

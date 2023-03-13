@@ -64,6 +64,8 @@ class Cache():
             'loader.filler': 'items/loading/loader-filler.png',
             'banner': 'items/banner.png',
             'button.none': 'items/buttons/button-none.png',
+            'button.active': 'items/buttons/button-active.png',
+            'button.inactive': 'items/buttons/button-inactive.png',
             'bg': 'bg/bg-{}.png'.format(self.bg_index)
         }
 
@@ -99,8 +101,6 @@ class Cache():
             'level.segment.propeller': 'sprites/segment/propeller.png',
             'level.segment.clear.all': 'sprites/segment/clear-all.png',
             'level.segment.clear.line': 'sprites/segment/clear-line-segment.png',
-            'button.active': 'items/buttons/button-active.png',
-            'button.inactive': 'items/buttons/button-inactive.png',
             'imagebutton.active': 'items/buttons/imagebutton-active.png',
             'imagebutton.inactive': 'items/buttons/imagebutton-inactive.png',
             'highscore': 'items/highscore/highscore.png',

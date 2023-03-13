@@ -91,6 +91,8 @@ class GameData():
         except:
             pass
 
+        self.scene_exit.draw_background_level = False
+
         self.timer_exit = Timer(self.game_config.get('exit.timer1'), self._exit_full).start()
 
     def _exit_full(self):
