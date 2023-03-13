@@ -20,14 +20,13 @@ from game.sprites.Spritesheet import Spritesheet
 class Cloud(pygame.sprite.Sprite):
     """A cloud"""
 
-    def __init__(self, game_data, image, startpoint, width, height, speed_min, speed_max):
+    def __init__(self, game_data, image, startpoint, size, speed_min, speed_max):
         """Initializes the cloud
 
         :param game_data: The game data
         :param image: The image
         :param startpoint: The startpoint
-        :param width: The width
-        :param height: The height
+        :param size: The size
         :param speed_min: The min speed
         :param speed_max: max The speed
         """
@@ -41,8 +40,7 @@ class Cloud(pygame.sprite.Sprite):
 
         self.image = image
         self.startpoint = startpoint
-        self.width = width
-        self.height = height
+        self.size = size
 
         self.rect = self.image.get_rect(midbottom=self.startpoint)
         self.speed = random.randint(speed_min, speed_max)
@@ -59,7 +57,7 @@ class Cloud(pygame.sprite.Sprite):
             pygame.Rect(
                 self.startpoint[0] - offset.x,
                 self.startpoint[1] - offset.y,
-                self.width,
-                self.height
+                self.size[0],
+                self.size[1]
             )
         )
