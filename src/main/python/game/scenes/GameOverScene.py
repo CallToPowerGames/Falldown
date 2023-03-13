@@ -141,7 +141,7 @@ class GameOverScene(Scene):
         if not self.is_state(State.GAMEOVER):
             self.game_data.scene_game.stop_music()
             self.saved_highscore = False
-            self.game_data.background.reset(init_background_level=True)
+            self.game_data.background.reset(initialize_background_level=True)
             return
 
         if not self.saved_highscore:
