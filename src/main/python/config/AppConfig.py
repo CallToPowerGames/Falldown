@@ -16,7 +16,7 @@ import tempfile
 _app_config = {
     'author': 'Denis Meyer',
     'version': '1.4',
-    'build': '2023-03-13-2',
+    'build': '2023-03-13-3',
     'copyright': '© 2023 Denis Meyer',
     'conf.game.folder': 'falldown',
     'conf.game.name': 'conf.json',

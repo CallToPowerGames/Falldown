@@ -68,6 +68,7 @@ class Camera():
         self.score_plus = self.game_data.game_config.get('score.plus')
         self.score_plus_clear_linesegment = self.game_data.game_config.get('score.plus.clear.linesegment')
         self.score_plus_clear_all = self.game_data.game_config.get('score.plus.clear.all')
+        self.level_offset_max = self.game_data.game_config.get('level.offset.max')
 
         self.nr_lines_created_since_last_clean = 0
         self.clean_every_n_created_lines = 10
@@ -243,6 +244,7 @@ class Camera():
             self.nr_lines_created_since_last_clean += 1
             if self.level.nr_or_lines_generated > self.barrier_start_after_lines:
                 if self.barrier and self.start_barrier:
+                    # logging.debug('Barrier speed increased')
                     self.barrier.started = True
                     self.barrier.increase_speed()
                 self.game_data.score += self.score_plus
@@ -253,6 +255,9 @@ class Camera():
 
     def _check_game_over(self):
         """Checks whether the game is over and sets a flag"""
+        if self.offset.y > self.level_offset_max:
+            self.game_over = True
+            return
         if self.barrier and self.player:
             if self.barrier.is_visible(self.offset):
                 if self.music_volume != self.music_volume_bg_game_barriervisible:

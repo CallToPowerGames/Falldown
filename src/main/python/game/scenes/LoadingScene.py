@@ -177,7 +177,7 @@ class LoadingScene(Scene):
                 self.init_perc += _plus_loading_empty
             elif self.init_perc == 60:
                 self.init_perc += _plus_loading
-                self.game_data.background._init_background_level()
+                self.game_data.background.init_background_level()
             elif self.init_perc < 70:
                 self.init_perc += _plus_loading_empty
             elif self.init_perc == 70:

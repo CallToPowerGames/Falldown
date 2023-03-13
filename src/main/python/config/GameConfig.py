@@ -139,6 +139,7 @@ class GameConfig():
         'font.main.path': 'yoster-island',
         'font.main.name': 'yoster.ttf',
         'app.icon.size': (32, 32),
+        'level.offset.max': 10000000,
         'level.border.img.size': (64, 128),
         'level.border.out.img.size': (8, 85),
         'level.collision.detection.correction.left': 2,

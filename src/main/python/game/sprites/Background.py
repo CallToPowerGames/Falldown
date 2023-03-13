@@ -69,6 +69,7 @@ class Background(pygame.sprite.Sprite):
         self.background_scale_factor_max_small = self.game_data.game_config.get('background.scale.factor.max.small')
         self.background_scale_factor_max_mid = self.game_data.game_config.get('background.scale.factor.max.mid')
         self.background_scale_factor_max_big = self.game_data.game_config.get('background.scale.factor.max.big')
+        self.level_offset_max = self.game_data.game_config.get('level.offset.max')
 
         self.min_size_x = self.offset_max_left
         self.max_size_x = self.screen_size[0] + abs(self.offset_max_left) + self.offset_max_right
@@ -88,7 +89,6 @@ class Background(pygame.sprite.Sprite):
 
         self.offset = pygame.math.Vector2(0, 0)
         self.offset_plus = pygame.math.Vector2(1, 1)
-        self.offset_max = 1000000
 
         self.background_level_active = True
         self.background_level = None
@@ -135,7 +135,7 @@ class Background(pygame.sprite.Sprite):
         _size = (original_size[0] * rand_float, original_size[1] * rand_float)
         return _size, spritesheet.get_scaled_left(_size)[0]
 
-    def _init_background_level(self):
+    def init_background_level(self):
         """Initializes the background level"""
         self.background_level_active = True
         self.background_level = Level(self.game_data)
@@ -245,14 +245,14 @@ class Background(pygame.sprite.Sprite):
         self.mid_clouds = sorted(self.mid_clouds, key=lambda e: e.speed)
         self.small_clouds = sorted(self.small_clouds, key=lambda e: e.speed)
 
-    def reset(self, init_background_level=False):
+    def reset(self, initialize_background_level=False):
         """Resets the background"""
         logging.info('Resetting background')
         self.offset = pygame.math.Vector2(0, 0)
         self.offset_plus = pygame.math.Vector2(1, 1)
         self.clear_background_level()
-        if init_background_level:
-            self._init_background_level()
+        if initialize_background_level:
+            self.init_background_level()
         self._init()
 
     def reload_conf(self):
@@ -268,7 +268,7 @@ class Background(pygame.sprite.Sprite):
         """
         if iterate_offset:
             self.offset += self.offset_plus
-            if self.offset.y > self.offset_max:
+            if self.offset.y > self.level_offset_max:
                 self.reset(init_background_level=True)
             elif (self.offset[0] > self.offset_max_right) or (self.offset[0] < self.offset_max_left):
                 self.offset_plus = (-1 * self.offset_plus[0], self.offset_plus[1])
