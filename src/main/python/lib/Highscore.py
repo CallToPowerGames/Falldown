@@ -15,18 +15,20 @@ from lib.Utils import load_highscore_db, save_highscore_db
 class Highscore():
     """The highscore"""
 
-    def __init__(self, cryptography, basedir, max_entries=100):
+    def __init__(self, game_config, cryptography, basedir):
         """Initializes the Highscore
 
+        :param game_config: The game configuration
         :param cryptography: The Cryptography
         :param basedir: The base path
-        :param max_entries: Max highscore entries
         """
         logging.info('Initializing highscore')
 
+        self.game_config = game_config
         self.cryptography = cryptography
         self.basedir = basedir
-        self.max_entries = max_entries
+
+        self.max_entries = self.game_config.get('highscore.entries.max')
 
         self.highscore_db = None
 

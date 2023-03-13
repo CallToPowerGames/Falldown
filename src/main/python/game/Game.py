@@ -34,23 +34,18 @@ class Game():
 
     def _init(self):
         """Initializes"""
-        logging.debug('Initializing')
+        logging.debug('Initializing game')
         self.game_data.game_state.set_state(State.LOADING)
-
-        self._init_library()
-
-        pygame.display.set_caption(self.game_data.i18n.get('game.name'))
-        img_icon = self.game_data.cache.sprite_cache.get('app.logo').convert()
-        icon = pygame.transform.scale(img_icon, self.game_data.game_config.get('app.icon.size'))
-        pygame.display.set_icon(icon)
-
-        pygame.mouse.set_visible(0)
+        self._init_screen()
+        self.game_data.init_loading_scene()
+        self._init_window()
 
     def _set_allowed_events(self):
         """Allowes only certain events"""
+        logging.debug('Setting allowed events')
         pygame.event.set_allowed([pygame.QUIT, pygame.KEYDOWN])
 
-    def _init_library(self):
+    def _init_screen(self):
         """Initializes library"""
         logging.debug('Initializing library')
         self.clock = pygame.time.Clock()
@@ -59,7 +54,14 @@ class Game():
         self.game_data.game_config.set('winstyle', winstyle)
         self.game_data.game_config.set('screen', pygame.display.set_mode(size, winstyle | pygame.DOUBLEBUF))
 
-        self.game_data.init_loading_scene()
+    def _init_window(self):
+        """Initializes window"""
+        logging.debug('Initializing window')
+        pygame.display.set_caption(self.game_data.i18n.get('game.name'))
+        img_icon = self.game_data.cache.sprite_cache.get('app.logo').convert()
+        icon = pygame.transform.scale(img_icon, self.game_data.game_config.get('app.icon.size'))
+        pygame.display.set_icon(icon)
+        pygame.mouse.set_visible(0)
 
     def loop(self):
         """Main loop"""

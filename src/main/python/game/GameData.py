@@ -12,6 +12,9 @@ import logging
 from threading import Timer
 import pygame
 
+from i18n.I18n import I18n
+from lib.Cryptography import Cryptography
+from lib.Highscore import Highscore
 from game.GameState import GameState, State
 from game.sprites.Background import Background
 from game.scenes.LoadingScene import LoadingScene
@@ -27,25 +30,35 @@ from game.scenes.ExitScene import ExitScene
 class GameData():
     """Game data"""
 
-    def __init__(self, game_config, i18n, highscore, cache):
+    def __init__(self, game_config, cache, basedir):
         """Initializes the Game data
 
         :param game_config: The game config
-        :param i18n: The i18n
-        :param highscore: The highscore
         :param cache: The cache
+        :param basedir: The base path
         """
         logging.info('Initializing game data')
 
         self.game_config = game_config
-        self.i18n = i18n
-        self.highscore = highscore
         self.cache = cache
+        self.basedir = basedir
+
+        self.i18n = I18n(self.game_config, self.basedir)
 
         self.game_state = GameState()
         self.looping = False
         self.fullscreen = False
         self.exiting = False
+        self.timer_exit = None
+        self.cryptography = None
+        self.highscore = None
+        self.background = None
+        self.players = []
+        self.player_index = 0
+        self.player_info = None
+        self.score = 0
+        self.fps = 0
+
         self.scenes = {}
         self.scene_loading = None
         self.scene_menu = None
@@ -55,15 +68,45 @@ class GameData():
         self.scene_game = None
         self.scene_pause = None
         self.scene_gameover = None
-        self.timer_exit = None
 
-        self.background = None
+    def _set_screen(self, screen):
+        """Sets the screen
 
-        self.players = []
-        self.player_index = 0
-        self.player_info = None
-        self.score = 0
-        self.fps = 0
+        :param screen: The screen
+        """
+        self.screen = screen
+        self.game_config.set('screen', screen)
+
+    def _exit_stop_loop(self):
+        """Exits, stops the loop"""
+        if not self.looping:
+            return
+
+        logging.debug('Stopping loop')
+        self.looping = False
+        try:
+            if self.timer_exit:
+                self.timer_exit.cancel()
+                self.timer_exit.stop()
+        except:
+            pass
+
+        self.timer_exit = Timer(self.game_config.get('exit.timer1'), self._exit_full).start()
+
+    def _exit_full(self):
+        """Exits, sets flag to full quit"""
+        if self.exiting:
+            return
+
+        logging.debug('Ready to quit')
+        self.looping = False
+        self.exiting = True
+        try:
+            if self.timer_exit:
+                self.timer_exit.cancel()
+                self.timer_exit.stop()
+        except:
+            pass
 
     def init_loading_scene(self):
         """Initializes the scenes"""
@@ -76,25 +119,35 @@ class GameData():
         self.scenes[State.LOADING] = self.scene_loading
         self.scenes[State.EXIT] = self.scene_exit
 
-    def init_scenes(self):
+    def init_menu_scenes(self):
         """Initializes the scenes"""
-        logging.debug('Initializing scenes')
+        logging.debug('Initializing menu scenes')
 
         self.scene_menu = MenuScene(State.MENU, self.game_config.get('fps.menu'), self)
         self.scene_highscore = HighscoreScene(State.HIGHSCORE, self.game_config.get('fps.highscore'), self)
         self.scene_options = OptionsScene(State.OPTIONS, self.game_config.get('fps.options'), self)
         self.scene_playerselection = PlayerSelectionScene(State.PLAYERSELECTION, self.game_config.get('fps.playerselection'), self)
-        self.scene_game = GameScene(State.GAME, self.game_config.get('fps.game'), self)
-        self.scene_pause = PauseScene(State.PAUSE, self.game_config.get('fps.pause'), self)
-        self.scene_gameover = GameOverScene(State.GAMEOVER, self.game_config.get('fps.gameover'), self)
 
         self.scenes[State.MENU] = self.scene_menu
         self.scenes[State.HIGHSCORE] = self.scene_highscore
         self.scenes[State.OPTIONS] = self.scene_options
         self.scenes[State.PLAYERSELECTION] = self.scene_playerselection
+
+    def init_game_scenes(self):
+        """Initializes the game scenes"""
+        logging.debug('Initializing game scenes')
+        self.scene_game = GameScene(State.GAME, self.game_config.get('fps.game'), self)
+        self.scene_pause = PauseScene(State.PAUSE, self.game_config.get('fps.pause'), self)
+        self.scene_gameover = GameOverScene(State.GAMEOVER, self.game_config.get('fps.gameover'), self)
+
         self.scenes[State.GAME] = self.scene_game
         self.scenes[State.PAUSE] = self.scene_pause
         self.scenes[State.GAMEOVER] = self.scene_gameover
+
+    def init_highscore(self):
+        """Initializes the highscore"""
+        self.cryptography = Cryptography(self.basedir)
+        self.highscore = Highscore(self.game_config, self.cryptography, self.basedir)
 
     def reload_i18n_texts(self):
         """Reloads the i18n texts of all scenes"""
@@ -119,14 +172,6 @@ class GameData():
         self.game_config.get('screen').blit(screen_backup, (0, 0))
         pygame.display.update()
         self.fullscreen = not self.fullscreen
-
-    def _set_screen(self, screen):
-        """Sets the screen
-
-        :param screen: The screen
-        """
-        self.screen = screen
-        self.game_config.set('screen', screen)
 
     def check_reset_game(self):
         """Checks whether to reset game"""
@@ -164,34 +209,3 @@ class GameData():
             pass
 
         self.timer_exit = Timer(self.game_config.get('exit.timer1'), self._exit_stop_loop).start()
-
-    def _exit_stop_loop(self):
-        """Exits, stops the loop"""
-        if not self.looping:
-            return
-
-        logging.debug('Stopping loop')
-        self.looping = False
-        try:
-            if self.timer_exit:
-                self.timer_exit.cancel()
-                self.timer_exit.stop()
-        except:
-            pass
-
-        self.timer_exit = Timer(self.game_config.get('exit.timer1'), self._exit_full).start()
-
-    def _exit_full(self):
-        """Exits, sets flag to full quit"""
-        if self.exiting:
-            return
-
-        logging.debug('Ready to quit')
-        self.looping = False
-        self.exiting = True
-        try:
-            if self.timer_exit:
-                self.timer_exit.cancel()
-                self.timer_exit.stop()
-        except:
-            pass

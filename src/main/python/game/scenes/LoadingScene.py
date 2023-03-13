@@ -25,8 +25,11 @@ class LoadingScene(Scene):
         self.screen = self.game_data.game_config.get('screen')
         self.screen_size = self.game_data.game_config.get('screen.size')
         self.font_xl = self.game_data.cache.font_cache.get('main.xl')
+        self.font_s = self.game_data.cache.font_cache.get('main.s')
         self.text_color_logo = self.game_data.game_config.get('text.color.logo')
         self.load_filler_bg_color = self.game_data.game_config.get('background.load.filler.color')
+        self.text_color_inactive = self.game_data.game_config.get('text.color.inactive')
+        self.text_color_help = self.game_data.game_config.get('text.color.help')
 
         self.screen_mid = self.screen_size[0] / 2, self.screen_size[1] / 2
         self.curr_initial_wait = 0
@@ -93,6 +96,25 @@ class LoadingScene(Scene):
                                 )
         self.items.append(self.item_logo)
 
+        # Loading
+        item_width = 450
+        item_height = 80
+        width = self.screen_size[0] - 20
+        height = item_height
+        rect = (self.screen_mid[0] - width / 2, self.screen_size[1] - height - 10, width, height)
+        self.item_loading = MenuItem(
+                                    self.game_data,
+                                    self.font_s,
+                                    rect,
+                                    (self.screen_mid[0], self.screen_size[1] - height / 2),
+                                    width=width,
+                                    height=height,
+                                    color=self.text_color_help,
+                                    text=self.game_data.i18n.get('menu.loading.loading.txt'),
+                                    button_none=True
+                                )
+        self.items.append(self.item_loading)
+
     def reload_i18n_texts(self):
         """Reloads the i18n texts"""
         self.item_logo.set_text(self.game_data.i18n.get('game.name'))
@@ -113,36 +135,66 @@ class LoadingScene(Scene):
         if not self.is_state(State.LOADING):
             return
 
+        _plus_loading_empty = 5
+        _plus_loading = 5
         # Simulate a cool feeling of loading. And load some stuff in between
         if self.curr_initial_wait >= self.initial_wait and not self.init:
-            if self.init_perc < 10:
-                self.init_perc = 10
-            elif self.init_perc < 20:
-                self.init_perc = 20
-            elif self.init_perc < 30:
-                self.init_perc = 30
-            elif self.init_perc < 40:
-                self.init_perc = 40
+            if self.init_perc == 0:
+                self.init_perc += _plus_loading
+                self.item_loading.set_text(self.game_data.i18n.get('menu.loading.loading.sounds.txt'))
+            elif self.init_perc < 10:
+                self.init_perc += _plus_loading_empty
+            elif self.init_perc == 10:
+                self.init_perc += _plus_loading
                 self.game_data.cache.cache_sounds()
-            elif self.init_perc < 50:
-                self.init_perc = 50
-            elif self.init_perc < 60:
-                self.init_perc = 60
-            elif self.init_perc < 70:
-                self.init_perc = 70
-            elif self.init_perc < 80:
-                self.init_perc = 80
+                self.item_loading.set_text(self.game_data.i18n.get('menu.loading.loading.sprites.txt'))
+            elif self.init_perc < 20:
+                self.init_perc += _plus_loading_empty
+            elif self.init_perc == 20:
+                self.init_perc += _plus_loading
                 self.game_data.cache.cache_sprites()
+                self.item_loading.set_text(self.game_data.i18n.get('menu.loading.loading.highscore.txt'))
+            elif self.init_perc < 30:
+                self.init_perc += _plus_loading_empty
+            elif self.init_perc == 30:
+                self.init_perc += _plus_loading
+                self.game_data.init_highscore()
+                self.item_loading.set_text(self.game_data.i18n.get('menu.loading.loading.menu.txt'))
+            elif self.init_perc < 40:
+                self.init_perc += _plus_loading_empty
+            elif self.init_perc == 40:
+                self.init_perc += _plus_loading
+                self.game_data.init_menu_scenes()
+                self.item_loading.set_text(self.game_data.i18n.get('menu.loading.loading.game.txt'))
+            elif self.init_perc < 50:
+                self.init_perc += _plus_loading_empty
+            elif self.init_perc == 50:
+                self.init_perc += _plus_loading
+                self.game_data.init_game_scenes()
+            elif self.init_perc < 60:
+                self.init_perc += _plus_loading_empty
+            elif self.init_perc == 60:
+                self.init_perc += _plus_loading
+            elif self.init_perc < 70:
+                self.init_perc += _plus_loading_empty
+            elif self.init_perc == 70:
+                self.init_perc += _plus_loading
+            elif self.init_perc < 80:
+                self.init_perc += _plus_loading_empty
+            elif self.init_perc == 80:
+                self.init_perc += _plus_loading
             elif self.init_perc < 90:
-                self.init_perc = 90
+                self.init_perc += _plus_loading_empty
+            elif self.init_perc == 90:
+                self.init_perc += _plus_loading
+                self.item_loading.set_text(self.game_data.i18n.get('menu.loading.loading.done.txt'))
             elif self.init_perc < 100:
-                self.init_perc = 100
-                self.game_data.init_scenes()
+                self.init_perc += _plus_loading_empty
             else:
                 self.init = True
             self.set_percentage(self.init_perc)
         else:
-            self.curr_initial_wait += 1
+            self.curr_initial_wait += _plus_loading
 
     def draw(self):
         self.game_data.background.draw()

@@ -17,16 +17,16 @@ from cache.SpriteCache import SpriteCache
 class Cache():
     """A cache helper"""
 
-    def __init__(self, basedir, game_config):
+    def __init__(self, game_config, basedir):
         """Initializes the cache
 
-        :param basedir: The base directory
         :param game_config: The game configuration
+        :param basedir: The base directory
         """
         logging.info('Initializing cache')
 
-        self.basedir = basedir
         self.game_config = game_config
+        self.basedir = basedir
 
         self.font_cache = FontCache(self.basedir)
         self.sound_cache = SoundCache(self.basedir)

@@ -40,6 +40,13 @@ class I18n():
         'scene.exit.txt': 'Bye!',
         'scene.game.score': 'Score: {}',
         'scene.game.go': 'Go, {}!',
+        'menu.loading.loading.txt': 'Loading...',
+        'menu.loading.loading.sounds.txt': 'Loading the sounds...',
+        'menu.loading.loading.sprites.txt': 'Loading the images...',
+        'menu.loading.loading.highscore.txt': 'Loading the highscore...',
+        'menu.loading.loading.menu.txt': 'Loading the menu...',
+        'menu.loading.loading.game.txt': 'Loading the game...',
+        'menu.loading.loading.done.txt': 'Loading done.',
         'menu.item.player.speed.start': 'Speed start: {}, {}',
         'menu.item.player.speed.max': 'Speed max: {}, {}',
         'menu.item.player.speed.increase': 'Speed +: {}, {}',
@@ -49,7 +56,7 @@ class I18n():
         'menu.highscore.help': 'Press <Enter> to open the highscore list.',
         'menu.options.txt': 'Options',
         'menu.options.help': 'Press <Enter> for options.',
-        'menu.fullscreen.txt': 'Toggle fullscreen',
+        'menu.fullscreen.txt': 'Fullscreen',
         'menu.fullscreen.help': 'Press <Enter> to toggle between fullscreen and window mode.',
         'menu.start_game.txt': 'Start Game',
         'menu.start_game.help': 'Press <Enter> to start a new game.',
@@ -60,7 +67,7 @@ class I18n():
         'menu.playerselection.showinfo.help': 'Use <Arrows> to select a player, press <Enter> to start a game. Press <Tab> to hide additional info.',
         'menu.random.txt': 'Random',
         'menu.random.help': 'Press <Enter> to start a game with a random player.',
-        'menu.language.txt': 'Switch language',
+        'menu.language.txt': 'Language',
         'menu.language.help': 'Press <Enter> to switch the language.',
         'menu.background.txt': 'Show background',
         'menu.background.help': 'Press <Enter> to show or hide the background image.',
@@ -70,16 +77,16 @@ class I18n():
         'menu.back.highscore.help': 'Use <Arrow-Up> and <Arrow-Down> to scroll the highscore. Press <Enter> to get back to the menu.'
     }
 
-    def __init__(self, basedir, game_config):
+    def __init__(self, game_config, basedir):
         """Initializes the I18n
 
-        :param basedir: The base path
         :param game_config: The game configuration
+        :param basedir: The base path
         """
         logging.debug('Initializing I18n')
 
-        self.basedir = basedir
         self.game_config = game_config
+        self.basedir = basedir
 
         self.languages = load_languages(self.basedir)
         self.language_main = self.game_config.get('languages.main')
