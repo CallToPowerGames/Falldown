@@ -37,7 +37,7 @@ New Game Started:
 ![Screenshot](img/screenshot-1.png "Grumpy Stone starts a game")
 
 "Clear segment" and "clear all lines" powers:  
-![Screenshot](img/screenshot-2.png "CLear segment and clear all lines powers")
+![Screenshot](img/screenshot-2.png "Clear segment and clear all lines powers")
 
 Left Side, Green Swine:  
 ![Screenshot](img/screenshot-3.png "Left side, green swine")
