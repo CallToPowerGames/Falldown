@@ -45,9 +45,7 @@ class PlayerAI():
             pygame.K_RIGHT: False
         }
         self.probability_change_direction = round(random.uniform(0.65, 0.85), 2)
-        logging.info('probability_change_direction: {}'.format(self.probability_change_direction))
         self.probability_pause_when_falling = round(random.uniform(0.9, 0.99), 2)
-        logging.info('probability_pause_when_falling: {}'.format(self.probability_pause_when_falling))
 
     def loop(self):
         """Loops the AI
