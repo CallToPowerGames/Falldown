@@ -15,7 +15,6 @@ import pygame
 from game.drawables.MenuItem import MenuItem
 from game.drawables.DrawableUtils import draw_text_in_rect
 
-
 class Camera():
     """The camera"""
 
@@ -280,7 +279,7 @@ class Camera():
         if self.player:
             self.player.update_sprite()
 
-    def loop(self, dt, keys=[]):
+    def loop(self, dt, keys):
         """Updates the camera
 
         :param dt: Tick rate, milliseconds between each call to 'tick'

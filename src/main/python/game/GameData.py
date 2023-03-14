@@ -9,7 +9,9 @@
 """GameData"""
 
 import logging
+import random
 from threading import Timer
+
 import pygame
 
 from i18n.I18n import I18n
@@ -22,6 +24,7 @@ from game.scenes.MenuScene import MenuScene
 from game.scenes.HighscoreScene import HighscoreScene
 from game.scenes.OptionsScene import OptionsScene
 from game.scenes.PlayerSelectionScene import PlayerSelectionScene
+from game.scenes.AIScene import AIScene
 from game.scenes.GameScene import GameScene
 from game.scenes.PauseScene import PauseScene
 from game.scenes.GameOverScene import GameOverScene
@@ -66,6 +69,7 @@ class GameData():
         self.scene_options = None
         self.scene_playerselection = None
         self.scene_game = None
+        self.scene_ai = None
         self.scene_pause = None
         self.scene_gameover = None
 
@@ -139,10 +143,12 @@ class GameData():
         """Initializes the game scenes"""
         logging.debug('Initializing game scenes')
         self.scene_game = GameScene(State.GAME, self.game_config.get('fps.game'), self)
+        self.scene_ai = AIScene(State.AI, self.game_config.get('fps.ai'), self)
         self.scene_pause = PauseScene(State.PAUSE, self.game_config.get('fps.pause'), self)
         self.scene_gameover = GameOverScene(State.GAMEOVER, self.game_config.get('fps.gameover'), self)
 
         self.scenes[State.GAME] = self.scene_game
+        self.scenes[State.AI] = self.scene_ai
         self.scenes[State.PAUSE] = self.scene_pause
         self.scenes[State.GAMEOVER] = self.scene_gameover
 
@@ -175,10 +181,15 @@ class GameData():
         pygame.display.update()
         self.fullscreen = not self.fullscreen
 
+    def select_player(self):
+        """Fills the player info object"""
+        logging.info('Selecting player #{}'.format(self.player_index))
+        self.player_info = self.players[self.player_index]
+
     def check_reset_game(self):
         """Checks whether to reset game"""
         if self.game_state.is_state_changed():
-            self.player_info = self.players[self.player_index]
+            self.select_player()
             self.reset_game()
             self.game_state.reset_state_changed()
 
@@ -186,6 +197,19 @@ class GameData():
         """Resets the game"""
         logging.debug('Reset game')
         self.scene_game.reset()
+
+    def reset_ai(self):
+        """Resets the game"""
+        logging.debug('Reset ai')
+        self.scene_ai.reset()
+
+    def check_reset_ai(self):
+        """Checks whether to reset ai"""
+        if self.game_state.is_state_changed():
+            self.player_index = random.randint(0, len(self.players) - 1)
+            self.select_player()
+            self.reset_ai()
+            self.game_state.reset_state_changed()
 
     def get_scene(self, state):
         """Returns the scene for the given state

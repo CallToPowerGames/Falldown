@@ -1,6 +1,7 @@
 import pygame
+import logging
 
-def draw_text_in_rect(surface, text, color, font, rect, center=None, aa=False, colorkey=None):
+def draw_text_in_rect(surface, text, color, font, rect, center=None, aa=False, colorkey=None, alpha=255):
     """Draws text in a rectangle
 
     :param text: The text
@@ -34,4 +35,5 @@ def draw_text_in_rect(surface, text, color, font, rect, center=None, aa=False, c
         if center:
             image_rect.center = center
 
+    image.set_alpha(alpha)
     surface.blit(image, image_rect)

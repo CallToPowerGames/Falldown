@@ -18,6 +18,7 @@ from game.Direction import Direction
 from game.sprites.Spritesheet import Spritesheet
 from game.sprites.Cloud import Cloud
 from game.level.Level import Level
+from game.sprites.Player import Player
 from game.Camera import Camera
 
 class Background(pygame.sprite.Sprite):
@@ -70,6 +71,7 @@ class Background(pygame.sprite.Sprite):
         self.background_scale_factor_max_mid = self.game_data.game_config.get('background.scale.factor.max.mid')
         self.background_scale_factor_max_big = self.game_data.game_config.get('background.scale.factor.max.big')
         self.level_offset_max = self.game_data.game_config.get('level.offset.max')
+        self.camera_borders = self.game_data.game_config.get('camera.borders')
 
         self.min_size_x = self.offset_max_left
         self.max_size_x = self.screen_size[0] + abs(self.offset_max_left) + self.offset_max_right
@@ -92,6 +94,7 @@ class Background(pygame.sprite.Sprite):
 
         self.background_level_active = True
         self.background_level = None
+        self.background_player = None
         self.background_camera = None
 
         self._init()
@@ -140,14 +143,18 @@ class Background(pygame.sprite.Sprite):
         self.background_level_active = True
         self.background_level = Level(self.game_data)
         self.background_level.last_y = -1
-        self.background_camera = Camera(self.game_data, level=self.background_level, show_go=False, directly_generate_segments=True)
+
+        self.background_camera = Camera(self.game_data,
+                                        level=self.background_level,
+                                        player=self.background_player,
+                                        show_go=False, directly_generate_segments=True)
 
     def clear_background_level(self):
         """Clears the background level"""
         self.background_level_active = False
         self.background_level = None
+        self.background_player = None
         self.background_camera = None
-        self.background_level_active = False
 
     def clean(self):
         """Cleans the background elements, removes all lines not in the offset area"""
@@ -292,7 +299,7 @@ class Background(pygame.sprite.Sprite):
 
         if self.background_camera:
             self.background_camera.offset = self.offset
-            self.background_camera.loop(dt)
+            self.background_camera.loop(dt, {})
 
     def _draw(self, clouds, offset):
         """Draws the background

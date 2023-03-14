@@ -54,7 +54,7 @@ class GameScene(Scene):
         pos_barrier = (self.screen_size[0] / 2, self.camera_borders['top'])
         self.barrier = Barrier(self.game_data, pos_barrier)
 
-        self.player = Player(self.game_data)
+        self.player = Player(self.game_data, self.game_data.player_info)
         pos_player = (self.screen_size[0] / 2, self.player.size[1] + self.camera_borders['top'])
         self.player.init(pos_player)
 
@@ -88,6 +88,12 @@ class GameScene(Scene):
         self.game_data.cache.sound_cache.stop_music()
         self.playing_music = False
 
+    def _back_to_menu(self):
+        """Goes back to menu"""
+        self.stop_music()
+        self.game_data.background.reset(initialize_background_level=True)
+        self.set_state(State.PLAYERSELECTION)
+
     def loop(self, tick):
         # Handle events
         for event in pygame.event.get():
@@ -102,37 +108,33 @@ class GameScene(Scene):
                     self.set_state(State.PAUSE)
 
         if self.is_state(State.GAME):
+            if not self.game_init_done:
+                logging.error('Game is not initialized.')
+                self._back_to_menu()
+                return
             if self.paused:
                 self.paused = False
                 self.camera.unpause()
             if not self.sound_played:
                 self.sound_played = True
                 self.game_data.cache.sound_cache.play('game.start', volume=self.music_volume_bg_game_effects)
-            dt = tick / 1000
-            self.game_data.background.loop(dt, self.camera.offset)
-            self.camera.loop(dt, pygame.key.get_pressed())
-            if self.camera.game_over:
-                self.set_state(State.GAMEOVER)
-
-        if not self.is_state(State.GAME):
-            if not self.is_state(State.PAUSE):
-                self.game_init_done = False
-            self.game_data.cache.sound_cache.play('menu.back', volume=self.music_volume_bg_menu_effects)
-            if not self.is_state(State.PAUSE) and not self.is_state(State.GAMEOVER):
-                self.stop_music()
-                self.game_data.background.reset()
-            return
-        else:
-            if not self.game_init_done:
-                logging.error('Game is not initialized.')
-                self.set_state(State.PLAYERSELECTION)
-                self.stop_music()
-                return
             if not self.playing_music:
                 self.playing_music = True
                 self.curr_bg_music = random.choice(self.game_music)
                 self.game_data.cache.sound_cache.load_music(self.curr_bg_music)
                 self.game_data.cache.sound_cache.play_music(loops=-1, volume=self.music_volume_bg_game)
+            dt = tick / 1000
+            self.game_data.background.loop(dt, self.camera.offset)
+            self.camera.loop(dt, pygame.key.get_pressed())
+            if self.camera.game_over:
+                self.set_state(State.GAMEOVER)
+        else:
+            if not self.is_state(State.PAUSE):
+                self.game_init_done = False
+            self.game_data.cache.sound_cache.play('menu.back', volume=self.music_volume_bg_menu_effects)
+            if not self.is_state(State.PAUSE) and not self.is_state(State.GAMEOVER):
+                self.stop_music()
+                self.game_data.background.reset(initialize_background_level=True)
 
     def draw(self, show_score=True, show_fps=True):
         """Draws the game scene
@@ -140,5 +142,10 @@ class GameScene(Scene):
         :param show_score: Flag whether to show the score
         :param show_fps: Flag whether to show the fps, shows only if toggled on
         """
+        if not self.game_init_done:
+            logging.error('Game is not initialized.')
+            self._back_to_menu()
+            return
+
         self.game_data.background.draw()
         self.camera.draw(show_score=show_score, show_fps=show_fps)

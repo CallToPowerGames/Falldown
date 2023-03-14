@@ -23,6 +23,7 @@ class State(Enum):
     GAME = 20
     PAUSE = 21
     GAMEOVER = 22
+    AI = 23
     LOADING = 30
     EXIT = 40
 
@@ -64,7 +65,6 @@ class GameState():
         """
         if isinstance(state, State) and not self.is_state(state):
             logging.info('Set state "{}"'.format(state))
-            logging.debug('Setting game state to {}'.format(state.name))
             self.state = state
             self._state_changed = True
             return True

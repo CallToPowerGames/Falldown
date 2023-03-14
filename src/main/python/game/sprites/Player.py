@@ -20,30 +20,32 @@ from game.sprites.Spritesheet import Spritesheet
 class Player(pygame.sprite.Sprite):
     """The player"""
 
-    def __init__(self, game_data):
+    def __init__(self, game_data, player_info):
         """Initializes the Player
 
         :param game_data: The game data
+        :param player_info: The player info
         """
         super().__init__()
 
         logging.debug('Initializing player')
 
         self.game_data = game_data
+        self.player_info = player_info
 
         self.screen = self.game_data.game_config.get('screen')
-        self.size = self.game_data.player_info['size']
-        self.speed_start = self.game_data.player_info['speed_start']
+        self.size = self.player_info['size']
+        self.speed_start = self.player_info['speed_start']
         self.speed = [self.speed_start[0], self.speed_start[1]]
-        self.speed_max = self.game_data.player_info['speed_max']
-        self.speed_increase = self.game_data.player_info['speed_increase']
-        self.speed_decrease = self.game_data.player_info['speed_decrease']
-        self.falling_factor_increase = self.game_data.player_info['falling_factor_increase']
-        self.rect_inner = self.game_data.player_info['rect_inner']
+        self.speed_max = self.player_info['speed_max']
+        self.speed_increase = self.player_info['speed_increase']
+        self.speed_decrease = self.player_info['speed_decrease']
+        self.falling_factor_increase = self.player_info['falling_factor_increase']
+        self.rect_inner = self.player_info['rect_inner']
         self.debug_show = self.game_data.game_config.get('debug.show')
 
-        self.spritesheet_idle = Spritesheet(self.game_data.cache.sprite_cache, self.game_data.player_info['idle']['key'], size=self.game_data.player_info['size'], nr_images=self.game_data.player_info['idle']['nr_images'], orientation_left=self.game_data.player_info['orientation_left'])
-        self.spritesheet_run = Spritesheet(self.game_data.cache.sprite_cache, self.game_data.player_info['run']['key'], size=self.game_data.player_info['size'], nr_images=self.game_data.player_info['run']['nr_images'], orientation_left=self.game_data.player_info['orientation_left'])
+        self.spritesheet_idle = Spritesheet(self.game_data.cache.sprite_cache, self.player_info['idle']['key'], size=self.player_info['size'], nr_images=self.player_info['idle']['nr_images'], orientation_left=self.player_info['orientation_left'])
+        self.spritesheet_run = Spritesheet(self.game_data.cache.sprite_cache, self.player_info['run']['key'], size=self.player_info['size'], nr_images=self.player_info['run']['nr_images'], orientation_left=self.player_info['orientation_left'])
         self.curr_img_index = 0
         self.image = None
 
@@ -68,7 +70,7 @@ class Player(pygame.sprite.Sprite):
 
         self.last_direction = Direction.LEFT
 
-        logging.info('Starting with player "{}"'.format(self.game_data.player_info['name']))
+        logging.info('Starting with player "{}"'.format(self.player_info['name']))
 
     def get_rect(self):
         """Returns the calculated rect

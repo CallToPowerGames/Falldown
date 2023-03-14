@@ -18,6 +18,7 @@ from config.AppConfig import app_conf_get
 from game.scenes.Scene import Scene
 from game.GameState import State
 from game.drawables.MenuItem import MenuItem
+from threading import Timer
 
 @unique
 class MenuSceneActiveItem(Enum):
@@ -26,7 +27,6 @@ class MenuSceneActiveItem(Enum):
     OPTIONS = 1
     HIGHSCORE = 2
     QUIT = 10
-
 
 class MenuScene(Scene):
     """Menu scene"""
@@ -60,6 +60,9 @@ class MenuScene(Scene):
         self.item_options = None
         self.item_quitgame = None
         self.item_help = None
+
+        self.timer_ai = None
+        self.timer_ai_started = False
 
         self._init_items()
 
@@ -295,16 +298,44 @@ class MenuScene(Scene):
         self.game_data.cache.sound_cache.stop_music()
         self.playing_music = False
 
+    def _start_ai_scene(self):
+        """Starts the AI scene"""
+        self.game_data.check_reset_ai()
+        self.set_state(State.AI)
+
+    def _stop_timer_ai(self):
+        """Stops the AI timer"""
+        try:
+            if self.timer_ai:
+                logging.debug('Stopped the AI timer')
+                self.timer_ai.cancel()
+        except Exception as e:
+            logging.error('Failed to stop AI timer', e)
+
+    def _restart_timer(self):
+        """Restarts the timer"""
+        self._stop_timer_ai()
+        logging.debug('Restarting the AI timer')
+        self.timer_ai = Timer(self.game_data.game_config.get('ai.timer'), self._start_ai_scene)
+        self.timer_ai.start()
+
     def loop(self, tick):
         dt = tick / 1000
 
         self.game_data.background.loop(dt, iterate_offset=True)
+
+        if not self.timer_ai_started:
+            logging.debug('Starting the AI timer')
+            self.timer_ai_started = True
+            self.timer_ai = Timer(self.game_data.game_config.get('ai.timer'), self._start_ai_scene)
+            self.timer_ai.start()
 
         # Handle events
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.exit()
             elif event.type == pygame.KEYDOWN:
+                self._restart_timer()
                 if event.key == pygame.K_ESCAPE:
                     self.exit()
                 elif event.key == pygame.K_UP:
@@ -324,6 +355,8 @@ class MenuScene(Scene):
                         self.set_state(State.PLAYERSELECTION)
 
         if not self.is_state(State.MENU):
+            self._stop_timer_ai()
+            self.timer_ai_started = False
             self.game_data.cache.sound_cache.play('menuitem.activate', volume=self.music_volume_bg_menu_effects)
             if not (self.is_state(State.OPTIONS) or self.is_state(State.HIGHSCORE) or self.is_state(State.PLAYERSELECTION)):
                 self.stop_music()
