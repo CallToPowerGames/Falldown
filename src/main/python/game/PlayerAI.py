@@ -55,10 +55,12 @@ class PlayerAI():
         if self.player.falling:
             if not self.is_falling:
                 self.is_falling = True
-                if random.random() < 0.5:
-                    self.current_direction = Direction.LEFT if random.random() < 0.5 else Direction.RIGHT
-                else:
-                    do_pause = True
+                if random.random() < 0.8:
+                    if self.current_direction == Direction.LEFT:
+                        self.current_direction = Direction.RIGHT
+                    else:
+                        self.current_direction = Direction.LEFT
+                do_pause = True
         else:
             self.is_falling = False
 
