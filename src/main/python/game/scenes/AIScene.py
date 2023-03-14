@@ -180,24 +180,22 @@ class AIScene(Scene):
             if not self.sound_played:
                 self.sound_played = True
                 self.game_data.cache.sound_cache.play('game.start', volume=self.music_volume_bg_game_effects)
+            if not self.playing_music:
+                self.playing_music = True
+                self.curr_bg_music = random.choice(self.game_music)
+                self.game_data.cache.sound_cache.load_music(self.curr_bg_music)
+                self.game_data.cache.sound_cache.play_music(loops=-1, volume=self.music_volume_bg_game)
             dt = tick / 1000
             self.game_data.background.loop(dt, self.camera.offset)
             keys_pressed = self.player_ai.loop()
             self.camera.loop(dt, keys_pressed)
             if self.camera.game_over:
                 self._back_to_menu()
-                return
-            if not self.playing_music:
-                self.playing_music = True
-                self.curr_bg_music = random.choice(self.game_music)
-                self.game_data.cache.sound_cache.load_music(self.curr_bg_music)
-                self.game_data.cache.sound_cache.play_music(loops=-1, volume=self.music_volume_bg_game)
         else:
             self.ai_init_done = False
             self.game_data.cache.sound_cache.play('menu.back', volume=self.music_volume_bg_menu_effects)
             self.stop_music()
             self.game_data.background.reset(initialize_background_level=True)
-            return
 
     def draw(self):
         """Draws the game scene"""

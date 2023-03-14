@@ -109,6 +109,13 @@ class SoundCache():
         """
         pygame.mixer.music.set_volume(volume)
 
+    def is_playing(self):
+        """Checks whether music is playing
+
+        :return: Flag whether music is playing
+        """
+        return pygame.mixer.music.get_busy()
+
     def play_music(self, loops=0, volume=1.0):
         """Plays the music. Music has to be loaded at this time
 
