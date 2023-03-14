@@ -293,8 +293,11 @@ class MenuScene(Scene):
             self.curr_bg_music = random.choice(self.menu_music)
             self.game_data.cache.sound_cache.load_music(self.curr_bg_music)
             self.game_data.cache.sound_cache.play_music(loops=-1, volume=self.music_volume_bg_menu)
+        elif not self.game_data.cache.sound_cache.is_playing():
+            self.playing_music = False
 
     def stop_music(self):
+        """Stops the music"""
         self.game_data.cache.sound_cache.stop_music()
         self.playing_music = False
 
@@ -303,44 +306,49 @@ class MenuScene(Scene):
         self.game_data.check_reset_ai()
         self.set_state(State.AI)
 
-    def _stop_timer_ai(self):
+    def _stop_ai_timer(self):
         """Stops the AI timer"""
         try:
             if self.timer_ai:
                 logging.debug('Stopped the AI timer')
                 self.timer_ai.cancel()
+                self.timer_ai_started = False
         except Exception as e:
             logging.error('Failed to stop AI timer', e)
 
-    def _restart_timer(self):
-        """Restarts the timer"""
-        self._stop_timer_ai()
-        logging.debug('Restarting the AI timer')
-        self.timer_ai = Timer(self.game_data.game_config.get('ai.timer'), self._start_ai_scene)
-        self.timer_ai.start()
+
+    def start_ai_timer(self):
+        """Starts the AI timer"""
+        if not self.timer_ai_started:
+            logging.debug('Starting the AI timer')
+            self.timer_ai_started = True
+            try:
+                self.timer_ai = Timer(self.game_data.game_config.get('ai.timer'), self._start_ai_scene)
+                self.timer_ai.start()
+            except Exception as e:
+                logging.error('Failed to start AI timer', e)
+                self.timer_ai_started = False
+                self.timer_ai = None
 
     def loop(self, tick):
         dt = tick / 1000
 
         self.game_data.background.loop(dt, iterate_offset=True)
 
-        if not self.timer_ai_started:
-            logging.debug('Starting the AI timer')
-            self.timer_ai_started = True
-            self.timer_ai = Timer(self.game_data.game_config.get('ai.timer'), self._start_ai_scene)
-            self.timer_ai.start()
-
         # Handle events
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                self._stop_ai_timer()
                 self.exit()
             elif event.type == pygame.KEYDOWN:
-                self._restart_timer()
+                self._stop_ai_timer()
                 if event.key == pygame.K_ESCAPE:
                     self.exit()
                 elif event.key == pygame.K_UP:
+                    self.start_ai_timer()
                     self._keypress_arrow_up()
                 elif event.key == pygame.K_DOWN:
+                    self.start_ai_timer()
                     self._keypress_arrow_down()
                 elif event.key == pygame.K_RETURN:
                     if self.active_item == MenuSceneActiveItem.HIGHSCORE:
@@ -355,13 +363,12 @@ class MenuScene(Scene):
                         self.set_state(State.PLAYERSELECTION)
 
         if not self.is_state(State.MENU):
-            self._stop_timer_ai()
-            self.timer_ai_started = False
+            self._stop_ai_timer()
             self.game_data.cache.sound_cache.play('menuitem.activate', volume=self.music_volume_bg_menu_effects)
             if not (self.is_state(State.OPTIONS) or self.is_state(State.HIGHSCORE) or self.is_state(State.PLAYERSELECTION)):
                 self.stop_music()
-            return
         else:
+            self.start_ai_timer()
             self.start_music()
 
     def draw(self):

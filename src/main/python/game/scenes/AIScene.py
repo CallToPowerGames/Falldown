@@ -185,6 +185,8 @@ class AIScene(Scene):
                 self.curr_bg_music = random.choice(self.game_music)
                 self.game_data.cache.sound_cache.load_music(self.curr_bg_music)
                 self.game_data.cache.sound_cache.play_music(loops=-1, volume=self.music_volume_bg_game)
+            elif not self.game_data.cache.sound_cache.is_playing():
+                self.playing_music = False
             dt = tick / 1000
             self.game_data.background.loop(dt, self.camera.offset)
             keys_pressed = self.player_ai.loop()
