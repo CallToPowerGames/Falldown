@@ -38,11 +38,16 @@ class PlayerAI():
 
         self.current_direction = Direction.LEFT
         self.is_falling = False
+        self.do_pause = False
 
         self.keys_pressed = {
             pygame.K_LEFT: False,
             pygame.K_RIGHT: False
         }
+        self.probability_change_direction = round(random.uniform(0.65, 0.85), 2)
+        logging.info('probability_change_direction: {}'.format(self.probability_change_direction))
+        self.probability_pause_when_falling = round(random.uniform(0.9, 0.99), 2)
+        logging.info('probability_pause_when_falling: {}'.format(self.probability_pause_when_falling))
 
     def loop(self):
         """Loops the AI
@@ -51,20 +56,21 @@ class PlayerAI():
         """
         last_direction = self.current_direction
 
-        do_pause = False
         if self.player.falling:
             if not self.is_falling:
                 self.is_falling = True
-                if random.random() < 0.8:
+                if random.random() < self.probability_change_direction:
                     if self.current_direction == Direction.LEFT:
                         self.current_direction = Direction.RIGHT
                     else:
                         self.current_direction = Direction.LEFT
-                do_pause = True
+                if random.random() < self.probability_pause_when_falling:
+                    self.do_pause = True
         else:
             self.is_falling = False
+            self.do_pause = False
 
-        if do_pause:
+        if self.do_pause:
             self.keys_pressed[pygame.K_RIGHT] = False
             self.keys_pressed[pygame.K_LEFT] = False
             return self.keys_pressed
