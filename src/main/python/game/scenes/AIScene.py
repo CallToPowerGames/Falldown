@@ -39,8 +39,10 @@ class AIScene(Scene):
         self.screen = self.game_data.game_config.get('screen')
         self.text_color_ai_text = self.game_data.game_config.get('text.color.ai_text')
         self.font_l = self.game_data.cache.font_cache.get('main.l')
+        self.font_s = self.game_data.cache.font_cache.get('main.s')
         self.text_color_logo = self.game_data.game_config.get('text.color.logo')
         self.text_color = self.game_data.game_config.get('text.color')
+        self.text_color_help = self.game_data.game_config.get('text.color.help')
 
         self.screen_mid = self.screen_size[0] / 2, self.screen_size[1] / 2
         self.ai_init_done = False
@@ -87,6 +89,25 @@ class AIScene(Scene):
                                     banner=True
                                 )
         self.items.append(self.item_logo)
+        
+        # Help
+        width = self.screen_size[0] - 20
+        height = 80
+        rect = (self.screen_mid[0] - width / 2, self.screen_size[1] - height - 10, width, height)
+        self.item_help = MenuItem(
+                                    self.game_data,
+                                    self.font_s,
+                                    rect,
+                                    (self.screen_mid[0], self.screen_size[1] - height / 2),
+                                    width=width,
+                                    height=height,
+                                    color=self.text_color_help,
+                                    text=self.game_data.i18n.get('scene.ai.help'),
+                                    rotate=True,
+                                    rotate_ticks_max=16,
+                                    button_none=True
+                                )
+        self.items.append(self.item_help)
 
     def init_game(self):
         """Initializes the game objects"""
@@ -114,6 +135,11 @@ class AIScene(Scene):
         self.ai_text_factor = 1
 
         self.ai_init_done = True
+
+    def reload_i18n_texts(self):
+        """Reloads the i18n texts"""
+        self.item_logo.set_text(self.game_data.i18n.get('game.name'))
+        self.item_help.set_text(self.game_data.i18n.get('scene.ai.help'))
 
     def reset(self):
         """Resets the scene"""
@@ -198,4 +224,7 @@ class AIScene(Scene):
 
         for item in self.items:
             item.loop()
-            item.draw()
+            if not item == self.item_help:
+                item.draw()
+            else:
+                item.draw(alpha=self.ai_text_alpha)

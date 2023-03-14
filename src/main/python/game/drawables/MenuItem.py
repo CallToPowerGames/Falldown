@@ -121,16 +121,25 @@ class MenuItem(Drawable):
         else:
             self.sound_played = False
 
-    def draw(self):
-        """Draws the MenuItem"""
+    def draw(self, alpha=255):
+        """Draws the MenuItem
+
+        :param alpha: The alpha value
+        """
         if self.rotate and self.active and self.tick_current == 0:
             self.text_current = self.text_current[1:] + self.text_current[0]
 
         if self.button_none:
+            if alpha < 255:
+                self.image_button_none.set_alpha(alpha)
             self.screen.blit(self.image_button_none, self.rect)
         if self.button:
+            if alpha < 255:
+                self.image_button_active.set_alpha(alpha)
             self.screen.blit(self.image_button_active if self.active else self.image_button_inactive, self.rect)
         if self.banner:
+            if alpha < 255:
+                self.image_banner.set_alpha(alpha)
             self.screen.blit(self.image_banner, self.rect)
 
         _color = self.color if self.active else self.color_inactive
@@ -140,4 +149,4 @@ class MenuItem(Drawable):
             self.rect[1],
             self.rect[2] - corr,
             self.rect[3]
-        ), self.center)
+        ), self.center, alpha=alpha)

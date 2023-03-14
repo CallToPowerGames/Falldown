@@ -18,7 +18,7 @@ class GameConfig():
 
     _config = {
         # In the public config
-        'config.version': 2, # if user folder conf.json is < this version, it gets overwritten
+        'config.version': 3, # if user folder conf.json is < this version, it gets overwritten
         'languages.main': 'en',
         'logging.level': 'INFO',
         'logging.logtofile': False,
@@ -45,7 +45,7 @@ class GameConfig():
         'score.plus.clear.linesegment': 2,
         'score.plus.clear.all': 4,
         'highscore.entries.max': 100,
-        'ai.timer': 10.0,
+        'ai.timer': 15.0,
         'exit.timer1': 2.0,
         'exit.timer2': 0.2,
         'offset.max.up': 0,

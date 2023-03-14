@@ -14,6 +14,7 @@
     "scene.pause.score": "Punkte: {}",
     "scene.gameover.score": "Score: {}",
     "scene.game.fps": "FPS: {}",
+    "scene.ai.help": "Drücke eine beliebige Taste, um zurück zum Menü zu gelangen.",
     "scene.pause.pause": "Pause",
     "scene.pause.help": "Drücke <Leerzeichen>, um fortzufahren oder <Escape>, um das Spiel zu beenden.",
     "scene.gameover.gameover": "Spiel vorbei!",

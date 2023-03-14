@@ -33,6 +33,7 @@ class I18n():
         'scene.pause.score': 'Score: {}',
         'scene.gameover.score': 'Score: {}',
         'scene.game.fps': 'FPS: {}',
+        'scene.ai.help': 'Press any key to get back to the menu.',
         'scene.pause.pause': 'Pause',
         'scene.pause.help': 'Press <Space> to continue, <Escape> to end the game.',
         'scene.gameover.gameover': 'Game over!',
