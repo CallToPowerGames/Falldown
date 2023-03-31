@@ -2,6 +2,14 @@
 
 ## Changelog
 
+### v1.2.0
+
+* New Powers
+    * Clear a single segment
+    * Clear all segments
+* New cache
+* General bug fixing, cleaning up and refactoring
+
 ### v1.1.0
 
 * Additional player info on pressing Tab in player selection
