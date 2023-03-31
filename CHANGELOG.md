@@ -2,6 +2,21 @@
 
 ## Changelog
 
+### v1.6.0
+
+* New font
+* Antialiased texts
+* Refined UI
+* Refined pause menu
+* Refined options menu
+* More options:
+    * Switch on/off music
+    * Switch on/off effects
+    * Increase/decrease volume of music
+    * Increase/decrease volume of effects
+* Indicator in options menu whether the option is currently switched on/off
+* General bug fixing, cleaning up and refactoring
+
 ### v1.5.0
 
 * Added player AIs
