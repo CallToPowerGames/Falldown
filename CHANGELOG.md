@@ -2,6 +2,18 @@
 
 ## Changelog
 
+### v1.7.0
+
+* Added player dying and death animations
+* Fixed bug in and cleaned up player AI
+* You can now let a specific player AI play
+    * Instead of waiting or pressing "k" in the main menu
+    * Select a player in the player selection menu and press "k"
+* Graphically improved segments
+* Improved per-player-sprite animations
+* Bug fix: Options overwritten when game config version changed
+* General bug fixing, cleaning up and refactoring
+
 ### v1.6.0
 
 * New font
