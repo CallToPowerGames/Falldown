@@ -2,6 +2,18 @@
 
 ## Changelog
 
+### v1.8.0
+
+* Added controller support
+    * Supported controllers:
+        * XBox 360
+        * Nintendo Pro
+    * Controller hot plugging
+        * App knows when controllers are added/removed
+* Improved quitting the application
+* Drawing optimizations
+* General bug fixing, cleaning up and refactoring
+
 ### v1.7.0
 
 * Added player dying and death animations
