@@ -2,6 +2,16 @@
 
 ## Changelog
 
+### v1.5.0
+
+* Added player AIs
+* After 10 seconds of inactivity in the main screen a player AI starts to play the game with a randomly selected player
+* Pressing any button returns to the main menu
+* When the player AI's game is over, the game returns to the main menu
+* Music and background generation hardening
+* Improved loading bar
+* General bug fixing, cleaning up and refactoring
+
 ### v1.4.0
 
 * Added (randomized) cloud background images
