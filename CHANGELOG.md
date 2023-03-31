@@ -2,6 +2,17 @@
 
 ## Changelog
 
+### v1.3.0
+
+* Internationalization (i18n) added
+    * Two languages
+        * English
+        * German
+    * New option to switch languages under "Options"
+    * Selected language gets saved to configuration and is loaded at startup
+* Config file versioning
+* General bug fixing, cleaning up and refactoring
+
 ### v1.2.0
 
 * New Powers
