@@ -2,6 +2,17 @@
 
 ## Changelog
 
+### v1.4.0
+
+* Added (randomized) cloud background images
+* Added parallax scrolling for the background (background image and clouds)
+* Added an option to deactivate the background image
+* Added a (random) cloud scale factor for cloud variations
+* Added a scrolling level as background (when not in-game)
+* Added specific loading texts in loading screen
+* Added a very (VERY) high limit of steps that the player can fall down. Should never be reached even closeley, but better save than sorry.
+* General bug fixing, cleaning up and refactoring
+
 ### v1.3.0
 
 * Internationalization (i18n) added
