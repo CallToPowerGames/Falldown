@@ -2,6 +2,11 @@
 
 ## Changelog
 
+### v1.8.1
+
+* Dependency upgrades
+* Cleanup
+
 ### v1.8.0
 
 * Added controller support
